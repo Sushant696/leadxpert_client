@@ -7,6 +7,7 @@ import connectDB from "./config/db";
 import rateLimiter from "./utils/rateLimiter";
 import mainRouter from "./routes";
 import { env } from "./config/env";
+import { httpLogger } from "./lib/http-logger";
 
 
 const app: Application = express()
@@ -24,5 +25,7 @@ app.get("/", (req: Request, res: Response) => {
 })
 
 connectDB()
+
+app.use(httpLogger)
 
 export default app

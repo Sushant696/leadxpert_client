@@ -1,9 +1,8 @@
-import { NextFunction } from "express"
+import { NextFunction, Request, Response } from "express"
 
-async function asyncHandler(cb: any) {
+const asyncHandler = (fn: any) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    Promise.resolve(cb(req, res, next)).catch((err) => next(err))
+    Promise.resolve(fn(req, res, next)).catch((err) => { next(err) })
   }
 }
-
 export default asyncHandler

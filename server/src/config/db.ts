@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import { env } from "./env"
+import pino from "pino";
+import { logger } from "../lib/logger";
 
 const connectDB = async () => {
   try {
@@ -7,16 +9,19 @@ const connectDB = async () => {
     await mongoose.connect(mongodbURI)
 
     mongoose.connection.on("error", (err) => {
-      console.log("Mongodb connection error", err)
+      logger.error("Mongodb connection error", err)
     })
 
     mongoose.connection.on("disconnected", (err) => {
-      console.log("Mongodb disconnected", err)
+      logger.error("Mongodb disconnected", err)
     })
-    console.log("Mongodb connected successfully")
+    logger.info("Mongodb connected successfully")
+
   } catch (error: any) {
-    console.error(error)
+
+    logger.error(error)
     process.exit(1);
+
   }
 }
 
