@@ -17,7 +17,6 @@ app.use(rateLimiter)
 app.use(cookieParser())
 app.use(bodyParser.json())
 app.use(express.json())
-console.log(env.VERSION, "version")
 app.use(`/${env.VERSION}/api/`, mainRouter)
 
 app.get("/", (req: Request, res: Response) => {

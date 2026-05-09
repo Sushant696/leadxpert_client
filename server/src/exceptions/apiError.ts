@@ -6,8 +6,8 @@ class ApiError extends Error {
   constructor(status: number, message: string = "Something wen't wrong", success: boolean = false) {
     super();
     this.status = status;
-    this.success = success
     this.message = super.message;
+    this.success = success
   }
 }
 
