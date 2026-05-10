@@ -13,12 +13,9 @@ type LayoutProps = {
 
 export default function Layout({ children }: LayoutProps) {
   return (
-    <html lang="en">
-      <body
-      >
-        <SignupHeader />
-        {children}
-      </body>
-    </html>
+    <>
+      <SignupHeader />
+      {children}
+    </>
   );
 }

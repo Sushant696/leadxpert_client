@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { Google } from "iconsax-reactjs";
-import { Lock, Shield, Users, Zap } from "lucide-react";
+import { Google, Lock1 } from "iconsax-reactjs";
+import { Shield, Users, Zap } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import LoginForm from "@/features/auth/components/login-screen";
@@ -37,16 +37,17 @@ function Login() {
                     variant="outline"
                     className="w-full h-14 justify-center text-base font-medium hover:bg-primary/80 hover:text-white"
                   >
-                    <Google variant="Bulk" className=" text-primary hover:text-primary/70" />
+                    <Google variant="Bulk" className="text-primary hover:text-primary/70" />
                     Sign in with Google
                   </Button>
 
                   <Button
+                    disabled={true}
                     variant="outline"
-                    className="w-full h-14 justify-center text-base font-medium hover:bg-accent"
+                    className="w-full h-14 justify-center text-base font-medium hover:bg-primary/80 hover:text-white"
                   >
-                    <Lock className="h-3 w-3 text-primary" />
-                    Log in with SSO
+                    <Lock1 variant="Bulk" className="text-primary hover:text-primary/70" />
+                    Login in with SSO
                   </Button>
                 </div>
               </div>
@@ -83,7 +84,7 @@ function Login() {
                       <Users className="h-4 w-4 text-accent" />
                     </div>
                     <div>
-                      <h4 className="font-medium text-foreground text-sm">Trusted by 10,000+ Teams</h4>
+                      <h4 className="font-medium text-foreground text-sm">Trusted by Multiple Teams</h4>
                       <p className="text-xs text-muted-foreground mt-0.5">
                         Join thousands of businesses growing with LeadXpert
                       </p>

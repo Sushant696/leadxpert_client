@@ -43,7 +43,7 @@ function Navigation() {
                 Sign In
               </Link>
             </Button>
-            <div className="h-10">
+            <div className="h-8">
               <Separator orientation="vertical" />
             </div>
             <Button className="">

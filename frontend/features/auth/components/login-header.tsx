@@ -16,9 +16,9 @@ function LoginHeader() {
           </Link>
           <div className="text-sm text-muted-foreground">
             Don't have an account?{" "}
-            <a href="#" className="text-primary hover:text-primary-dark font-medium transition-colors">
+            <Link href="/register" className="text-primary hover:text-primary-dark font-medium transition-colors">
               Get started free
-            </a>
+            </Link>
           </div>
         </div>
       </div>
