@@ -1,10 +1,9 @@
+import SignupHeader from "@/features/auth/components/signup-header";
 import type { Metadata } from "next";
 
-import LoginHeader from "@/features/auth/components/login-header";
-
 export const metadata: Metadata = {
-  title: "LeadXpert login",
-  description: "Leadxpert login page",
+  title: "LeadXpert create account",
+  description: "Create account at leadXpert",
 };
 
 export default function RootLayout({
@@ -14,8 +13,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
-        <LoginHeader />
+      <body
+      >
+        <SignupHeader />
         {children}
       </body>
     </html>

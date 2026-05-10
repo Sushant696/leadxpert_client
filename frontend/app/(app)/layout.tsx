@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-
-import LoginHeader from "@/features/auth/components/login-header";
+import Navigation from "@/components/layout/navbar/navigation";
+import Footer from "@/components/layout/footer";
 
 export const metadata: Metadata = {
-  title: "LeadXpert login",
-  description: "Leadxpert login page",
+  title: "LeadXpert",
+  description: "An smart lead management system.",
 };
 
 export default function RootLayout({
@@ -15,8 +15,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <LoginHeader />
+        <Navigation />
         {children}
+        <Footer />
       </body>
     </html>
   );
