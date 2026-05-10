@@ -1,24 +1,17 @@
-import type { Metadata } from "next";
 import Navigation from "@/components/layout/navbar/navigation";
 import Footer from "@/components/layout/footer";
 
-export const metadata: Metadata = {
-  title: "LeadXpert",
-  description: "An smart lead management system.",
+type LayoutProps = {
+  children: React.ReactNode;
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function Layout({ children }: LayoutProps) {
   return (
-    <html lang="en">
-      <body>
-        <Navigation />
-        {children}
-        <Footer />
-      </body>
-    </html>
+    <>
+      <Navigation />
+      <main>{children}</main>
+      <Footer />
+    </>
   );
 }
+

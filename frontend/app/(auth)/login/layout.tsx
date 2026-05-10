@@ -7,11 +7,11 @@ export const metadata: Metadata = {
   description: "Leadxpert login page",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
+type LayoutProps = {
   children: React.ReactNode;
-}>) {
+};
+
+export default function Layout({ children }: LayoutProps) {
   return (
     <html lang="en">
       <body>
