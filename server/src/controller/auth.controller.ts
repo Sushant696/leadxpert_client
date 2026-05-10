@@ -1,25 +1,39 @@
-import { Request, Response } from "express"
-import asyncHandler from "../utils/asyncHandler"
-import ApiResponse from "../utils/apiResponse"
+import z from "zod";
+import { Request, Response } from "express";
+import { StatusCodes } from "http-status-codes";
 
-const loginUser = asyncHandler(async (req: Request, res: Response) => {
-  return res.json(new ApiResponse(201, "hello world", {}));
-})
+import ApiResponse from "../utils/apiResponse";
+import asyncHandler from "../utils/asyncHandler";
+import { UserServices } from "../services/auth.service";
+import responseMessages from "../constants/responseMessages";
+import { CreateUserDTO, loginUserDTO } from "../dtos/user.dto";
 
-const createUser = asyncHandler(async (req: Request, res: Response) => {
-  return res.json(new ApiResponse(201, "hello world", {}));
-})
+const userServices = new UserServices();
 
-const logoutuser = asyncHandler(async (req: Request, res: Response) => {
-  return res.json(new ApiResponse(201, "hello world", {}));
-})
+export class AuthController {
 
-const refreshAccessToken = asyncHandler(async (req: Request, res: Response) => {
-  return res.json(new ApiResponse(201, "hello world", {}));
-})
+  createUser = asyncHandler(async (req: Request, res: Response) => {
+    const parsedData = CreateUserDTO.safeParse(req.body);
 
-const verifyMe = asyncHandler(async (req: Request, res: Response) => {
-  return res.json(new ApiResponse(201, "hello world", {}));
-})
+    if (!parsedData.success) {
+      return new ApiResponse(StatusCodes.BAD_REQUEST, z.prettifyError(parsedData.error), {})
+    }
 
-export const authControllers = { loginUser, createUser, refreshAccessToken, logoutuser, verifyMe }
+    const validatedData: CreateUserDTO = parsedData.data;
+    const createdUser = await userServices.createUser(validatedData)
+
+    return res.json(new ApiResponse(201, responseMessages.USER.CREATED, createdUser));
+  })
+
+
+  loginUser = asyncHandler(async (req: Request, res: Response) => {
+
+    const parsedData = loginUserDTO.safeParse(req.body);
+
+    if (!parsedData.success) {
+      return new ApiResponse(StatusCodes.BAD_REQUEST, z.prettifyError(parsedData.error), {})
+    }
+    return res.json(new ApiResponse(201, responseMessages.USER.LOGGED_IN, {}));
+  })
+
+}

@@ -1,11 +1,11 @@
-import mongoose from "mongoose";
+import mongoose, { HydratedDocument } from "mongoose";
+import { UserType } from "../types/user.types";
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema<UserType>({
   name: {
     type: String,
     required: true
   },
-
   email: {
     type: String,
     required: true,
@@ -13,21 +13,14 @@ const userSchema = new mongoose.Schema({
     unique: true,
     index: true,
   },
-  passwordHash: {
+  password: {
     type: String,
     select: false,
   },
-
-  authProviders: {
-    google: { type: Boolean, default: false },
-    password: { type: Boolean, default: true },
-  },
-
   isEmailVerified: {
     type: Boolean,
     default: false,
   },
-
   isActive: {
     type: Boolean,
     default: true,
@@ -41,6 +34,8 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-})
+}, { timestamps: true })
 
-export const User = mongoose.model("User", userSchema)
+export type UserDocument = HydratedDocument<UserType>;
+
+export const User = mongoose.model<UserType>("User", userSchema)
