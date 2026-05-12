@@ -3,12 +3,12 @@ import { Google, Lock1 } from "iconsax-reactjs";
 import { Shield, Users, Zap } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import LoginForm from "@/features/auth/components/login-screen";
+import LoginForm from "@/features/auth/components/LoginForm";
 
 function Login() {
   return (
     <>
-      <div className="min-h-screen bg-background py-12 px-4">
+      <div className="min-h-screen bg-background py-12 px-4 border">
         <div className="max-w-6xl mx-auto">
           <div className="mb-8 bg-primary/5 border border-primary/20 rounded-lg p-4">
             <h3 className="font-semibold text-foreground mb-1">

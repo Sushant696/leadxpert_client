@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import LoginHeader from "@/features/auth/components/login-header";
+import LoginHeader from "@/features/auth/components/LoginHeader";
 
 export const metadata: Metadata = {
   title: "LeadXpert login",

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import SignupHeader from "@/features/auth/components/signup-header";
+import SignupHeader from "@/features/auth/components/SignupHeader";
 
 export const metadata: Metadata = {
   title: "LeadXpert create account",

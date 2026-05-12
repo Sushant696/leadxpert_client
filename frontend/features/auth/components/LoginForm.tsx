@@ -29,15 +29,14 @@ function LoginForm() {
   }
 
   return (
-    <div >
+    <div>
       <form className=" space-y-5" onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-2">
           <Label htmlFor="email" className="text-sm font-medium text-foreground">
             Email address
           </Label>
           <Input
-            type="email"
-            placeholder="name@company.com"
+            type="email" placeholder="name@company.com"
             className="h-11"
             {...register("email",)}
           />

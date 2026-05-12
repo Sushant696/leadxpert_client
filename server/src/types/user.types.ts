@@ -1,6 +1,5 @@
 import z from "zod";
 
-// Domain contract
 export const UserSchema = z.object({
   name: z.string,
   email: z.email().min(5),
