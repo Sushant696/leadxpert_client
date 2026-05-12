@@ -1,5 +1,5 @@
-import { UserDocument, User } from "../models/auth.model";
 import { UserType } from "../types/user.types";
+import { UserDocument, User } from "../models/auth.model";
 
 export interface IUserRepository {
   createUser(userData: Partial<UserType>): Promise<UserDocument>;
