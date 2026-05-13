@@ -1,9 +1,7 @@
-import express from "express";
+import { env } from "./config/env";
+import { logger } from "./lib/logger";
+import app from "./server";
 
-const app = express()
-
-const port = 5500;
-
-app.listen(port, () => {
-  console.log("Listening on port: ", port)
+app.listen(env.PORT || 5500, () => {
+  logger.info("Server Started on port : " + env.PORT)
 })
