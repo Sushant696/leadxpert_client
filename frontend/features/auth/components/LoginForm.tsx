@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button"
 import { loginSchema, TloginForm } from "../auth.types"
 
 function LoginForm() {
-
   const navigate = useRouter()
   const [showPassword, setShowPassword] = useState<boolean>(false)
 
@@ -24,7 +23,7 @@ function LoginForm() {
   const onSubmit = async (data: TloginForm) => {
     alert("LoggedIn Successfully");
     console.log(data)
-    navigate.push("/")
+    navigate.push("/dashboard")
     reset();
   }
 

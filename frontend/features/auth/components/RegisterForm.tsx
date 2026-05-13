@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from "react"
+import { Google } from "iconsax-reactjs"
 import { useForm } from "react-hook-form"
 import { Eye, EyeOff } from "lucide-react"
 import { useRouter } from "next/navigation"
@@ -10,7 +11,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { registerSchema, TregisterForm } from "../auth.types"
-import { Google } from "iconsax-reactjs"
 
 function RegisterForm() {
   const navigate = useRouter()
@@ -28,7 +28,7 @@ function RegisterForm() {
   const onSubmit = async (data: TregisterForm) => {
     console.log("Registration attempt:", data)
     alert("User created successfully")
-    navigate.push("/")
+    navigate.push("/login")
     reset()
   }
 
