@@ -3,16 +3,23 @@ import type React from "react"
 import { Google, TableDocument } from "iconsax-reactjs"
 import { useRouter } from "next/navigation"
 
-function SignupEmail() {
+interface RegisterEmailProps {
+  onEmailSubmit: (email: string) => void
+}
 
+function SignupEmail({ onEmailSubmit }: RegisterEmailProps) {
   const navigate = useRouter()
-
-  const handleEmailVerify = async (e: React.FormEvent) => {
-  }
-
   const handleGoogleSignup = () => {
     console.log("Google signup clicked")
   }
+
+  const handleVerifyEmail = () => {
+    onEmailSubmit("sushantgml@gmail.com")
+    navigate.push("/register/verify-code")
+  }
+
+  console.log("Google signup clicked")
+
 
   return (
     <div className="w-full max-w-md mt-6 md:mt-12">
@@ -26,14 +33,14 @@ function SignupEmail() {
           onClick={handleGoogleSignup}
           className="w-full border border-border rounded-lg px-4 py-3 flex items-center justify-center gap-3 hover:bg-secondary/50 transition-colors"
         >
-          <Google variant="Bulk" />
+          <Google className="text-primary" variant="Bulk" />
           <span className="text-sm font-medium text-foreground">Continue with Google</span>
         </button>
         <button
           onClick={() => navigate.push("/register/classic")}
           className="w-full border border-border rounded-lg px-4 py-3 flex items-center justify-center gap-3 hover:bg-secondary/50 transition-colors"
         >
-          <TableDocument variant="Bulk" />
+          <TableDocument className="text-primary" variant="Bulk" />
           <span className="text-sm font-medium text-foreground">Signup with classic register form</span>
         </button>
 
@@ -45,7 +52,7 @@ function SignupEmail() {
         <div className="flex-1 h-px bg-border" />
       </div>
 
-      <form onSubmit={handleEmailVerify} className="space-y-4">
+      <form onSubmit={handleVerifyEmail} className="space-y-4">
         <div>
           <label htmlFor="email" className="block text-sm font-semibold text-foreground mb-2">
             Email address <span className="text-destructive">*</span>
