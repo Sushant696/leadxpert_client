@@ -9,3 +9,4 @@ export const bcryptUtil = {
     return await bcrypt.compare(password, hash);
   }
 }
+

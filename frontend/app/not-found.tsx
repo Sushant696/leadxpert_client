@@ -3,14 +3,13 @@ import { ArrowRight, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Navigation from "@/components/layout/navbar/navigation"
 
-export default function NotFound() {
+function NotFound() {
   return (
     <div>
       <Navigation />
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center px-2">
         <div className="max-w-2xl w-full">
           <div className="flex flex-col items-center text-center space-y-8">
-            {/* Illustration */}
             <div >
               <img className="relative w-full h-80" src="/icons/404_icon.svg" alt="logo" />
             </div>
@@ -60,4 +59,4 @@ export default function NotFound() {
     </div>
   )
 }
-
+export default NotFound 

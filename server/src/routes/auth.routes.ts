@@ -8,5 +8,4 @@ const authcontroller = new AuthController();
 authRouter.post("/login", authcontroller.loginUser)
 authRouter.post("/register", authcontroller.createUser)
 
-
 export default authRouter

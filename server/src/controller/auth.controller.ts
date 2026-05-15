@@ -7,6 +7,7 @@ import asyncHandler from "../utils/asyncHandler";
 import { UserServices } from "../services/auth.service";
 import responseMessages from "../constants/responseMessages";
 import { CreateUserDTO, loginUserDTO } from "../dtos/user.dto";
+import ApiError from "../exceptions/apiError";
 
 const userServices = new UserServices();
 
@@ -16,24 +17,24 @@ export class AuthController {
     const parsedData = CreateUserDTO.safeParse(req.body);
 
     if (!parsedData.success) {
-      return new ApiResponse(StatusCodes.BAD_REQUEST, z.prettifyError(parsedData.error), {})
+      throw new ApiError(StatusCodes.BAD_REQUEST, parsedData.error.message)
     }
-
-    const validatedData: CreateUserDTO = parsedData.data;
-    const createdUser = await userServices.createUser(validatedData)
+    const createdUser = await userServices.createUser(parsedData.data)
 
     return res.json(new ApiResponse(201, responseMessages.USER.CREATED, createdUser));
   })
 
-
   loginUser = asyncHandler(async (req: Request, res: Response) => {
 
     const parsedData = loginUserDTO.safeParse(req.body);
-
     if (!parsedData.success) {
       return new ApiResponse(StatusCodes.BAD_REQUEST, z.prettifyError(parsedData.error), {})
     }
-    return res.json(new ApiResponse(201, responseMessages.USER.LOGGED_IN, {}));
+    const { accessToken, refreshToken, existingUser } = await userServices.loginUser(parsedData.data);
+
+    res.cookie("accessToken", accessToken, {})
+
+    return res.json(new ApiResponse(201, responseMessages.USER.LOGGED_IN, existingUser));
   })
 
 }
