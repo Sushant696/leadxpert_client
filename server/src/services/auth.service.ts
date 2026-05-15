@@ -51,7 +51,6 @@ export class UserServices {
     const payload = {
       id: existingUser._id,
       email: existingUser.email,
-      role: existingUser.role
     };
 
     const { accessToken, refreshToken } = GenerateTokens(payload);

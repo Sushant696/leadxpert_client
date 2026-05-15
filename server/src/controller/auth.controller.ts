@@ -8,6 +8,7 @@ import { UserServices } from "../services/auth.service";
 import responseMessages from "../constants/responseMessages";
 import { CreateUserDTO, loginUserDTO } from "../dtos/user.dto";
 import ApiError from "../exceptions/apiError";
+import cookieConfig from "../utils/cookiesConfig";
 
 const userServices = new UserServices();
 
@@ -32,7 +33,8 @@ export class AuthController {
     }
     const { accessToken, refreshToken, existingUser } = await userServices.loginUser(parsedData.data);
 
-    res.cookie("accessToken", accessToken, {})
+    res.cookie("accessToken", accessToken, cookieConfig.accessTokenConfig)
+    res.cookie("refreshToken", refreshToken, cookieConfig.refreshTokenConfig)
 
     return res.json(new ApiResponse(201, responseMessages.USER.LOGGED_IN, existingUser));
   })

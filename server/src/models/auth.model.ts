@@ -22,8 +22,7 @@ const userSchema = new mongoose.Schema<UserType>({
     default: false,
   },
   isActive: {
-    type: Boolean,
-    default: true,
+    type: Boolean, default: true,
   },
 
   lastLoginAt: Date,
