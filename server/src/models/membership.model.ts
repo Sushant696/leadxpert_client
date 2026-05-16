@@ -13,7 +13,6 @@ const membershipSchema = new mongoose.Schema(
       ref: "Company",
       required: true,
     },
-
     role: {
       type: String,
       enum: ["super_admin", "admin", "agent"],

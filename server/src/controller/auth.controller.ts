@@ -32,12 +32,12 @@ export class AuthController {
       return new ApiResponse(StatusCodes.BAD_REQUEST, z.prettifyError(parsedData.error), {})
     }
 
-    const { accessToken, refreshToken, existingUser } = await userServices.loginUser(parsedData.data);
+    const { accessToken, refreshToken, user } = await userServices.loginUser(parsedData.data);
 
     res.cookie("accessToken", accessToken, cookieConfig.accessTokenConfig)
     res.cookie("refreshToken", refreshToken, cookieConfig.refreshTokenConfig)
 
-    return res.json(new ApiResponse(201, responseMessages.USER.LOGGED_IN, existingUser));
+    return res.json(new ApiResponse(201, responseMessages.USER.LOGGED_IN, user));
   })
 
 }

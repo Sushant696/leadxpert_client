@@ -35,15 +35,12 @@ export class UserServices {
   }
 
   async loginUser(data: loginUserDTO) {
-
     const existingUser = await userRepository.getUserWithPasswordByEmail(data.email)
 
     if (!existingUser) {
       throw new ApiError(StatusCodes.BAD_REQUEST, errorMessages.USER.NOT_FOUND)
     }
-    console.log(existingUser)
     const validatedPassword = await bcryptUtil.compare(data.password, existingUser.password);
-    console.log(validatedPassword, "validated password")
 
     if (!validatedPassword) {
       throw new ApiError(StatusCodes.CONFLICT, errorMessages.USER.INVALID_CREDENTIALS)
@@ -52,10 +49,13 @@ export class UserServices {
     const payload = {
       id: existingUser._id,
       email: existingUser.email,
+      role: existingUser.role
     };
 
-
+    const userObj = existingUser.toObject();
+    const { password, ...safeUser } = userObj;
     const { accessToken, refreshToken } = GenerateTokens(payload);
-    return { accessToken, refreshToken, existingUser }
+
+    return { accessToken, refreshToken, user: safeUser }
   }
 }

@@ -1,7 +1,6 @@
 import ms from "ms";
 import { env } from "../config/env";
 
-
 const cookieConfig = {
   accessTokenConfig: {
     httpOnly: true,
