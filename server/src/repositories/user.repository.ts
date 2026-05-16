@@ -10,12 +10,16 @@ export interface IUserRepository {
 export class UserRepository implements IUserRepository {
 
   async createUser(userData: Partial<UserType>): Promise<UserDocument> {
-    
+
     return User.create(userData);
   }
 
   async getUserByEmail(email: string): Promise<UserDocument | null> {
     return User.findOne({ email });
+  }
+
+  async getUserWithPasswordByEmail(email: string): Promise<UserDocument | null> {
+    return User.findOne({ email }).select("+password");
   }
 
   async getUserByUsername(username: string): Promise<UserDocument | null> {

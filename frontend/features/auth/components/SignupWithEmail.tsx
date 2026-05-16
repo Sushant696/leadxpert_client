@@ -10,16 +10,12 @@ interface RegisterEmailProps {
 function SignupEmail({ onEmailSubmit }: RegisterEmailProps) {
   const navigate = useRouter()
   const handleGoogleSignup = () => {
-    console.log("Google signup clicked")
   }
 
   const handleVerifyEmail = () => {
     onEmailSubmit("sushantgml@gmail.com")
     navigate.push("/register/verify-code")
   }
-
-  console.log("Google signup clicked")
-
 
   return (
     <div className="w-full max-w-md mt-6 md:mt-12">

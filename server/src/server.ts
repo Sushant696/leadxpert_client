@@ -7,6 +7,7 @@ import rateLimiter from "./utils/rateLimiter";
 import mainRouter from "./routes";
 import { env } from "./config/env";
 import { httpLogger } from "./lib/http-logger";
+import { logger } from "./lib/logger";
 
 const app: Application = express()
 
@@ -28,6 +29,7 @@ app.use(httpLogger)
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   const status = err.status || 500;
+  logger.error(err)
 
   res.status(status).json({
     success: false,

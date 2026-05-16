@@ -26,14 +26,12 @@ function RegisterForm() {
   })
 
   const onSubmit = async (data: TregisterForm) => {
-    console.log("Registration attempt:", data)
     alert("User created successfully")
     navigate.push("/login")
     reset()
   }
 
   const handleGoogleSignUp = () => {
-    console.log("Google Sign Up initiated")
     // TODO: Implement Google OAuth flow
   }
 

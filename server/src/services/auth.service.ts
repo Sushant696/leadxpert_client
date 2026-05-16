@@ -2,10 +2,10 @@ import { StatusCodes } from "http-status-codes";
 
 import { bcryptUtil } from "../utils/bcrypt";
 import ApiError from "../exceptions/apiError";
+import GenerateTokens from "../utils/generateToken";
 import errorMessages from "../constants/errorMessages";
 import { CreateUserDTO, loginUserDTO } from "../dtos/user.dto";
 import { UserRepository } from "../repositories/user.repository";
-import GenerateTokens from "../utils/generateToken";
 
 const userRepository = new UserRepository()
 
@@ -15,7 +15,7 @@ export class UserServices {
     const existingUser = await userRepository.getUserByEmail(data.email);
 
     if (existingUser) {
-      throw new ApiError(StatusCodes.CONFLICT, "")
+      throw new ApiError(StatusCodes.CONFLICT, errorMessages.USER.EXIST)
     }
 
     const hashedPassword = await bcryptUtil.generate(data.password, 12);
@@ -33,18 +33,19 @@ export class UserServices {
       name: user.name
     }
   }
+
   async loginUser(data: loginUserDTO) {
 
-    const existingUser = await userRepository.getUserByEmail(data.email)
+    const existingUser = await userRepository.getUserWithPasswordByEmail(data.email)
 
     if (!existingUser) {
       throw new ApiError(StatusCodes.BAD_REQUEST, errorMessages.USER.NOT_FOUND)
     }
-
+    console.log(existingUser)
     const validatedPassword = await bcryptUtil.compare(data.password, existingUser.password);
+    console.log(validatedPassword, "validated password")
 
     if (!validatedPassword) {
-      console.log(validatedPassword)
       throw new ApiError(StatusCodes.CONFLICT, errorMessages.USER.INVALID_CREDENTIALS)
     }
 
@@ -52,6 +53,7 @@ export class UserServices {
       id: existingUser._id,
       email: existingUser.email,
     };
+
 
     const { accessToken, refreshToken } = GenerateTokens(payload);
     return { accessToken, refreshToken, existingUser }

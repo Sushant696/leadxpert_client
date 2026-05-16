@@ -21,7 +21,6 @@ function Dashboard() {
 
   const handleLogout = () => {
     navigate.push('/')
-    console.log("Logging out...")
   }
 
   return (
