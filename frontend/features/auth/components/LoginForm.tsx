@@ -22,7 +22,6 @@ function LoginForm() {
 
   const onSubmit = async (data: TloginForm) => {
     alert("LoggedIn Successfully");
-    console.log(data)
     navigate.push("/dashboard")
     reset();
   }

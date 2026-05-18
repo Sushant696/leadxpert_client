@@ -1,25 +1,20 @@
 import z from "zod"
 import { UserSchema } from "../types/user.types"
 
-export const CreateUserDTO = UserSchema.pick(
-  {
-    email: true,
-    name: true,
-    password: true,
-    isEmailVerified: true,
-    role: true,
-    isActive: true,
-    onboardingCompleted: true
-  }
-).extend({
-  confirmPassword: z.string().min(6)
+export const CreateUserDTO = z.object({
+  email: z.string().email(),
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
+  password: z.string().min(6),
+  confirmPassword: z.string().min(6),
 }).refine(
   (data) => data.password === data.confirmPassword,
   {
-    message: "passwords do not match",
-    path: ["confirmPassword"]
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
   }
-)
+);
+
 export const loginUserDTO = UserSchema.pick(
   {
     email: true,

@@ -6,6 +6,7 @@ export const bcryptUtil = {
     return await bcrypt.hash(password + env.PEPPER, saltRounds);
   },
   async compare(password: string, hash: string) {
-    return await bcrypt.compare(password, hash);
+    return await bcrypt.compare(password + env.PEPPER, hash);
   }
 }
+

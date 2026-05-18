@@ -13,6 +13,11 @@ const userSchema = new mongoose.Schema<UserType>({
     unique: true,
     index: true,
   },
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user',
+  },
   password: {
     type: String,
     select: false,
@@ -22,8 +27,7 @@ const userSchema = new mongoose.Schema<UserType>({
     default: false,
   },
   isActive: {
-    type: Boolean,
-    default: true,
+    type: Boolean, default: true,
   },
 
   lastLoginAt: Date,

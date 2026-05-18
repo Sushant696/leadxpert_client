@@ -8,11 +8,19 @@ const errorMessages = {
     DELETION_FAILED: "We couldn't delete the user. Please try again later.",
     INVALID_CREDENTIALS:
       "The credentials provided are incorrect. Please check and try again.",
+    EXIST:
+      "The user with same email or username already exists.",
+    UNAUTHORIZED: "Unauthorized access.",
   },
   NAME: {
     REQUIRED: "Please provide your name. This field cannot be left empty.",
     INVALID:
       "The name entered contains invalid characters. Please use only alphabets.",
+  },
+  TOKEN: {
+    NOT_FOUND: "Unauthorized, Missing Token",
+    INVALID_TOKEN: "Unauthorized, Invalid Token",
+    TOKEN_USER_NOT_FOUND: "Unauthorized, user not found!"
   },
   USERNAME: {
     CONFLICT:

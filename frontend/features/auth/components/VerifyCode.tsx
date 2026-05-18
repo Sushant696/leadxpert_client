@@ -19,8 +19,6 @@ function VerifyCodePage({ email, onCodeVerify, onBack }: VerifyCodeProps) {
   const [timeLeft, setTimeLeft] = useState(300)
   const [isVerifying, setIsVerifying] = useState(false)
 
-  console.log(email)
-
   useEffect(() => {
     if (timeLeft <= 0) return
 
