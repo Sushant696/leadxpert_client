@@ -9,6 +9,7 @@ import cookieConfig from "../utils/cookiesConfig";
 import { UserServices } from "../services/auth.service";
 import responseMessages from "../constants/responseMessages";
 import { CreateUserDTO, loginUserDTO } from "../dtos/user.dto";
+import errorMessages from "../constants/errorMessages";
 
 const userServices = new UserServices();
 
@@ -40,4 +41,16 @@ export class AuthController {
     return res.json(new ApiResponse(201, responseMessages.USER.LOGGED_IN, user));
   })
 
+  getCurrentUser = asyncHandler(async (req: Request, res: Response) => {
+
+    if (!req.user) {
+      throw new ApiError(
+        StatusCodes.UNAUTHORIZED,
+        errorMessages.USER.UNAUTHORIZED
+      );
+    }
+
+    const currentUser = await userServices.getCurrentUser(req.user.id);
+    return res.json(new ApiResponse(StatusCodes.OK, responseMessages.USER.RETRIEVED, currentUser));
+  })
 }

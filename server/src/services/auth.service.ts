@@ -58,4 +58,9 @@ export class UserServices {
 
     return { accessToken, refreshToken, user: safeUser }
   }
+
+  async getCurrentUser(id: string) {
+    const currentUser = await userRepository.getUserById(id)
+    return currentUser
+  }
 }
