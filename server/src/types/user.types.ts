@@ -12,4 +12,12 @@ export const UserSchema = z.object({
   onboardingCompleted: z.boolean().default(false),
 });
 
+const User = UserSchema.pick({
+  email: true,
+  role: true
+}).extend({
+  id: z.string()
+})
+
+export type User = z.infer<typeof User>;
 export type UserType = z.infer<typeof UserSchema>;

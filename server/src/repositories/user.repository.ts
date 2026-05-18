@@ -18,6 +18,10 @@ export class UserRepository implements IUserRepository {
     return User.findOne({ email });
   }
 
+  async getUserById(id: string): Promise<UserDocument | null> {
+    return User.findById({ id });
+  }
+
   async getUserWithPasswordByEmail(email: string): Promise<UserDocument | null> {
     return User.findOne({ email }).select("+password");
   }

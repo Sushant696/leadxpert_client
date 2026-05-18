@@ -1,6 +1,7 @@
 const errorMessages = {
   USER: {
-    NOT_FOUND: "The specified user does not exist in our system.", CREATION_FAILED:
+    NOT_FOUND: "The specified user does not exist in our system.",
+    CREATION_FAILED:
       "We encountered an issue while creating your account. Please try again.",
     UPDATE_FAILED:
       "Unable to update the user information. Please check your input and try again.",
@@ -9,13 +10,17 @@ const errorMessages = {
       "The credentials provided are incorrect. Please check and try again.",
     EXIST:
       "The user with same email or username already exists.",
+    UNAUTHORIZED: "Unauthorized access.",
   },
   NAME: {
     REQUIRED: "Please provide your name. This field cannot be left empty.",
     INVALID:
       "The name entered contains invalid characters. Please use only alphabets.",
-
-
+  },
+  TOKEN: {
+    NOT_FOUND: "Unauthorized, Missing Token",
+    INVALID_TOKEN: "Unauthorized, Invalid Token",
+    TOKEN_USER_NOT_FOUND: "Unauthorized, user not found!"
   },
   USERNAME: {
     CONFLICT:
