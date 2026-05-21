@@ -1,3 +1,5 @@
+import axiosInstance from "@/lib/axios";
+import { apiURLs } from "@/utils/apiUrls";
 import { LoginCredentials, RegisterData } from "./auth.types";
 
 export const authApi = {
