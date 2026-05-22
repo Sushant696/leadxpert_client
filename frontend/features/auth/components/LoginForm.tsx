@@ -4,26 +4,24 @@ import Link from "next/link"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { Eye, EyeOff } from "lucide-react"
-import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 
+import { useLogin } from "../hooks/useLogin"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { loginSchema, TloginForm } from "../auth-validators"
 
 function LoginForm() {
-  const navigate = useRouter()
+  const loginMutation = useLogin()
   const [showPassword, setShowPassword] = useState<boolean>(false)
-
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<TloginForm>(
+  const { register, handleSubmit, reset, formState: { errors, isSubmitting, isSubmitSuccessful } } = useForm<TloginForm>(
     { resolver: zodResolver(loginSchema) }
   )
 
   const onSubmit = async (data: TloginForm) => {
-    alert("LoggedIn Successfully");
-    navigate.push("/dashboard")
-    reset();
+    loginMutation.mutate(data);
+    if (isSubmitSuccessful === true) reset();
   }
 
   return (
