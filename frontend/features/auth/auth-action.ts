@@ -1,13 +1,19 @@
 "use server";
 
 import { cookies } from "next/headers";
+
 import { authApi } from "./auth-api";
+import cookieConfig from "@/utils/cookieConfig";
 import { LoginCredentials, RegisterData } from "./auth.types";
+
 
 export async function loginAction(formData: LoginCredentials) {
   try {
     // runs on next js server
     const response = await authApi.login(formData);
+    const cookieStore = await cookies();
+    cookieStore.set('accessToken', response?.data?.accessToken, cookieConfig.accessTokenConfig);
+    cookieStore.set('refreshToken', response?.data?.refreshToken, cookieConfig.refreshTokenConfig);
 
     return {
       success: true,
@@ -21,6 +27,8 @@ export async function loginAction(formData: LoginCredentials) {
     };
   }
 }
+
+
 
 
 export async function registerAction(formData: RegisterData) {
