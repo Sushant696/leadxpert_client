@@ -1,12 +1,13 @@
 "use client"
 
-import { useRouter } from "next/navigation"
 import { LogOut, Settings } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { useLogout } from "@/features/auth/hooks/useLogout"
 
 function Dashboard() {
-  const navigate = useRouter()
+
+  const logoutMutation = useLogout()
 
   const user = {
     firstName: "Sushant",
@@ -20,7 +21,7 @@ function Dashboard() {
   }
 
   const handleLogout = () => {
-    navigate.push('/')
+    logoutMutation.mutate()
   }
 
   return (

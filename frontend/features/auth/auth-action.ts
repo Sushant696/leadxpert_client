@@ -28,9 +28,6 @@ export async function loginAction(formData: LoginCredentials) {
   }
 }
 
-
-
-
 export async function registerAction(formData: RegisterData) {
   try {
     const response = await authApi.register(formData)
@@ -42,6 +39,21 @@ export async function registerAction(formData: RegisterData) {
     return {
       success: false,
       error: error.response?.data?.message || "Registration failed",
+    };
+  }
+}
+
+export async function logoutAction() {
+  try {
+    const cookieStore = await cookies();
+    cookieStore.delete('accessToken');
+    cookieStore.delete('refreshToken');
+
+    return { success: true };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: "Logout failed",
     };
   }
 }
