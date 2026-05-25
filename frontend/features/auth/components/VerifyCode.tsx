@@ -97,7 +97,7 @@ function VerifyCodePage({ email, onCodeVerify, onBack }: VerifyCodeProps) {
         </div>
 
         <p className="text-xs text-muted-foreground text-center mt-8">
-          Didn't receive the code? Check your spam folder or{" "}
+          Didn&apos;t receive the code? Check your spam folder or{" "}
           <button className="underline hover:text-foreground">
             try another email
           </button>
