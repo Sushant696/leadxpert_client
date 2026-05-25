@@ -31,6 +31,7 @@ export async function loginAction(formData: LoginCredentials) {
 export async function registerAction(formData: RegisterData) {
   try {
     const response = await authApi.register(formData)
+    console.log(response, "respone received from the registeraction")
     return {
       success: true,
       data: response.data,

@@ -9,7 +9,6 @@ import useAuthStore from "@/store/auth-store"
 function Dashboard() {
   const logoutMutation = useLogout()
   const user = useAuthStore((s) => s.user);
-  console.log(user, "user")
 
   const company = {
     name: "Pi Technology",
@@ -60,7 +59,7 @@ function Dashboard() {
               Welcome, <span className="text-primary">{user?.name.split(",")[0]}</span>
             </h2>
             <p className="text-lg text-muted-foreground">
-              You're all set to start managing your leads with {company.name}
+              You&apos;re all set to start managing your leads with {company.name}
             </p>
           </section>
 
