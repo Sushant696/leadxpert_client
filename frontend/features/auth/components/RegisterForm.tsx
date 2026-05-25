@@ -4,31 +4,31 @@ import { useState } from "react"
 import { Google } from "iconsax-reactjs"
 import { useForm } from "react-hook-form"
 import { Eye, EyeOff } from "lucide-react"
-import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { registerSchema, TregisterForm } from "../auth.types"
+import { useRegister } from "../hooks/useRegister"
+import { registerSchema, TregisterForm } from "../auth-validators"
 
 function RegisterForm() {
-  const navigate = useRouter()
+  const registerMutation = useRegister();
   const [showPassword, setShowPassword] = useState<boolean>(false)
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isSubmitSuccessful },
     reset,
   } = useForm<TregisterForm>({
     resolver: zodResolver(registerSchema),
   })
 
   const onSubmit = async (data: TregisterForm) => {
-    alert("User created successfully")
-    navigate.push("/login")
-    reset()
+    console.log("fuck it you", data)
+    registerMutation.mutate(data);
+    if (isSubmitSuccessful) reset()
   }
 
   const handleGoogleSignUp = () => {
@@ -72,8 +72,8 @@ function RegisterForm() {
             <Label htmlFor="lastname" className="text-sm font-medium text-foreground">
               Last Name*
             </Label>
-            <Input id="lastname" type="text" placeholder="Smith" className="h-10" {...register("lastname")} />
-            {errors.lastname && <span className="text-xs text-destructive font-medium">{errors.lastname.message}</span>}
+            <Input id="lastName" type="text" placeholder="Smith" className="h-10" {...register("lastName")} />
+            {errors.lastName && <span className="text-xs text-destructive font-medium">{errors.lastName.message}</span>}
           </div>
         </div>
 

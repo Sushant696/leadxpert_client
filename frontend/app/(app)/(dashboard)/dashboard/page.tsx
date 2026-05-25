@@ -1,18 +1,15 @@
 "use client"
 
-import { useRouter } from "next/navigation"
 import { LogOut, Settings } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { useLogout } from "@/features/auth/hooks/useLogout"
+import useAuthStore from "@/store/auth-store"
 
 function Dashboard() {
-  const navigate = useRouter()
-
-  const user = {
-    firstName: "Sushant",
-    lastName: "Prasai",
-    email: "sushant@example.com",
-  }
+  const logoutMutation = useLogout()
+  const user = useAuthStore((s) => s.user);
+  console.log(user, "user")
 
   const company = {
     name: "Pi Technology",
@@ -20,7 +17,7 @@ function Dashboard() {
   }
 
   const handleLogout = () => {
-    navigate.push('/')
+    logoutMutation.mutate()
   }
 
   return (
@@ -34,7 +31,7 @@ function Dashboard() {
             <div>
               <h1 className="text-lg font-semibold text-foreground">{company.name}</h1>
               <p className="text-sm text-muted-foreground">
-                {user.firstName} {user.lastName}
+                {user?.name}
               </p>
             </div>
           </div>
@@ -60,7 +57,7 @@ function Dashboard() {
         <div className="space-y-8">
           <section>
             <h2 className="text-4xl font-bold text-foreground mb-2">
-              Welcome, <span className="text-primary">{user.firstName}</span>
+              Welcome, <span className="text-primary">{user?.name.split(",")[0]}</span>
             </h2>
             <p className="text-lg text-muted-foreground">
               You're all set to start managing your leads with {company.name}
