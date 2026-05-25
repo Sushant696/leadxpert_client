@@ -26,7 +26,6 @@ function RegisterForm() {
   })
 
   const onSubmit = async (data: TregisterForm) => {
-    console.log("fuck it you", data)
     registerMutation.mutate(data);
     if (isSubmitSuccessful) reset()
   }
