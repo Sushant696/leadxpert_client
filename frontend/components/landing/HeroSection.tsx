@@ -47,7 +47,7 @@ function HeroSection() {
   return (
     <section className="relative flex items-center py-12 sm:py-16 px-2 sm:px-4 lg:px-6 overflow-hidden bg-white">
       {/* Background Gradients */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50/30 to-purple-50/20" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-indigo-50/30 to-purple-50/20" />
       <motion.div
         className="absolute inset-0"
         initial={{ opacity: 0 }}
@@ -207,7 +207,6 @@ function HeroSection() {
             </motion.div>
           </motion.div>
 
-          {/* Right Side - 3D Card (ONLY this moves on hover) */}
           <div className="lg:col-span-7 relative h-[800px] lg:h-[500px]" style={{ perspective: "2500px" }}>
             <motion.div
               onMouseMove={handleMouseMove}
@@ -238,9 +237,7 @@ function HeroSection() {
               }}
               className="absolute -right-[10%] lg:-right-[80%] top-1/2 -translate-y-1/2 w-[130%] lg:w-[160%] xl:w-[170%] cursor-pointer"
             >
-              {/* Main Dashboard Container */}
               <div className="relative" style={{ transformStyle: "preserve-3d" }}>
-                {/* Glow effect */}
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-600/40 via-blue-500/40 to-purple-600/40 rounded-3xl blur-3xl scale-110 opacity-60" />
                 <DashboardCard />
                 <FloatingStats />
