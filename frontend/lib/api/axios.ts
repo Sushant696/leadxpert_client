@@ -11,7 +11,7 @@ const axiosInstance = axios.create({
   timeout: 30000 // 30 second timeout for each request
 })
 
-// for development logging
+// For development logging
 if (process.env.NEXT_ENV === 'development') {
   axiosInstance.interceptors.request.use(
     (config) => {

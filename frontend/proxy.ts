@@ -2,22 +2,26 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 function proxy(request: NextRequest) {
-  const accessToken = request.cookies.get('accessToken')
   const path = request.nextUrl.pathname
+
+  const hasAccessToken = request.cookies.has('accessToken')
+  const hasRefreshToken = request.cookies.has('refreshToken')
+  const hasAnyToken = hasAccessToken || hasRefreshToken
 
   const isPublicPath = path === '/' || path === '/login' || path === '/register'
   const isProtectedPath = path.startsWith('/dashboard')
 
-  // Redirect to login if accessing protected route without token
-  if (isProtectedPath && !accessToken) {
-    return NextResponse.redirect(new URL('/login', request.url))
-  }
-
-  // Redirect to dashboard if accessing auth pages with valid token
-  if ((isPublicPath) && accessToken) {
+  if (isPublicPath && hasAnyToken) {
+    // Redirecting authenticated user to dashboard  
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
+  // Access to protected routes & API wrapper will handle token validation and refresh
+  if (isProtectedPath) {
+    return NextResponse.next()
+  }
+
+  // access to public pages
   return NextResponse.next()
 }
 
