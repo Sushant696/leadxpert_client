@@ -4,7 +4,8 @@ import { cookies } from "next/headers";
 
 import { authApi } from "./auth-api";
 import cookieConfig from "@/utils/cookieConfig";
-import { LoginCredentials, RegisterData } from "./auth.types";
+import { LoginCredentials, RegisterData, UpdateUser } from "./auth.types";
+import SessionExpiredError from "@/lib/auth/session-error-handler";
 
 
 export async function loginAction(formData: LoginCredentials) {
@@ -59,3 +60,35 @@ export async function logoutAction() {
   }
 }
 
+export async function updateProfileAction(data: UpdateUser) {
+  try {
+    const response = await authApi.updateUser(data);
+
+    if (response.success) {
+      return {
+        success: true,
+        message: response.message || 'Profile updated successfully',
+        data: response.data,
+      };
+    }
+
+    return {
+      success: false,
+      message: response.message || 'Failed to update profile'
+    };
+
+  } catch (error: any) {
+    if (error instanceof SessionExpiredError) {
+      return {
+        success: false,
+        sessionExpired: true,
+        error: error.message,
+      };
+    }
+
+    return {
+      success: false,
+      error: error.message || 'Failed to update profile'
+    };
+  }
+}

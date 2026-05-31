@@ -6,9 +6,12 @@ export const apiURLs = {
     me: '/api/auth/mee',
     refresh: '/api/auth/refresh',
     update: '/api/auth/update',
+    changePassword: "/api/auth/changePassword"
   },
   FILE: {
-    uploadImg: '/api/assets/uploadImg',
+    uploadImg: '/api/upload/image',
+    uploadMultipleImges: '/api/upload/images',
+    deleteImage: "/api/upload/image",
   },
   FORGOTPASSWORD: {
     verifyOTP: '/api/forgotPassword/verifyOTP',
