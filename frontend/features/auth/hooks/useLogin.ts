@@ -5,9 +5,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { UserRole } from "@/types/user";
 import { loginAction } from "../auth-action";
-import { TloginForm } from "../auth-validators";
+import useAuthStore from "@/store/auth-store";
 import { showToast } from "@/components/showToast";
-import useAuthStore from "../../../store/auth-store";
 
 export function useLogin() {
   const router = useRouter();
@@ -15,7 +14,7 @@ export function useLogin() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (credentials: TloginForm) => {
+    mutationFn: async (credentials: { email: string; password: string }) => {
       const result = await loginAction(credentials);
 
       if (!result.success) {
@@ -28,7 +27,6 @@ export function useLogin() {
         ...data,
         role: data.role?.toUpperCase() as UserRole,
       });
-
       queryClient.invalidateQueries({ queryKey: ["mee"] });
       showToast.success("Login successful!");
       router.push("/dashboard");

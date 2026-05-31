@@ -1,26 +1,30 @@
 "use server";
 
-import { cookies } from "next/headers";
-
 import { authApi } from "./auth-api";
-import cookieConfig from "@/utils/cookieConfig";
 import { LoginCredentials, RegisterData, UpdateUser } from "./auth.types";
 import SessionExpiredError from "@/lib/auth/session-error-handler";
+import { clearAuthCookies, setAccessToken, setRefreshToken } from "@/lib/auth/cookies";
 
 
 export async function loginAction(formData: LoginCredentials) {
   try {
-    // runs on next js server
     const response = await authApi.login(formData);
-    const cookieStore = await cookies();
-    cookieStore.set('accessToken', response?.data?.accessToken, cookieConfig.accessTokenConfig);
-    cookieStore.set('refreshToken', response?.data?.refreshToken, cookieConfig.refreshTokenConfig);
+
+    if (response.success) {
+      await setAccessToken(response.data?.accessToken);
+      await setRefreshToken(response.data?.refreshToken);
+
+      return {
+        success: true,
+        message: response.message || 'Login successful',
+        data: response.data.user,
+      };
+    }
 
     return {
-      success: true,
-      data: response.data.user,
+      success: false,
+      message: response.message || 'Login failed'
     };
-
   } catch (error: any) {
     return {
       success: false,
@@ -29,12 +33,14 @@ export async function loginAction(formData: LoginCredentials) {
   }
 }
 
+
 export async function registerAction(formData: RegisterData) {
   try {
-    const response = await authApi.register(formData)
-    console.log(response, "respone received from the registeraction")
+    const response = await authApi.register(formData);
+
     return {
       success: true,
+      message: response.message || 'Registration successful',
       data: response.data,
     };
   } catch (error: any) {
@@ -47,15 +53,50 @@ export async function registerAction(formData: RegisterData) {
 
 export async function logoutAction() {
   try {
-    const cookieStore = await cookies();
-    cookieStore.delete('accessToken');
-    cookieStore.delete('refreshToken');
+    try {
+      await authApi.logout();
+    } catch (error) {
+      console.log("Logout API call failed, but clearing cookies anyway");
+    }
 
+    await clearAuthCookies();
     return { success: true };
   } catch (error: any) {
+    return { success: true };
+  }
+}
+
+export async function getCurrentUserAction() {
+  try {
+    const response = await authApi.getCurrentUser();
+
+    if (response.success) {
+      return {
+        success: true,
+        message: response.message,
+        data: response.data,
+      };
+    }
+
     return {
       success: false,
-      error: "Logout failed",
+      sessionExpired: true,
+      message: response.message || 'Failed to fetch user data'
+    };
+
+  } catch (error: any) {
+    // Check if it's a session expired error
+    if (error instanceof SessionExpiredError) {
+      return {
+        success: false,
+        sessionExpired: true,
+        error: error.message,
+      };
+    }
+
+    return {
+      success: false,
+      error: error.message || 'Failed to get user'
     };
   }
 }

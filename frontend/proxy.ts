@@ -12,13 +12,11 @@ function proxy(request: NextRequest) {
   const isProtectedPath = path.startsWith('/dashboard')
 
   if (isPublicPath && hasAnyToken) {
-    // Redirecting authenticated user to dashboard  
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
-  // Access to protected routes & API wrapper will handle token validation and refresh
-  if (isProtectedPath) {
-    return NextResponse.next()
+  if (isProtectedPath && !hasAnyToken) {
+    return NextResponse.redirect(new URL('/login', request.url))
   }
 
   // access to public pages

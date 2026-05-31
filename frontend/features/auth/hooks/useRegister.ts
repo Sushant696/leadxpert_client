@@ -7,6 +7,7 @@ import { RegisterData } from "../auth.types";
 
 export function useRegister() {
   const router = useRouter();
+
   return useMutation({
     mutationFn: async (data: RegisterData) => {
       const result = await registerAction(data);
