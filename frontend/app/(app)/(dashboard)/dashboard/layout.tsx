@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation"
 import { getCurrentUserAction, logoutAction } from "@/features/auth/auth-action"
+import useAuthStore from "@/store/auth-store"
 
 async function layout({
   children,
@@ -9,7 +10,6 @@ async function layout({
   const result = await getCurrentUserAction()
 
   if (!result.success || result.sessionExpired || !result.data) {
-    await logoutAction();
     redirect('/login?session=expired')
   }
 
