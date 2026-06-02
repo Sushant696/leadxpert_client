@@ -61,7 +61,6 @@ async function makeAuthenticatedRequest<T>(config: RequestConfig): Promise<T> {
         throw new SessionExpiredError('Your session has expired. Please login again.');
       }
     }
-
     // If it's not a 401, just throw the original error
     throw error;
   }
@@ -77,27 +76,30 @@ async function refreshAccessToken(): Promise<string> {
   if (!refreshToken) {
     throw new Error('No refresh token available');
   }
-  const response = await axiosInstance.post(
-    apiURLs.AUTH.refresh,
-    {},
-    {
-      headers: {
-        Authorization: `Bearer ${refreshToken}`,
-      },
+  try {
+    const response = await axiosInstance.post(
+      apiURLs.AUTH.refresh,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${refreshToken}`,
+        },
+      }
+    )
+
+    if (!response.data.success) {
+      throw new Error('Refresh token invalid or expired');
     }
-  )
+    const newAccessToken = response.data.data.accessToken;
+    const newRefreshToken = response.data.data.refreshToken;
 
-  if (!response.data.success) {
-    throw new Error('Refresh token invalid or expired');
+    await setAccessToken(newAccessToken);
+    await setRefreshToken(newRefreshToken);
+    return newAccessToken;
   }
-
-  const newAccessToken = response.data.data.accessToken;
-  const newRefreshToken = response.data.data.refreshToken;
-
-  await setAccessToken(newAccessToken);
-  await setRefreshToken(newRefreshToken);
-
-  return newAccessToken;
+  catch (error) {
+    throw new SessionExpiredError('Session refresh failed');
+  }
 }
 
 // Generic API wrapper methods

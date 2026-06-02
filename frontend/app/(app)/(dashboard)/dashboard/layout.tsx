@@ -1,6 +1,5 @@
-import { getCurrentUserAction } from "@/features/auth/auth-action"
-import { clearAuthCookies } from "@/lib/auth/cookies"
 import { redirect } from "next/navigation"
+import { getCurrentUserAction, logoutAction } from "@/features/auth/auth-action"
 
 async function layout({
   children,
@@ -8,11 +7,16 @@ async function layout({
   children: React.ReactNode
 }) {
   const result = await getCurrentUserAction()
-  console.log('layout getCurrentUserAction result:', result)
-  if (!result.success || result.sessionExpired) {
-    await clearAuthCookies()
+
+  if (!result.success || result.sessionExpired || !result.data) {
+    await logoutAction();
+    redirect('/login?session=expired')
+  }
+
+  if (!result.data) {
     redirect('/login')
   }
+
   return (
     <>{children}</>
   )

@@ -5,7 +5,8 @@ import { Shield, Users, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import LoginForm from "@/features/auth/components/LoginForm";
 
-function Login() {
+async function Login() {
+
   return (
     <>
       <div className="min-h-screen bg-background py-12 px-4 border">

@@ -56,6 +56,7 @@ export async function logoutAction() {
     try {
       await authApi.logout();
     } catch (error) {
+      await clearAuthCookies();
       console.log("Logout API call failed, but clearing cookies anyway");
     }
 
