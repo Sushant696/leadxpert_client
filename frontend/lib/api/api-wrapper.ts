@@ -100,7 +100,6 @@ async function refreshAccessToken(): Promise<string> {
     await clearAuthCookies();
     throw new SessionExpiredError('Session refresh failed');
   }
-
 }
 
 // Generic API wrapper methods

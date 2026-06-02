@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 
-function Dashboard() {
+function AdminDashboard() {
   const { user } = useAuthStore()
 
   const hasCompany = false;
@@ -168,4 +168,4 @@ function Dashboard() {
   )
 }
 
-export default Dashboard
+export default AdminDashboard
