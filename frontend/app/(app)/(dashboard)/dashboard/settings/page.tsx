@@ -1,6 +1,6 @@
 function Page() {
   return (
-    <div>
+    <div className="flex justify-center h-full w-full text-2xl font-semibold">
       settings page
     </div>
   )

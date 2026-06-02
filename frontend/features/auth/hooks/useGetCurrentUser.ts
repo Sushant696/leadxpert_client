@@ -23,7 +23,6 @@ function useGetCurrentUser() {
       }
       setUser({
         ...result.data,
-        role: result.data.role?.toUpperCase() as UserRole,
       });
 
       return result.data;

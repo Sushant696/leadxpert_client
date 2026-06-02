@@ -3,7 +3,7 @@
 import { authApi } from "./auth-api";
 import { LoginCredentials, RegisterData, UpdateUser } from "./auth.types";
 import SessionExpiredError from "@/lib/auth/session-error-handler";
-import { clearAuthCookies, setAccessToken, setRefreshToken } from "@/lib/auth/cookies";
+import { clearAuthCookies, setAccessToken, setRefreshToken, setUserRole } from "@/lib/auth/cookies";
 
 
 export async function loginAction(formData: LoginCredentials) {
@@ -13,6 +13,7 @@ export async function loginAction(formData: LoginCredentials) {
     if (response.success) {
       await setAccessToken(response.data?.accessToken);
       await setRefreshToken(response.data?.refreshToken);
+      await setUserRole(response.data?.user?.role);
 
       return {
         success: true,

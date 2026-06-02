@@ -1,12 +1,14 @@
 import Sidebar from "@/components/navigation_dashboard/sidebar/mainSidebar"
 import TopBar from "@/components/navigation_dashboard/topbar/topbar"
+import { protectAdminRoute } from "@/lib/auth/route-protection"
 
-export default function DashboardLayout({
+async function AdminLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
 
+  await protectAdminRoute()
   return (
     <div className="flex h-screen bg-white">
       {/* Fixed Sidebar */}
@@ -23,3 +25,5 @@ export default function DashboardLayout({
     </div>
   )
 }
+
+export default AdminLayout

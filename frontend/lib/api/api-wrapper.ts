@@ -1,7 +1,7 @@
 import axiosInstance from "./axios";
 import { apiURLs } from "@/utils/apiUrls";
 import SessionExpiredError from "../auth/session-error-handler";
-import { getAccessToken, getRefreshToken, setAccessToken, setRefreshToken } from "../auth/cookies";
+import { clearAuthCookies, getAccessToken, getRefreshToken, setAuthCookies } from "../auth/cookies";
 
 type HttpMethod = "GET" | "POST" | 'PUT' | 'DELETE' | 'PATCH';
 
@@ -76,6 +76,7 @@ async function refreshAccessToken(): Promise<string> {
   if (!refreshToken) {
     throw new Error('No refresh token available');
   }
+
   try {
     const response = await axiosInstance.post(
       apiURLs.AUTH.refresh,
@@ -90,16 +91,16 @@ async function refreshAccessToken(): Promise<string> {
     if (!response.data.success) {
       throw new Error('Refresh token invalid or expired');
     }
-    const newAccessToken = response.data.data.accessToken;
-    const newRefreshToken = response.data.data.refreshToken;
 
-    await setAccessToken(newAccessToken);
-    await setRefreshToken(newRefreshToken);
+    const { accessToken: newAccessToken, refreshToken: newRefreshToken, user } = response.data.data;
+    await setAuthCookies(newAccessToken, newRefreshToken, user?.role);
     return newAccessToken;
-  }
-  catch (error) {
+  } catch (error: Error | any) {
+    console.error('❌ Refresh failed:', error.message);
+    await clearAuthCookies();
     throw new SessionExpiredError('Session refresh failed');
   }
+
 }
 
 // Generic API wrapper methods

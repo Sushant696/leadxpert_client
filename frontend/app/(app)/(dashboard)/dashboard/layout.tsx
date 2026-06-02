@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation"
-import { getCurrentUserAction, logoutAction } from "@/features/auth/auth-action"
-import useAuthStore from "@/store/auth-store"
+import { getCurrentUserAction } from "@/features/auth/auth-action"
+import { UserRoles } from "@/types/user"
 
 async function layout({
   children,
@@ -13,8 +13,8 @@ async function layout({
     redirect('/login?session=expired')
   }
 
-  if (!result.data) {
-    redirect('/login')
+  if (result.data.role !== UserRoles.USER) {
+    redirect('/unauthorized')
   }
 
   return (

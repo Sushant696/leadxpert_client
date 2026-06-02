@@ -1,11 +1,14 @@
 import Sidebar from "@/components/navigation_dashboard/sidebar/mainSidebar"
 import TopBar from "@/components/navigation_dashboard/topbar/topbar"
+import { protectUserRoute } from "@/lib/auth/route-protection"
 
-export default function DashboardLayout({
+async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+
+  await protectUserRoute()
 
   return (
     <div className="flex h-screen bg-white">
@@ -23,3 +26,4 @@ export default function DashboardLayout({
     </div>
   )
 }
+export default DashboardLayout
