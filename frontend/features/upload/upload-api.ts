@@ -1,11 +1,11 @@
 import { apiURLs } from "@/utils/apiUrls";
-import { apiWrapper } from "./api-wrapper";
+import { apiWrapper } from "@/lib/api/api-wrapper";
 
 const multiPartHeader = {
   "Content-Type": "multipart/form-data",
 };
 
-export const assestUploadAction = {
+export const assestUploadApi = {
   uploadImage: async (image: FormData) => {
     return await apiWrapper.post(apiURLs.FILE.uploadImg, image, multiPartHeader);
   },

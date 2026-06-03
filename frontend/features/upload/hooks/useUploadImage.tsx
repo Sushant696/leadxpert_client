@@ -1,11 +1,10 @@
 import { useMutation } from "@tanstack/react-query"
-
-import { assestUploadAction } from "@/lib/api/upload-api";
+import { assestUploadApi } from "../upload-api"
 
 const useUploadImage = () => {
   return useMutation({
     mutationKey: ['imageUpload'],
-    mutationFn: assestUploadAction.uploadImage,
+    mutationFn: assestUploadApi.uploadImage,
   })
 }
 

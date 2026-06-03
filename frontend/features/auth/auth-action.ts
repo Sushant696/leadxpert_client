@@ -5,7 +5,6 @@ import { LoginCredentials, RegisterData, UpdateUser } from "./auth.types";
 import SessionExpiredError from "@/lib/auth/session-error-handler";
 import { clearAuthCookies, setAccessToken, setRefreshToken, setUserRole } from "@/lib/auth/cookies";
 
-
 export async function loginAction(formData: LoginCredentials) {
   try {
     const response = await authApi.login(formData);
@@ -54,13 +53,15 @@ export async function registerAction(formData: RegisterData) {
 
 export async function logoutAction() {
   try {
-    try {
-      await authApi.logout();
-    } catch (error) {
-      await clearAuthCookies();
-      console.log("Logout API call failed, but clearing cookies anyway");
-    }
 
+    /*
+        try {
+          await authApi.logout();
+        } catch (error) {
+          await clearAuthCookies();
+          console.log("Logout API call failed, but clearing cookies anyway");
+        }
+    */
     await clearAuthCookies();
     return { success: true };
   } catch (error: any) {

@@ -17,9 +17,9 @@ import {
 
 import getInitials from '@/utils/getInitials';
 import { Button } from '@/components/ui/button';
-import useUploadImage from '@/hooks/useUploadImage';
 import useUpdateUser from '@/features/auth/hooks/useUpdateUser';
 import useAuthStore from '@/store/auth-store';
+import useUploadImage from '@/features/upload/hooks/useUploadImage';
 
 interface ProfileFormData {
   name: string;
