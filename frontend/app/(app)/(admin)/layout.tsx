@@ -1,6 +1,6 @@
-import Sidebar from "@/components/navigation_dashboard/sidebar/mainSidebar"
-import TopBar from "@/components/navigation_dashboard/topbar/topbar"
+import AdminSidebar from "@/features/user/components/sidebar"
 import { protectAdminRoute } from "@/lib/auth/route-protection"
+import TopBar from "@/components/navigation_dashboard/topbar/topbar"
 
 async function AdminLayout({
   children,
@@ -8,11 +8,10 @@ async function AdminLayout({
   children: React.ReactNode
 }) {
 
-  await protectAdminRoute()
   return (
     <div className="flex h-screen bg-white">
       {/* Fixed Sidebar */}
-      <Sidebar />
+      <AdminSidebar />
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Top Navigation */}
         <TopBar />

@@ -53,8 +53,8 @@ export async function registerAction(formData: RegisterData) {
 
 export async function logoutAction() {
   try {
-
     /*
+     * Implement logout api after refresh token is saved in db to remove session from db as well
         try {
           await authApi.logout();
         } catch (error) {
@@ -134,5 +134,14 @@ export async function updateProfileAction(data: UpdateUser) {
       success: false,
       error: error.message || 'Failed to update profile'
     };
+  }
+}
+
+export async function clearAuthCookiesAction() {
+  try {
+    await clearAuthCookies();
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
   }
 }

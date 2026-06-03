@@ -4,7 +4,6 @@ import { UserRoles } from './types/user'
 
 function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname
-  const searchParams = request.nextUrl.searchParams
   const hasAccessToken = request.cookies.has('accessToken')
   const hasRefreshToken = request.cookies.has('refreshToken')
   const hasAnyToken = hasAccessToken || hasRefreshToken
@@ -14,41 +13,29 @@ function proxy(request: NextRequest) {
   const isUserDashboard = path.startsWith('/dashboard')
   const isAdminDashboard = path.startsWith('/admin')
   const isProtectedPath = isUserDashboard || isAdminDashboard
-  const isSessionExpired = searchParams.get('session') === 'expired'
 
-  if (isSessionExpired && hasAnyToken) {
-    const response = NextResponse.redirect(new URL('/login', request.url))
-    response.cookies.delete('accessToken')
-    response.cookies.delete('refreshToken')
-    response.cookies.delete('userRole')
-    return response
-  }
-
-  if (isPublicPath && hasAnyToken && !isSessionExpired) {
+  // Redirect authenticated users away from public paths (login/register)
+  if (isPublicPath && hasAnyToken) {
     if (userRole === UserRoles.ADMIN) {
       return NextResponse.redirect(new URL('/admin', request.url))
     }
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
+  // Redirect unauthenticated users from protected paths to login
   if (isProtectedPath && !hasAnyToken) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  if (isProtectedPath && hasAnyToken) {
-    if (isUserDashboard && userRole === UserRoles.ADMIN) {
-      return NextResponse.redirect(new URL('/admin', request.url))
-    }
-
-    if (isAdminDashboard && userRole !== UserRoles.ADMIN) {
-      const response = NextResponse.redirect(new URL('/unauthorized?type=admin', request.url))
-      response.cookies.delete('accessToken')
-      response.cookies.delete('refreshToken')
-      response.cookies.delete('userRole')
-      return response
-    }
+  // Redirect admins trying to access user dashboard to admin dashboard
+  if (isUserDashboard && hasAnyToken && userRole === UserRoles.ADMIN) {
+    return NextResponse.redirect(new URL('/admin', request.url))
   }
 
+  // Redirect non-admins trying to access admin dashboard to unauthorized page
+  if (isAdminDashboard && hasAnyToken && userRole !== UserRoles.ADMIN) {
+    return NextResponse.redirect(new URL('/unauthorized?type=admin', request.url))
+  }
   return NextResponse.next()
 }
 

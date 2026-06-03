@@ -3,7 +3,7 @@ const cookieConfig = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax' as const,
-    maxAge: 1 * 30,
+    maxAge: 15 * 60,
     path: '/',
 
   },

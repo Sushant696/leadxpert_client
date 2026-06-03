@@ -1,17 +1,24 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { ShieldX, ArrowLeft, Home, Mail, AlertCircle } from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
+import { Mail, AlertCircle, Home } from 'lucide-react'
 import useAuthStore from '@/store/auth-store'
+import { Button } from '@/components/ui/button'
+import { ArrowLeft } from 'iconsax-reactjs'
+import { clearAuthCookiesAction } from '@/features/auth/auth-action'
 
 
 function UnauthorizedClient() {
-  const router = useRouter()
   const searchParams = useSearchParams()
 
   const type = searchParams.get('type')
   const clearUser = useAuthStore(state => state.clearUser)
+
+  const handleNavigateToHome = () => {
+    clearAuthCookiesAction()
+    window.location.href = '/'
+  }
 
   useEffect(() => {
     clearUser()
@@ -46,6 +53,23 @@ function UnauthorizedClient() {
               : "You don't have the necessary permissions to access this resource. Please contact support if you believe this is an error."
             }
           </p>
+        </div>
+
+        <div className='flex gap-4'>
+          <Button
+            onClick={() => window.history.back()}
+            className='my-4' size={"lg"}>
+            <ArrowLeft />
+            <span> Go Back </span>
+          </Button>
+          <Button
+            onClick={handleNavigateToHome}
+            className='my-4' size={"lg"}>
+            <Home />
+            <span>
+              Home
+            </span>
+          </Button>
         </div>
 
         {/* Info Card */}

@@ -9,7 +9,10 @@ const useUpdateUser = () => {
     mutationKey: ['updateUser'],
     mutationFn: updateProfileAction,
     onSuccess: (data) => {
-      setUser({ ...data.data });
+      const { role, ...userData } = data.data;
+      setUser({
+        ...userData,
+      });
       showToast.success('Profile updated successfully');
     },
     onError: (error: any) => {

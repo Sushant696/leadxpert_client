@@ -16,9 +16,9 @@ import {
 } from 'lucide-react';
 
 import getInitials from '@/utils/getInitials';
+import useAuthStore from '@/store/auth-store';
 import { Button } from '@/components/ui/button';
 import useUpdateUser from '@/features/auth/hooks/useUpdateUser';
-import useAuthStore from '@/store/auth-store';
 import useUploadImage from '@/features/upload/hooks/useUploadImage';
 
 interface ProfileFormData {
@@ -65,7 +65,7 @@ const ProfileSettings = () => {
 
     uploadImageMutation.mutate(formData, {
       onSuccess: (response) => {
-        const url = response?.data?.url || response?.url;
+        const url = response?.data?.result.url || response?.url;
         setUploadedImageUrl(url);
       },
       onError: () => {

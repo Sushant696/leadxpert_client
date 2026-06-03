@@ -1,7 +1,7 @@
 'use client'
 
-import SubSidebar from '@/components/navigation_dashboard/sub-sidebar/sidebar';
 import React from 'react';
+import SubSidebar from '@/components/navigation_dashboard/sub-sidebar/sidebar';
 
 export default function Layout({
   children,

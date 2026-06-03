@@ -5,7 +5,3 @@ export const UserRoles = {
   USER: "USER"
 } as const
 
-export interface AuthState {
-  isAuthenticated: boolean
-  role: UserRole | null
-}
