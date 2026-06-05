@@ -6,7 +6,7 @@ import { getAllUsersParams } from "../user-types";
 const useGetAllUsers = (params: getAllUsersParams) => {
   return useQuery({
     // as the params change, the query will refetch
-    queryKey: ['updateUser', params],
+    queryKey: ['users', params],
     queryFn: async () => getAllUserAction(params),
   })
 }

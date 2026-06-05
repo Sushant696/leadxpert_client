@@ -3,7 +3,6 @@
 import {
   LayoutDashboardIcon,
   Users,
-  ChevronDown,
   Plus
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';

@@ -72,3 +72,36 @@ export async function getAllUserAction(params: getAllUsersParams) {
   }
 }
 
+
+export async function deleteUserAction(userId: string) {
+  try {
+    const response = await userApi.deleteUser(userId);
+
+    if (response.success) {
+      return {
+        success: true,
+        message: response.message || 'User Deleted successfully',
+      };
+    }
+
+    return {
+      success: false,
+      message: response.message || 'Failed to delete user'
+    };
+
+  } catch (error: any) {
+    if (error instanceof SessionExpiredError) {
+      return {
+        success: false,
+        sessionExpired: true,
+        error: error.message,
+      };
+    }
+
+    return {
+      success: false,
+      error: error.message || 'Failed to delete user'
+    };
+  }
+}
+

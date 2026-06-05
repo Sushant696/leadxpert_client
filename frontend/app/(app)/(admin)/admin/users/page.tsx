@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from "react"
+
+import useDeleteUser from "@/features/user/hooks/useDeleteUser"
 import useGetAllUsers from "@/features/user/hooks/useGetAllUsers"
 import {
   AlertDialog,
@@ -37,7 +39,9 @@ import { User } from "@/features/user/user-types"
 import UserTable from "@/features/user/components/userTable"
 import UserDetailsDialog from "@/features/user/components/userDetailsDialog"
 
+
 function Page() {
+  const deleteUserMutation = useDeleteUser()
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
   const [searchQuery, setSearchQuery] = useState("")
@@ -68,7 +72,7 @@ function Page() {
 
     try {
       console.log("Soft deleting user:", userToDelete._id)
-      // await softDeleteUserMutation.mutate(userToDelete._id)
+      deleteUserMutation.mutate(userToDelete._id)
 
       setIsDeleteDialogOpen(false)
       setUserToDelete(null)

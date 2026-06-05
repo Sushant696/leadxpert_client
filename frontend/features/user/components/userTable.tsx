@@ -34,6 +34,8 @@ function UserTable({
   setSelectedUser,
   handleDeleteClick,
 }: UserTableProps) {
+
+  
   const handleViewUser = (user: User) => {
     setSelectedUser(user)
     setIsViewModalOpen(true)
