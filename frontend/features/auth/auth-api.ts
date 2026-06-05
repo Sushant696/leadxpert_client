@@ -1,7 +1,7 @@
 import { apiURLs } from "@/utils/apiUrls";
 import axiosInstance from "@/lib/api/axios";
 import { apiWrapper } from "@/lib/api/api-wrapper";
-import { LoginCredentials, RegisterData, UpdateUser } from "./auth.types";
+import { LoginCredentials, RegisterData } from "./auth.types";
 
 export const authApi = {
   login: async (credentials: LoginCredentials) => {
@@ -22,7 +22,4 @@ export const authApi = {
     return await apiWrapper.post(apiURLs.AUTH.me);
   },
 
-  updateUser: async (data: UpdateUser) => {
-    return await apiWrapper.patch(apiURLs.AUTH.update, data);
-  },
 };

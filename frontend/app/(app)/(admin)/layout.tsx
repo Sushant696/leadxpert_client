@@ -1,5 +1,4 @@
 import AdminSidebar from "@/features/user/components/sidebar"
-import { protectAdminRoute } from "@/lib/auth/route-protection"
 import TopBar from "@/components/navigation_dashboard/topbar/topbar"
 
 async function AdminLayout({
@@ -15,7 +14,6 @@ async function AdminLayout({
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Top Navigation */}
         <TopBar />
-
         {/* Page Content */}
         <main className="flex-1 overflow-y-auto bg-gray-50/50 p-8">
           {children}

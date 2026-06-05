@@ -1,7 +1,7 @@
 "use server";
 
 import { authApi } from "./auth-api";
-import { LoginCredentials, RegisterData, UpdateUser } from "./auth.types";
+import { LoginCredentials, RegisterData } from "./auth.types";
 import SessionExpiredError from "@/lib/auth/session-error-handler";
 import { clearAuthCookies, setAccessToken, setRefreshToken, setUserRole } from "@/lib/auth/cookies";
 
@@ -100,39 +100,6 @@ export async function getCurrentUserAction() {
     return {
       success: false,
       error: error.message || 'Failed to get user'
-    };
-  }
-}
-
-export async function updateProfileAction(data: UpdateUser) {
-  try {
-    const response = await authApi.updateUser(data);
-
-    if (response.success) {
-      return {
-        success: true,
-        message: response.message || 'Profile updated successfully',
-        data: response.data,
-      };
-    }
-
-    return {
-      success: false,
-      message: response.message || 'Failed to update profile'
-    };
-
-  } catch (error: any) {
-    if (error instanceof SessionExpiredError) {
-      return {
-        success: false,
-        sessionExpired: true,
-        error: error.message,
-      };
-    }
-
-    return {
-      success: false,
-      error: error.message || 'Failed to update profile'
     };
   }
 }

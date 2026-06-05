@@ -13,7 +13,7 @@ import NavItem from '@/components/navigation_dashboard/sidebar/navItem';
 
 const NAV_ITEMS = [
   { label: 'Dashboard', icon: LayoutDashboardIcon, href: '/admin' },
-  { label: 'Users', icon: Users, href: '/dashboard/users' },
+  { label: 'Users', icon: Users, href: '/admin/users' },
 ];
 
 const AdminSidebar = () => {
@@ -27,17 +27,6 @@ const AdminSidebar = () => {
           <h1 className="font-bold text-sm leading-tight text-primary">leadXpert</h1>
           <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">CRM Engine</p>
         </div>
-      </div>
-
-      {/* 2. Workspace Selector */}
-      <div className="mb-2">
-        <button className="w-full border border-border bg-background/50 rounded-xl p-2.5 flex justify-between items-center text-sm font-medium hover:bg-muted transition-all group">
-          <span className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-primary rounded-lg flex items-center justify-center text-[10px] text-white font-bold">M</div>
-            <span className="text-primary/80 group-hover:text-primary">Mesh Studio</span>
-          </span>
-          <ChevronDown size={14} className="text-muted-foreground" />
-        </button>
       </div>
 
       <Separator className="my-4 opacity-50" />

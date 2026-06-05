@@ -14,7 +14,6 @@ function proxy(request: NextRequest) {
   const isAdminDashboard = path.startsWith('/admin')
   const isProtectedPath = isUserDashboard || isAdminDashboard
 
-  // Redirect authenticated users away from public paths (login/register)
   if (isPublicPath && hasAnyToken) {
     if (userRole === UserRoles.ADMIN) {
       return NextResponse.redirect(new URL('/admin', request.url))

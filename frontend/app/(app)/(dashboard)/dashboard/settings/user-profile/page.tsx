@@ -18,8 +18,8 @@ import {
 import getInitials from '@/utils/getInitials';
 import useAuthStore from '@/store/auth-store';
 import { Button } from '@/components/ui/button';
-import useUpdateUser from '@/features/auth/hooks/useUpdateUser';
 import useUploadImage from '@/features/upload/hooks/useUploadImage';
+import useUpdateUser from '@/features/user/hooks/useUpdateUser';
 
 interface ProfileFormData {
   name: string;
