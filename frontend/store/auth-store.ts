@@ -1,13 +1,17 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { UserRole } from '@/types/user'
 
 interface User {
   id: string
   name: string
-
+  isEmailVerified: boolean
+  isActive: boolean
+  onboardingCompleted: boolean
+  profilePicture?: string
   email: string
-  role: UserRole
+  createdAt: Date
+  updatedAt: Date
+  lastLoginAt?: Date
 }
 
 interface AuthState {

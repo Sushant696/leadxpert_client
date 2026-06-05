@@ -1,5 +1,4 @@
 "use client";
-
 import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -13,16 +12,19 @@ export function useLogout() {
   const clearUser = useAuthStore((s) => s.clearUser);
 
   return useMutation({
-    mutationFn: logoutAction,
+    mutationFn: async () => {
+      await logoutAction();
+    },
     onSuccess: () => {
       clearUser();
       queryClient.clear();
       showToast.success("Logged out successfully!");
       router.push("/login");
     },
-
     onError: (error: Error) => {
-      showToast.error("Logout failed");
+      clearUser();
+      queryClient.clear();
+      router.push("/login");
     },
   });
 }

@@ -1,119 +1,171 @@
 "use client"
 
-import { LogOut, Settings } from "lucide-react"
+import {
+  ListTodo,
+  Building2,
+  UserPlus,
+  ArrowRight,
+  ChevronRight,
+  Briefcase,
+  CheckCircle2,
+  Circle
+} from "lucide-react";
+import { Add } from "iconsax-reactjs";
 
-import { Button } from "@/components/ui/button"
-import { useLogout } from "@/features/auth/hooks/useLogout"
-import useAuthStore from "@/store/auth-store"
+import useAuthStore from "@/store/auth-store";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 
 function Dashboard() {
-  const logoutMutation = useLogout()
-  const user = useAuthStore((s) => s.user);
+  const { user } = useAuthStore()
 
-  const company = {
-    name: "Pi Technology",
-    role: "Business Owner",
-  }
-
-  const handleLogout = () => {
-    logoutMutation.mutate()
-  }
+  const hasCompany = false;
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-card">
-        <div className="container mx-auto px-6 py-6 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
-              {company.name.charAt(0)}
-            </div>
-            <div>
-              <h1 className="text-lg font-semibold text-foreground">{company.name}</h1>
-              <p className="text-sm text-muted-foreground">
-                {user?.name}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
-              <Settings className="w-5 h-5" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleLogout}
-              className="text-muted-foreground hover:text-foreground"
-            >
-              <LogOut className="w-5 h-5" />
-            </Button>
-          </div>
-        </div>
+    <div className="min-h-screen bg-background max-w-7xl mx-auto p-6 space-y-8">
+      <header className="space-y-1">
+        <p className="text-sm text-muted-foreground font-medium">
+          Sunday, January 25, 2026
+        </p>
+        <h1 className="text-3xl font-bold tracking-tight capitalize">
+          Welcome to LeadXpert, {user?.name.split(" ")[0]}
+        </h1>
+        <p className="text-muted-foreground">
+          Let's get your lead management pipeline up and running.
+        </p>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-6 py-16">
-        <div className="space-y-8">
-          <section>
-            <h2 className="text-4xl font-bold text-foreground mb-2">
-              Welcome, <span className="text-primary">{user?.name.split(",")[0]}</span>
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              You&apos;re all set to start managing your leads with {company.name}
-            </p>
-          </section>
+      {!hasCompany && (
+        <Card className="border-primary/20 bg-primary/5">
+          <CardHeader className="flex flex-row items-center space-x-4">
+            <div className="p-3 bg-primary rounded-lg text-primary-foreground">
+              <Building2 className="h-6 w-6" />
+            </div>
+            <div>
+              <CardTitle>Create your Organization</CardTitle>
+              <CardDescription>
+                You haven't set up a company profile yet. You'll need this to manage leads and invite team members.
+              </CardDescription>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Button className="gap-2">
+              Setup Company <ArrowRight className="h-4 w-4" />
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-card border border-border rounded-lg p-6">
-              <div className="text-4xl font-bold text-primary mb-2">0</div>
-              <p className="text-muted-foreground">Active Leads</p>
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card className="group hover:border-primary/50 transition-all cursor-pointer overflow-hidden">
+          <CardContent className="p-0">
+            <div className="p-6 space-y-4">
+              <div className="flex justify-between items-start">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-xs font-medium text-primary uppercase tracking-wider">
+                    <Circle className="h-3 w-3 fill-primary" />
+                    Set up the basics
+                  </div>
+                  <h3 className="text-xl font-bold">Create a new contact</h3>
+                  <p className="text-sm text-muted-foreground italic">About 2 minutes</p>
+                </div>
+                <div className="p-2 bg-muted rounded-lg group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                  <UserPlus className="h-6 w-6" />
+                </div>
+              </div>
+
+              <p className="text-muted-foreground text-sm">
+                See all their details and interactions you've had in one place.
+              </p>
+
+              <div className="flex items-center justify-between pt-2">
+                <Button variant="outline" className="font-semibold group-hover:bg-primary group-hover:text-primary-foreground">
+                  Create contact
+                </Button>
+                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+              </div>
             </div>
-            <div className="bg-card border border-border rounded-lg p-6">
-              <div className="text-4xl font-bold text-primary mb-2">0</div>
-              <p className="text-muted-foreground">Conversions</p>
+          </CardContent>
+        </Card>
+
+        <Card className="group hover:border-primary/50 transition-all cursor-pointer overflow-hidden">
+          <CardContent className="p-0">
+            <div className="p-6 space-y-4">
+              <div className="flex justify-between items-start">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    <CheckCircle2 className="h-3 w-3" />
+                    Track your deals in one place
+                  </div>
+                  <h3 className="text-xl font-bold">Create a deal</h3>
+                  <p className="text-sm text-muted-foreground italic">About 1 minute</p>
+                </div>
+                <div className="p-2 bg-muted rounded-lg group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                  <Briefcase className="h-6 w-6" />
+                </div>
+              </div>
+
+              <p className="text-muted-foreground text-sm">
+                Use deals in LeadXpert to track potential revenue through your sales process.
+              </p>
+
+              <div className="flex items-center justify-between pt-2">
+                <Button variant="outline" className="font-semibold group-hover:bg-primary group-hover:text-primary-foreground">
+                  Create deal
+                </Button>
+                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+              </div>
             </div>
-            <div className="bg-card border border-border rounded-lg p-6">
-              <div className="text-4xl font-bold text-primary mb-2">0</div>
-              <p className="text-muted-foreground">Team Members</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="">
+        <section className="space-y-4">
+          <div className="flex justify-between space-x-2 text-foreground/80">
+            <div className="flex items-center space-x-2 text-foreground/80">
+              <ListTodo className="h-5 w-5" />
+              <h2 className="text-lg font-semibold">Today's Tasks</h2>
+            </div>
+            <div className="flex items-center space-x-2 text-foreground/80">
+              <Add className="bg-forground/70" />
+              <Tabs defaultValue="open" className="">
+                <TabsList className=" bg-muted">
+                  <TabsTrigger
+                    value="open"
+                    className="data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm px-4 py-1.5 transition-all"
+                  >
+                    <ListTodo className="h-4 w-4 mr-2" />
+                    Open
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="completed"
+                    className="data-[state=active]:bg-background data-[state=active]:text-success data-[state=active]:shadow-sm px-4 py-1.5 transition-all"
+                  >
+                    <CheckCircle2 className="h-4 w-4 mr-2" />
+                    Completed
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
             </div>
           </div>
-
-          <section className="bg-card border border-border rounded-lg p-8">
-            <h3 className="text-xl font-semibold text-foreground mb-6">Company Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Company Name</p>
-                <p className="text-lg font-medium text-foreground">{company.name}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Your Role</p>
-                <p className="text-lg font-medium text-foreground">{company.role}</p>
-              </div>
+          <Card className="flex flex-col items-center justify-center p-12 text-center border-dashed">
+            <div className="bg-muted rounded-full p-4 mb-4">
+              <ListTodo className="h-8 w-8 text-muted-foreground" />
             </div>
-          </section>
-
-          <section className="bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 rounded-lg p-8 text-center">
-            <h3 className="text-xl font-semibold text-foreground mb-3">Ready to get started?</h3>
-            <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-              Create your first lead list, invite team members, or explore our features to streamline your lead
-              management process.
+            <h3 className="font-medium">No tasks scheduled</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Once you add leads, your daily follow-ups will appear here.
             </p>
-            <div className="flex gap-3 justify-center">
-              <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
-                Create Lead List
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-primary text-primary hover:bg-primary/10 bg-transparent"
-              >
-                Invite Team
-              </Button>
-            </div>
-          </section>
-        </div>
-      </main>
-    </div>
+            <Button variant="outline" className="hover:text-white" size="sm">
+              Create First Task
+            </Button>
+          </Card>
+        </section>
+      </div >
+    </div >
   )
 }
+
 export default Dashboard

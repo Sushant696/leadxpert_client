@@ -1,155 +1,251 @@
 'use client'
 
-import Link from "next/link"
-import { ArrowRight, Play, Sparkles, TrendingUp, Users, Zap } from "lucide-react"
+import {
+  ArrowRight,
+  Play,
+  Sparkles,
+  TrendingUp,
+  Users,
+  Zap,
+  CheckCircle2
+} from "lucide-react"
+import React from 'react'
+import { motion, useMotionValue, useSpring, useTransform } from "motion/react"
+
+import DashboardCard from './dashboardMockup'
+import FloatingStats from './floatingElements'
 
 function HeroSection() {
-  return (
-    <section className="relative min-h-screen flex items-center py-12 sm:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50/30 to-purple-50/20" />
-      <div className="absolute inset-0">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl animate-pulse delay-700" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-400/5 rounded-full blur-3xl" />
-      </div>
+  // Mouse position motion values - only for the 3D card
 
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]" />
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+
+  const mouseX = useSpring(x, { stiffness: 150, damping: 20 })
+  const mouseY = useSpring(y, { stiffness: 150, damping: 20 })
+
+  // Base tilt + mouse movement 
+  const rotateX = useTransform(mouseY, [-0.5, 0.5], ["12deg", "4deg"])
+  const rotateY = useTransform(mouseX, [-0.5, 0.5], ["-12deg", "4deg"])
+
+  function handleMouseMove(event: React.MouseEvent) {
+    const rect = event.currentTarget.getBoundingClientRect()
+    const width = rect.width
+    const height = rect.height
+    const mouseXPos = event.clientX - rect.left
+    const mouseYPos = event.clientY - rect.top
+
+    x.set(mouseXPos / width - 0.5)
+    y.set(mouseYPos / height - 0.5)
+  }
+
+  function handleMouseLeave() {
+    x.set(0)
+    y.set(0)
+  }
+
+  return (
+    <section className="relative flex items-center py-12 sm:py-16 px-2 sm:px-4 lg:px-6 overflow-hidden bg-white">
+      {/* Background Gradients */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-indigo-50/30 to-purple-50/20" />
+      <motion.div
+        className="absolute inset-0"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+      >
+        <motion.div
+          className="absolute top-20 left-10 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.5, 0.3]
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+        <motion.div
+          className="absolute bottom-20 right-10 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl"
+          animate={{
+            scale: [1.2, 1, 1.2],
+            opacity: [0.4, 0.6, 0.4]
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+      </motion.div>
+
+      <div className="absolute inset-0" />
 
       <div className="container mx-auto relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          <div className="space-y-8 lg:space-y-10">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm border border-blue-200/50 shadow-sm">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="space-y-8 lg:space-y-10 lg:col-span-5"
+          >
+            <motion.div
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm border border-blue-600/20 shadow-sm"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
               <Sparkles className="w-4 h-4 text-blue-600" />
               <span className="text-sm font-semibold text-gray-700">
-                #1 Lead Management Platform
+                #1 Lead Management for Nepal
               </span>
-            </div>
+            </motion.div>
 
             <div className="space-y-6">
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight tracking-tight">
-                Manage Your Leads
-                <span className="block bg-gradient-to-r from-primary via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                  Like Never Before
-                </span>
-              </h1>
-              <p className="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-xl">
-                Convert more prospects into customers with intelligent lead management, real-time analytics, and
-                powerful automation tools that drive results.
-              </p>
+              <motion.h1
+                className="text-4xl sm:text-5xl lg:text-7xl font-bold text-gray-900 leading-[1.1] tracking-tight"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                Turn Leads Into
+                <motion.span
+                  className="block bg-gradient-to-r from-blue-600 via-blue-500 to-purple-600 bg-clip-text text-transparent"
+                  animate={{
+                    backgroundPosition: ['0% 50%', '100% 50%', '0% 50%']
+                  }}
+                  transition={{
+                    duration: 5,
+                    repeat: Infinity,
+                    ease: "linear"
+                  }}
+                  style={{ backgroundSize: '200% 200%' }}
+                >
+                  Revenue Faster
+                </motion.span>
+              </motion.h1>
+              <motion.p
+                className="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-xl"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                Built for service-based businesses in Nepal. Manage leads, track deals, and close more sales with our intuitive CRM platform.
+              </motion.p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                href="/register"
-                className="group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-105 transition-all duration-200"
-              >
-                Get Started Free
+            {/* Feature List */}
+            <motion.div
+              className="space-y-3"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              {[
+                'Visual sales pipeline with drag & drop',
+                'Automated follow-up reminders',
+                'Real-time analytics & reporting'
+              ].map((feature, idx) => (
+                <motion.div
+                  key={idx}
+                  className="flex items-center gap-3"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.6 + idx * 0.1 }}
+                >
+                  <CheckCircle2 className="w-5 h-5 text-blue-600 flex-shrink-0" />
+                  <span className="text-gray-700 font-medium">{feature}</span>
+                </motion.div>
+              ))}
+            </motion.div>
+
+            <motion.div
+              className="flex flex-col sm:flex-row gap-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+            >
+              <button className="group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 text-white font-semibold shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40 hover:scale-105 transition-all duration-200">
+                Start Free Trial
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <button className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white border-2 border-gray-200 text-gray-900 font-semibold hover:border-gray-300 hover:shadow-lg transition-all duration-200">
-                <Play className="w-5 h-5" />
+              </button>
+              <button className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white border-2 border-gray-200 text-gray-900 font-semibold hover:border-blue-600/50 hover:shadow-lg transition-all duration-200">
+                <Play className="w-5 h-5 text-blue-600" />
                 Watch Demo
               </button>
-            </div>
+            </motion.div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-6 pt-8">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <Users className="w-5 h-5 text-blue-600" />
-                  <p className="text-2xl font-bold text-gray-900">10K+</p>
-                </div>
-                <p className="text-sm text-gray-600">Active Users</p>
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-indigo-600" />
-                  <p className="text-2xl font-bold text-gray-900">95%</p>
-                </div>
-                <p className="text-sm text-gray-600">Success Rate</p>
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <Zap className="w-5 h-5 text-purple-600" />
-                  <p className="text-2xl font-bold text-gray-900">2x</p>
-                </div>
-                <p className="text-sm text-gray-600">Faster Closure</p>
-              </div>
-            </div>
-
-            {/* Trust Badges */}
-            <div className="pt-6 border-t border-gray-200">
-              <p className="text-sm text-gray-500 mb-4 font-medium">Trusted by industry leaders</p>
-              <div className="flex flex-wrap gap-8 items-center opacity-60">
-                {["TechCorp", "StartupHub", "GrowthLabs", "InnovateCo"].map((company) => (
-                  <div key={company} className="text-base font-bold text-gray-600 hover:text-gray-900 transition-colors">
-                    {company}
+            <motion.div
+              className="grid grid-cols-3 gap-6 pt-8 border-t border-gray-100"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+            >
+              {[
+                { icon: Users, value: '500+', label: 'Businesses' },
+                { icon: TrendingUp, value: '85%', label: 'Conversion' },
+                { icon: Zap, value: '3x', label: 'Faster Sales' }
+              ].map((stat, idx) => (
+                <motion.div
+                  key={idx}
+                  className="space-y-1"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.9 + idx * 0.1 }}
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <div className="flex items-center gap-2">
+                    <stat.icon className="w-5 h-5 text-blue-600" />
+                    <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
                   </div>
-                ))}
+                  <p className="text-sm text-gray-600">{stat.label}</p>
+                </motion.div>
+              ))}
+            </motion.div>
+          </motion.div>
+
+          <div className="lg:col-span-7 relative h-[800px] lg:h-[500px]" style={{ perspective: "2500px" }}>
+            <motion.div
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
+              initial={{
+                opacity: 0,
+                x: 500,
+                rotateY: -45,
+                rotateX: 12,
+                scale: 0.85
+              }}
+              animate={{
+                opacity: 1,
+                x: 0,
+                rotateY: -12,
+                rotateX: 6,
+                scale: 1
+              }}
+              transition={{
+                duration: 1.4,
+                delay: 0.4,
+                ease: [0.19, 1, 0.22, 1]
+              }}
+              style={{
+                rotateX,
+                rotateY,
+                transformStyle: "preserve-3d"
+              }}
+              className="absolute -right-[10%] lg:-right-[80%] top-1/2 -translate-y-1/2 w-[130%] lg:w-[160%] xl:w-[170%] cursor-pointer"
+            >
+              <div className="relative" style={{ transformStyle: "preserve-3d" }}>
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/40 via-blue-500/40 to-purple-600/40 rounded-3xl blur-3xl scale-110 opacity-60" />
+                <DashboardCard />
+                <FloatingStats />
               </div>
-            </div>
-          </div>
-
-          <div className="relative lg:absolute lg:right-0 lg:top-1/2 lg:-translate-y-1/2 lg:w-[55%]">
-            <div className="absolute -top-6 -left-6 w-24 h-24 bg-blue-500/10 rounded-2xl backdrop-blur-sm animate-float" />
-            <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-purple-500/10 rounded-2xl backdrop-blur-sm animate-float-delayed" />
-
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-indigo-600/20 to-purple-600/20 rounded-3xl blur-3xl" />
-
-              <div className="relative bg-white/40 backdrop-blur-md rounded-3xl p-3 shadow-2xl border border-white/50">
-                <div className="relative rounded-2xl overflow-hidden shadow-xl">
-                  <img
-                    src="/dashboard.png"
-                    alt="LeadXpert Dashboard Interface"
-                    className="w-full h-auto"
-                  />
-
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/5 via-transparent to-transparent pointer-events-none" />
-                </div>
-              </div>
-
-              <div className="absolute -bottom-4 -left-4 bg-white rounded-xl shadow-xl border border-gray-100 p-4 animate-float">
-                <div className="flex items-center gap-3">
-                  <div className="bg-green-100 p-2 rounded-lg">
-                    <TrendingUp className="w-5 h-5 text-green-600" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Conversion Rate</p>
-                    <p className="text-lg font-bold text-gray-900">+32%</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="absolute -top-4 -right-4 bg-white rounded-xl shadow-xl border border-gray-100 p-3 animate-float-delayed">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                  <p className="text-sm font-semibold text-gray-900">5 New Leads</p>
-                </div>
-              </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-20px);
-          }
-        }
-        
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
-        }
-        
-        .animate-float-delayed {
-          animation: float 6s ease-in-out infinite 3s;
-        }
-      `}</style>
     </section>
   )
 }

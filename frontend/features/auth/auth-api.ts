@@ -1,5 +1,6 @@
-import axiosInstance from "@/lib/axios";
 import { apiURLs } from "@/utils/apiUrls";
+import axiosInstance from "@/lib/api/axios";
+import { apiWrapper } from "@/lib/api/api-wrapper";
 import { LoginCredentials, RegisterData } from "./auth.types";
 
 export const authApi = {
@@ -9,12 +10,16 @@ export const authApi = {
   },
 
   register: async (registerData: RegisterData) => {
-    const response = await axiosInstance.post(apiURLs.AUTH.register, registerData)
+    const response = await axiosInstance.post(apiURLs.AUTH.register, registerData);
     return response.data;
   },
 
   logout: async () => {
-    const response = await axiosInstance.get(apiURLs.AUTH.logout);
-    return response.data;
+    return await apiWrapper.post(apiURLs.AUTH.logout);
   },
+
+  getCurrentUser: async () => {
+    return await apiWrapper.post(apiURLs.AUTH.me);
+  },
+
 };

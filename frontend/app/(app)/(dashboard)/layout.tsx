@@ -1,12 +1,26 @@
-type LayoutProps = {
-  children: React.ReactNode;
-};
+import TopBar from "@/components/navigation_dashboard/topbar/topbar"
+import Sidebar from "@/components/navigation_dashboard/sidebar/mainSidebar"
 
-export default function Layout({ children }: LayoutProps) {
+async function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+
   return (
-    <>
-      <main>{children}</main>
-    </>
-  );
-}
+    <div className="flex h-screen bg-white">
+      {/* Fixed Sidebar */}
+      <Sidebar />
+      <div className="flex flex-col flex-1 overflow-hidden">
+        {/* Top Navigation */}
+        <TopBar />
 
+        {/* Page Content */}
+        <main className="flex-1 overflow-y-auto bg-gray-50/50 p-8">
+          {children}
+        </main>
+      </div>
+    </div>
+  )
+}
+export default DashboardLayout

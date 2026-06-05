@@ -6,8 +6,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-dm-sans);
+  --font-mono: var(--font-dm-sans);
 
   /* Primary colors */
   --color-primary: var(--primary);
@@ -88,13 +88,20 @@
   --primary-foreground: oklch(0.985 0 0);
   /* White text on primary */
 
-  /* Accent Colors - Cyan/Teal */
-  --accent: oklch(0.703 0.139 211.89);
-  /* #06B6D4 */
-  --accent-light: oklch(0.796 0.141 208.16);
-  /* #22D3EE */
-  --accent-foreground: oklch(0.145 0 0);
-  /* Dark text on accent */
+  /* Accent Colors - Coral/Salmon (Energetic & Warm) */
+  --accent: oklch(0.70 0.18 25);
+  /* Vibrant coral - perfect for CTAs */
+  --accent-light: oklch(0.78 0.15 25);
+  /* Light salmon */
+  --accent-foreground: oklch(0.985 0 0);
+  /* White text on accent */
+
+  /* Secondary - Orange (Complementary warmth) */
+  --secondary: oklch(0.72 0.17 45);
+  /* Warm orange */
+  --secondary-light: oklch(0.80 0.14 45);
+  --secondary-dark: oklch(0.64 0.19 45);
+  --secondary-foreground: oklch(0.985 0 0);
 
   /* Background & Surface */
   --background: oklch(0.986 0.002 264.54);
@@ -113,11 +120,6 @@
   /* Popover */
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.235 0.028 264.66);
-
-  /* Secondary */
-  --secondary: oklch(0.967 0.004 264.53);
-  /* Light gray */
-  --secondary-foreground: oklch(0.235 0.028 264.66);
 
   /* Muted */
   --muted: oklch(0.967 0.004 264.53);
@@ -138,8 +140,8 @@
   /* Status Colors (for leads) */
   --status-new: oklch(0.586 0.210 293.89);
   /* #8B5CF6 - Purple */
-  --status-in-progress: oklch(0.703 0.139 211.89);
-  /* #06B6D4 - Cyan */
+  --status-in-progress: oklch(0.72 0.17 45);
+  /* Orange - replacing cyan */
   --status-converted: oklch(0.691 0.166 165.88);
   /* #10B981 - Green */
   --status-lost: oklch(0.706 0.198 17.42);
@@ -163,11 +165,16 @@
   --sidebar-ring: oklch(0.448 0.131 264.05);
 
   /* Charts */
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
+  --chart-1: oklch(0.448 0.131 264.05);
+  /* Primary blue */
+  --chart-2: oklch(0.70 0.18 25);
+  /* Coral */
+  --chart-3: oklch(0.691 0.166 165.88);
+  /* Success green */
+  --chart-4: oklch(0.72 0.17 45);
+  /* Orange */
+  --chart-5: oklch(0.586 0.210 293.89);
+  /* Purple */
 }
 
 .dark {
@@ -179,10 +186,17 @@
   --primary-foreground: oklch(0.145 0 0);
   /* Dark text on light primary */
 
-  /* Accent Colors */
-  --accent: oklch(0.796 0.141 208.16);
-  --accent-light: oklch(0.703 0.139 211.89);
+  /* Accent Colors - Brighter coral for dark mode */
+  --accent: oklch(0.75 0.20 25);
+  /* Brighter coral */
+  --accent-light: oklch(0.82 0.17 25);
   --accent-foreground: oklch(0.145 0 0);
+
+  /* Secondary - Warm orange for dark */
+  --secondary: oklch(0.75 0.19 45);
+  --secondary-light: oklch(0.82 0.16 45);
+  --secondary-dark: oklch(0.68 0.21 45);
+  --secondary-foreground: oklch(0.145 0 0);
 
   /* Background & Surface */
   --background: oklch(0.235 0.028 264.66);
@@ -200,10 +214,6 @@
   --popover: oklch(0.290 0.022 264.66);
   --popover-foreground: oklch(0.985 0 0);
 
-  /* Secondary */
-  --secondary: oklch(0.340 0.020 264.66);
-  --secondary-foreground: oklch(0.985 0 0);
-
   /* Muted */
   --muted: oklch(0.340 0.020 264.66);
   --muted-foreground: oklch(0.660 0.020 257.42);
@@ -217,7 +227,8 @@
 
   /* Status Colors */
   --status-new: oklch(0.586 0.210 293.89);
-  --status-in-progress: oklch(0.796 0.141 208.16);
+  --status-in-progress: oklch(0.75 0.19 45);
+  /* Orange */
   --status-converted: oklch(0.691 0.166 165.88);
   --status-lost: oklch(0.706 0.198 17.42);
 
@@ -237,11 +248,16 @@
   --sidebar-ring: oklch(0.565 0.196 265.75);
 
   /* Charts */
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
+  --chart-1: oklch(0.565 0.196 265.75);
+  /* Primary blue */
+  --chart-2: oklch(0.75 0.20 25);
+  /* Coral */
+  --chart-3: oklch(0.691 0.166 165.88);
+  /* Green */
+  --chart-4: oklch(0.75 0.19 45);
+  /* Orange */
+  --chart-5: oklch(0.586 0.210 293.89);
+  /* Purple */
 }
 
 @layer base {

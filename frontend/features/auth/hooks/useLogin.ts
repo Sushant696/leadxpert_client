@@ -3,19 +3,18 @@
 import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { UserRole } from "@/types/user";
 import { loginAction } from "../auth-action";
-import { TloginForm } from "../auth-validators";
+import useAuthStore from "@/store/auth-store";
+import { UserRoles } from "@/types/user";
 import { showToast } from "@/components/showToast";
-import useAuthStore from "../../../store/auth-store";
 
 export function useLogin() {
   const router = useRouter();
-  const setUser = useAuthStore((s) => s.setUser);
   const queryClient = useQueryClient();
+  const setUser = useAuthStore((s) => s.setUser);
 
   return useMutation({
-    mutationFn: async (credentials: TloginForm) => {
+    mutationFn: async (credentials: { email: string; password: string }) => {
       const result = await loginAction(credentials);
 
       if (!result.success) {
@@ -24,14 +23,17 @@ export function useLogin() {
       return result.data;
     },
     onSuccess: (data) => {
+      const { role, ...userData } = data;
       setUser({
-        ...data,
-        role: data.role?.toUpperCase() as UserRole,
+        ...userData,
       });
-
       queryClient.invalidateQueries({ queryKey: ["mee"] });
+      if (data.role?.toUpperCase() === UserRoles.ADMIN) {
+        router.push("/admin/");
+      } else {
+        router.push("/dashboard/");
+      }
       showToast.success("Login successful!");
-      router.push("/dashboard");
     },
     onError: (error: Error) => {
       showToast.error(error.message);

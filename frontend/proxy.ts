@@ -1,23 +1,40 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { UserRoles } from './types/user'
 
 function proxy(request: NextRequest) {
-  const accessToken = request.cookies.get('accessToken')
   const path = request.nextUrl.pathname
+  const hasAccessToken = request.cookies.has('accessToken')
+  const hasRefreshToken = request.cookies.has('refreshToken')
+  const hasAnyToken = hasAccessToken || hasRefreshToken
+  const userRole = request.cookies.get('userRole')?.value
 
   const isPublicPath = path === '/' || path === '/login' || path === '/register'
-  const isProtectedPath = path.startsWith('/dashboard')
+  const isUserDashboard = path.startsWith('/dashboard')
+  const isAdminDashboard = path.startsWith('/admin')
+  const isProtectedPath = isUserDashboard || isAdminDashboard
 
-  // Redirect to login if accessing protected route without token
-  if (isProtectedPath && !accessToken) {
-    return NextResponse.redirect(new URL('/login', request.url))
-  }
-
-  // Redirect to dashboard if accessing auth pages with valid token
-  if ((isPublicPath) && accessToken) {
+  if (isPublicPath && hasAnyToken) {
+    if (userRole === UserRoles.ADMIN) {
+      return NextResponse.redirect(new URL('/admin', request.url))
+    }
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
+  // Redirect unauthenticated users from protected paths to login
+  if (isProtectedPath && !hasAnyToken) {
+    return NextResponse.redirect(new URL('/login', request.url))
+  }
+
+  // Redirect admins trying to access user dashboard to admin dashboard
+  if (isUserDashboard && hasAnyToken && userRole === UserRoles.ADMIN) {
+    return NextResponse.redirect(new URL('/admin', request.url))
+  }
+
+  // Redirect non-admins trying to access admin dashboard to unauthorized page
+  if (isAdminDashboard && hasAnyToken && userRole !== UserRoles.ADMIN) {
+    return NextResponse.redirect(new URL('/unauthorized?type=admin', request.url))
+  }
   return NextResponse.next()
 }
 
@@ -26,6 +43,7 @@ export const config = {
     '/',
     '/login',
     '/register',
+    '/admin/:path*',
     '/dashboard/:path*',
   ],
 }

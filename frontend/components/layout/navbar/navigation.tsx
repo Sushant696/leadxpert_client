@@ -13,7 +13,7 @@ function Navigation() {
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 py-2">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <Image src={"/logoiconblue.png"} alt="Leadxpert logo" height={40} width={40} />
@@ -38,19 +38,20 @@ function Navigation() {
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center gap-3">
-            <Button variant="ghost" className="hover:bg-primary/80 hover:text-white">
-              <Link href={"/login"} >
+
+            <Link href={"/login"} >
+              <Button variant="ghost" className="hover:bg-primary/80 hover:text-white">
                 Sign In
-              </Link>
-            </Button>
+              </Button>
+            </Link>
             <div className="h-8">
               <Separator orientation="vertical" />
             </div>
-            <Button className="">
-              <Link href={"/register"} >
+            <Link href={"/register"} >
+              <Button className="">
                 Try for free
-              </Link>
-            </Button>
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
