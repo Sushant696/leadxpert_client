@@ -8,8 +8,6 @@ import {
   PhoneCall,
   Calendar,
   BarChart3,
-  ShieldCheck,
-  HelpCircle,
 } from 'lucide-react';
 
 export const NAV_ITEMS = [
@@ -24,12 +22,7 @@ export const NAV_ITEMS = [
   { label: 'Analytics', icon: BarChart3, href: '/dashboard/analytics' },
 ];
 
-export const ADMIN_ITEMS = [
-  { label: 'User Management', icon: ShieldCheck, href: '/dashboard/users' },
-  { label: 'Support', icon: HelpCircle, href: '/dashboard/support' },
-];
 
 export const ProtectedPaths = [
   ...NAV_ITEMS.map(item => item.href),
-  ...ADMIN_ITEMS.map(item => item.href),
 ];

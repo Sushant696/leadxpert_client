@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react";
 import {
   ListTodo,
   Building2,
@@ -8,7 +9,8 @@ import {
   ChevronRight,
   Briefcase,
   CheckCircle2,
-  Circle
+  Circle,
+  Users
 } from "lucide-react";
 import { Add } from "iconsax-reactjs";
 
@@ -16,11 +18,17 @@ import useAuthStore from "@/store/auth-store";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Dialog } from "@/components/ui/dialog";
+import WorkspaceCreateModal from "@/features/workspace/components/CreateWorkspaceModal";
+import WorkspaceJoinModal from "@/features/workspace/components/WorkspaceJoinModal";
 
 function Dashboard() {
   const { user } = useAuthStore()
+  const [isCreateWorkspaceOpen, setIsCreateWorkspaceOpen] = useState(false);
+  const [isJoinWorkspaceOpen, setIsJoinWorkspaceOpen] = useState(false);
 
   const hasCompany = false;
+  const hasWorkspace = false;
 
   return (
     <div className="min-h-screen bg-background max-w-7xl mx-auto p-6 space-y-8">
@@ -32,27 +40,38 @@ function Dashboard() {
           Welcome to LeadXpert, {user?.name.split(" ")[0]}
         </h1>
         <p className="text-muted-foreground">
-          Let's get your lead management pipeline up and running.
+          Let&apos;s get your lead management pipeline up and running.
         </p>
       </header>
-
-      {!hasCompany && (
-        <Card className="border-primary/20 bg-primary/5">
+      {!hasWorkspace && (
+        <Card className="border-accent/20 bg-accent/5">
           <CardHeader className="flex flex-row items-center space-x-4">
-            <div className="p-3 bg-primary rounded-lg text-primary-foreground">
-              <Building2 className="h-6 w-6" />
+            <div className="p-3 bg-accent rounded-lg text-accent-foreground">
+              <Users className="h-6 w-6" />
             </div>
             <div>
-              <CardTitle>Create your Organization</CardTitle>
+              <CardTitle>Set up your Workspace</CardTitle>
               <CardDescription>
-                You haven't set up a company profile yet. You'll need this to manage leads and invite team members.
+                Create a new workspace to start managing leads, or join an existing team workspace with an invite link.
               </CardDescription>
             </div>
           </CardHeader>
           <CardContent>
-            <Button className="gap-2">
-              Setup Company <ArrowRight className="h-4 w-4" />
-            </Button>
+            <div className="flex gap-3">
+              <Button 
+                className="gap-2"
+                onClick={() => setIsCreateWorkspaceOpen(true)}
+              >
+                Create Workspace <ArrowRight className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant="outline" 
+                className="gap-2"
+                onClick={() => setIsJoinWorkspaceOpen(true)}
+              >
+                Join Workspace <Users className="h-4 w-4" />
+              </Button>
+            </div>
           </CardContent>
         </Card>
       )}
@@ -76,7 +95,7 @@ function Dashboard() {
               </div>
 
               <p className="text-muted-foreground text-sm">
-                See all their details and interactions you've had in one place.
+                See all their details and interactions you&apos;ve had in one place.
               </p>
 
               <div className="flex items-center justify-between pt-2">
@@ -126,7 +145,7 @@ function Dashboard() {
           <div className="flex justify-between space-x-2 text-foreground/80">
             <div className="flex items-center space-x-2 text-foreground/80">
               <ListTodo className="h-5 w-5" />
-              <h2 className="text-lg font-semibold">Today's Tasks</h2>
+              <h2 className="text-lg font-semibold">Today&apos;s Tasks</h2>
             </div>
             <div className="flex items-center space-x-2 text-foreground/80">
               <Add className="bg-forground/70" />
@@ -164,6 +183,16 @@ function Dashboard() {
           </Card>
         </section>
       </div >
+
+      {/* Create Workspace Modal */}
+      <Dialog open={isCreateWorkspaceOpen} onOpenChange={setIsCreateWorkspaceOpen}>
+        <WorkspaceCreateModal />
+      </Dialog>
+
+      {/* Join Workspace Modal */}
+      <Dialog open={isJoinWorkspaceOpen} onOpenChange={setIsJoinWorkspaceOpen}>
+        <WorkspaceJoinModal />
+      </Dialog>
     </div >
   )
 }

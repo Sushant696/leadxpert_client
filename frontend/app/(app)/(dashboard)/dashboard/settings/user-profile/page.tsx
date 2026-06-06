@@ -84,7 +84,7 @@ const ProfileSettings = () => {
   const onSubmit = (data: ProfileFormData) => {
     const updateData = {
       name: data.name,
-      profilePicture: uploadedImageUrl || user?.profilePicture || ''
+      profilePicture: uploadedImageUrl || user?.profilePicture
     };
     updateUserMutation.mutate(updateData, {
       onSuccess: () => {
