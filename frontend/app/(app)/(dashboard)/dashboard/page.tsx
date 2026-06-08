@@ -24,10 +24,9 @@ import WorkspaceJoinModal from "@/features/workspace/components/WorkspaceJoinMod
 
 function Dashboard() {
   const { user } = useAuthStore()
-  const [isCreateWorkspaceOpen, setIsCreateWorkspaceOpen] = useState(false);
+  const [isCreateWorkspaceOpen, setIsCreateWorkspaceOpen] = useState<boolean>(false);
   const [isJoinWorkspaceOpen, setIsJoinWorkspaceOpen] = useState(false);
 
-  const hasCompany = false;
   const hasWorkspace = false;
 
   return (
@@ -43,6 +42,7 @@ function Dashboard() {
           Let&apos;s get your lead management pipeline up and running.
         </p>
       </header>
+
       {!hasWorkspace && (
         <Card className="border-accent/20 bg-accent/5">
           <CardHeader className="flex flex-row items-center space-x-4">
@@ -58,14 +58,14 @@ function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="flex gap-3">
-              <Button 
+              <Button
                 className="gap-2"
                 onClick={() => setIsCreateWorkspaceOpen(true)}
               >
                 Create Workspace <ArrowRight className="h-4 w-4" />
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="gap-2"
                 onClick={() => setIsJoinWorkspaceOpen(true)}
               >
@@ -186,12 +186,12 @@ function Dashboard() {
 
       {/* Create Workspace Modal */}
       <Dialog open={isCreateWorkspaceOpen} onOpenChange={setIsCreateWorkspaceOpen}>
-        <WorkspaceCreateModal />
+        <WorkspaceCreateModal setIsCreateWorkspaceOpen={setIsCreateWorkspaceOpen} />
       </Dialog>
 
       {/* Join Workspace Modal */}
       <Dialog open={isJoinWorkspaceOpen} onOpenChange={setIsJoinWorkspaceOpen}>
-        <WorkspaceJoinModal />
+        <WorkspaceJoinModal setIsJoinWorkspaceOpen={setIsJoinWorkspaceOpen} />
       </Dialog>
     </div >
   )

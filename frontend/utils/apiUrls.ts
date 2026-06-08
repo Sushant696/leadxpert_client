@@ -18,6 +18,13 @@ export const apiURLs = {
     getUserById: (id: string) => `/api/users/${id}`,
     deleteUserById: (id: string) => `/api/users/${id}`,
   },
+  WORKSPACE: {
+    createWorkspace: '/api/workspace',
+    getAllWorkspaces: '/api/workspace',
+    getWorkspaceById: (id: string) => `/api/workspace/${id}`,
+    updateWorkspaceById: (id: string) => `/api/workspace/${id}`,
+    deleteWorkspaceById: (id: string) => `/api/workspace/${id}`,
+  },
   FORGOTPASSWORD: {
     verifyOTP: '/api/forgotPassword/verifyOTP',
     checkEmail: '/api/forgotPassword/checkEmail',

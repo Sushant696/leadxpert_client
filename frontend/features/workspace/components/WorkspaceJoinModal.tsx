@@ -5,6 +5,7 @@ import {
   Users,
   Link as LinkIcon
 } from "lucide-react";
+import { Dispatch, SetStateAction } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,9 +17,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-function WorkspaceJoinModal() {
+interface WorkspaceCreateModalProps {
+  setIsJoinWorkspaceOpen: Dispatch<SetStateAction<boolean>>;
+}
+
+function WorkspaceJoinModal({ setIsJoinWorkspaceOpen }: WorkspaceCreateModalProps) {
   return (
-    <DialogContent className="sm:max-w-[500px]">
+    <DialogContent className="max-w-2xl sm:max-w-xl m-2">
       <DialogHeader>
         <DialogTitle className="text-2xl">Join Workspace</DialogTitle>
         <DialogDescription>
@@ -69,7 +74,9 @@ function WorkspaceJoinModal() {
       </div>
 
       <div className="flex gap-3">
-        <Button variant="outline" className="flex-1">
+        <Button
+          onClick={() => setIsJoinWorkspaceOpen(false)}
+          variant="outline" className="flex-1">
           Cancel
         </Button>
         <Button className="flex-1 gap-2 bg-accent hover:bg-accent/90">
