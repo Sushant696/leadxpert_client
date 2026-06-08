@@ -1,17 +1,27 @@
 "use client";
 
+import { useState } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { ChevronDown } from 'lucide-react';
+import { Link, ChevronDown, Plus } from 'lucide-react';
 
 import NavItem from './navItem';
+import { Dialog } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { DUMMY_WORKSPACE_ITEMS, NAV_ITEMS } from './items';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import WorkspaceJoinModal from '@/features/workspace/components/WorkspaceJoinModal';
+import WorkspaceCreateModal from '@/features/workspace/components/CreateWorkspaceModal';
+import WorkspacesListing from '@/features/workspace/components/workspacesList';
 
 const Sidebar = () => {
   const pathname = usePathname();
+  const [isCreateWorkspaceOpen, setIsCreateWorkspaceOpen] = useState<boolean>(false);
+  const [isJoinWorkspaceOpen, setIsJoinWorkspaceOpen] = useState(false);
+
   return (
-    <aside className="w-64  border-r bg-surface flex flex-col p-4 sticky top-0 shadow-sm">
+    <aside className="w-64 border-r bg-surface flex flex-col p-4 sticky top-0 shadow-sm">
       <div className="flex items-center gap-3 mb-6 px-2">
         <Image src="/logoiconblack.png" alt="leadXpert logo" width={40} height={40} className='w-10' />
         <div>
@@ -32,7 +42,7 @@ const Sidebar = () => {
 
       <Separator className="my-4 opacity-50" />
 
-      <nav className="space-y-1 flex-1  custom-scrollbar pr-1 min-h-fit">
+      <nav className="space-y-1 flex-1 custom-scrollbar pr-1">
         {NAV_ITEMS.map((item) => (
           <NavItem
             key={item.href}
@@ -46,19 +56,54 @@ const Sidebar = () => {
       </nav>
 
       <Separator className="my-4 opacity-50" />
-      <p className='text-sm text-muted-foreground '>Workspaces</p>
 
-      <nav className="space-y-1 flex-1 overflow-y-auto custom-scrollbar pr-1 mt-2">
-        {DUMMY_WORKSPACE_ITEMS.map((item) => (
-          <NavItem
-            key={item.href}
-            icon={<item.icon size={18} />}
-            label={item.label}
-            href={item.href}
-            active={pathname === item.href}
-          />
-        ))}
-      </nav>
+      <div className=' flex items-center justify-between'>
+
+        <h6 className='text-sm text-muted-foreground'>Workspaces</h6>
+        <Popover>
+          <PopoverTrigger asChild >
+            <Button variant={"ghost"} className="p-1 rounded-md hover:bg-muted hover:text-primary ">
+              <Plus size={16} />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent
+            side="right"
+            align="start"
+            className="w-48 p-1"
+          >
+            <button
+              onClick={() => setIsCreateWorkspaceOpen(true)}
+              className="w-full flex items-center gap-2 px-2 py-2 text-sm rounded-md hover:bg-muted"
+            >
+              <Plus size={16} className='text-primary' />
+              Create workspace
+            </button>
+
+            <button
+              onClick={() => setIsJoinWorkspaceOpen(true)}
+              className="w-full flex items-center gap-2 px-2 py-2 text-sm rounded-md hover:bg-muted"
+            >
+              <Link size={16} className='text-primary' />
+
+              Join workspace
+            </button>
+          </PopoverContent>
+
+        </Popover>
+      </div>
+
+      {/* worksapce listing*/}
+      <WorkspacesListing />
+
+      <Dialog open={isCreateWorkspaceOpen} onOpenChange={setIsCreateWorkspaceOpen}>
+        <WorkspaceCreateModal setIsCreateWorkspaceOpen={setIsCreateWorkspaceOpen} />
+      </Dialog>
+
+      <Dialog open={isJoinWorkspaceOpen} onOpenChange={setIsJoinWorkspaceOpen}>
+        <WorkspaceJoinModal setIsJoinWorkspaceOpen={setIsJoinWorkspaceOpen} />
+      </Dialog>
+
+
     </aside>
   );
 };

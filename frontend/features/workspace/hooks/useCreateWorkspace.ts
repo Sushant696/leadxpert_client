@@ -12,6 +12,7 @@ const useCreateWorkspace = () => {
       queryClient.invalidateQueries({ queryKey: ["workspaces"] });
     },
     onError: (error: any) => {
+      showToast.error(error.message);
       console.error("Error creating workspace:", error);
     }
   })

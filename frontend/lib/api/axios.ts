@@ -8,7 +8,10 @@ const axiosInstance = axios.create({
     "Content-Type": "application/json"
   },
   withCredentials: true,
-  timeout: 30000 // 30 second timeout for each request
+  validateStatus: function(status) {
+    // for manual error handling in actions  
+    return status >= 200 && status < 600; // Accept all status codes
+  },
 })
 
 // For development logging

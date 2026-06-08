@@ -71,7 +71,6 @@ function Page() {
     if (!userToDelete) return
 
     try {
-      console.log("Soft deleting user:", userToDelete._id)
       deleteUserMutation.mutate(userToDelete._id)
 
       setIsDeleteDialogOpen(false)

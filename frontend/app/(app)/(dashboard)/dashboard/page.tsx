@@ -3,7 +3,6 @@
 import { useState } from "react";
 import {
   ListTodo,
-  Building2,
   UserPlus,
   ArrowRight,
   ChevronRight,
@@ -15,12 +14,12 @@ import {
 import { Add } from "iconsax-reactjs";
 
 import useAuthStore from "@/store/auth-store";
+import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Dialog } from "@/components/ui/dialog";
-import WorkspaceCreateModal from "@/features/workspace/components/CreateWorkspaceModal";
 import WorkspaceJoinModal from "@/features/workspace/components/WorkspaceJoinModal";
+import WorkspaceCreateModal from "@/features/workspace/components/CreateWorkspaceModal";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 
 function Dashboard() {
   const { user } = useAuthStore()

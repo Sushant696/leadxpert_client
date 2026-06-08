@@ -1,12 +1,12 @@
 'use server';
 
 import { workspaceApi } from "./workspace-api";
-import { CreateWorkspacePayload } from "./workspace-types";
+import { CreateWorkspacePayload, TransformedWorkspace } from "./workspace-types";
 
 export async function createWorkspaceAction(formData: CreateWorkspacePayload) {
   try {
-    // calling the workspace API to create a new workspace 
     const response = await workspaceApi.createWorkspace(formData);
+
     if (response.success) {
       return {
         success: true,
@@ -14,14 +14,44 @@ export async function createWorkspaceAction(formData: CreateWorkspacePayload) {
         data: response.data,
       };
     }
+
+    throw new Error(response.message || 'Failed to create workspace');
+  } catch (error: any) {
+ 
+    if (error.response?.data?.message) {
+      throw new Error(error.response.data.message);
+    }
+    throw new Error(error.message || 'Failed to create workspace');
+  }
+}
+
+export async function getUserWorkspacesAction() {
+  try {
+
+    const response = await workspaceApi.getUserWorkspaces();
+
+    if (response.success) {
+
+      const usersWorkspaces: TransformedWorkspace[] = response.data.workspaces.map((w: any) => ({ name: w.workspace.name, slug: w.workspace.slug }));
+
+      return {
+        success: true,
+        message: response.message || 'Workspaces fetched successfully',
+        data: {
+          usersWorkspaces,
+          fullWorkspaces: response.data.workspaces
+        },
+      };
+
+    }
     return {
       success: false,
-      message: response.message || 'Failed to create workspace'
+      message: response.message || 'Failed to fetch workspaces'
     };
   } catch (error: any) {
     return {
       success: false,
-      error: error.message || 'Failed to create workspace'
+      error: error.message || 'Failed to fetch workspaces'
     };
   }
 }

@@ -1,3 +1,5 @@
+import { RESOURCE_BASED_ROLES } from "@/types/user";
+
 export interface Workspace {
   _id: string;
   name: string;
@@ -8,6 +10,28 @@ export interface Workspace {
   members: string[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface WorkspaceMember {
+  workspace: Workspace,
+  role: RESOURCE_BASED_ROLES
+}
+
+export interface TransformedWorkspace {
+  name: string;
+  slug: string;
+}
+
+export interface getAllWorkspacesResponse {
+  status: number;
+  message: string;
+  success: boolean;
+  data: {
+    workspaces: [
+      workspace: Workspace,
+      role: string
+    ];
+  };
 }
 
 export interface CreateWorkspaceResponse {
