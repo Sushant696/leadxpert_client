@@ -1,16 +1,31 @@
+import { RESOURCE_BASED_ROLES } from '@/types/user';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+interface Workspace {
+  id: string;
+  name: string;
+  role: RESOURCE_BASED_ROLES;
+  slug?: string;
+}
+
 interface WorkspaceStore {
-  activeWorkspaceSlug: string | null;
-  setActiveWorkspace: (slug: string) => void;
+  workspace: Workspace | null;
+  setWorkspace: (workspace: Workspace) => void;
+  clearWorkspace: () => void;
+  isActiveWorkspace: (slug: string) => boolean;
 }
 
 const useWorkspaceStore = create<WorkspaceStore>()(
   persist(
-    (set) => ({
-      activeWorkspaceSlug: null,
-      setActiveWorkspace: (slug: string) => set({ activeWorkspaceSlug: slug }),
+    (set, get) => ({
+      workspace: null,
+      setWorkspace: (workspace) => set({ workspace }),
+      clearWorkspace: () => set({ workspace: null }),
+      isActiveWorkspace: (slug: string) => {
+        const currentWorkspace = get().workspace;
+        return currentWorkspace?.slug === slug;
+      }
     }),
     {
       name: 'active-workspace',

@@ -26,22 +26,17 @@ import getInitials from '@/utils/getInitials';
 import useAuthStore from '@/store/auth-store';
 import { useLogout } from '@/features/auth/hooks/useLogout';
 import useWorkspaceStore from '@/store/workspace-store';
-import useGetUserWorkspaces from '@/features/workspace/hooks/useGetUserWorkspaces';
-import InviteMemberModal from '@/features/workspace/components/inviteUserModal';
 import { RESOURCE_BASED_ROLES } from '@/types/user';
 import { Button } from '@/components/ui/button';
+import InviteMemberModal from '@/features/workspace/components/inviteUserModal';
 
 export default function TopBar() {
   const { user } = useAuthStore();
   const logoutMutation = useLogout();
   const router = useRouter();
-  const { activeWorkspaceSlug } = useWorkspaceStore();
-  const { data: workspaces } = useGetUserWorkspaces();
+  const { workspace } = useWorkspaceStore();
   const [isInviteOpen, setIsInviteOpen] = useState(false);
-
-  const currentWorkspace = workspaces?.data?.fullWorkspaces?.find(
-    (w: any) => w.workspace.slug === activeWorkspaceSlug
-  );
+  const currentWorkspace = workspace;
 
   const userRole = currentWorkspace?.role;
   const canManage = userRole === RESOURCE_BASED_ROLES.SUPER_ADMIN || userRole === RESOURCE_BASED_ROLES.ADMIN;
@@ -62,14 +57,12 @@ export default function TopBar() {
             />
           </div>
 
-          {/* Quick Add Button */}
           <button className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-semibold hover:bg-primary/90 transition-colors">
             <Plus size={18} />
             <span>New</span>
           </button>
         </div>
 
-        {/* Right Side Actions */}
         <div className="flex items-center gap-4">
           {canManage && currentWorkspace && (
             <Button
@@ -83,15 +76,15 @@ export default function TopBar() {
             </Button>
           )}
 
+
           {/* Notification Bell */}
           <button className="p-2 text-muted-foreground hover:bg-muted rounded-lg relative transition-colors">
             <Bell size={20} />
             <span className="absolute top-2 right-2.5 w-2 h-2 bg-destructive border-2 border-background rounded-full"></span>
           </button>
 
-          <div className="h-8 w-[1px] bg-border mx-2"></div>
+          <div className="h-8 w-px bg-border mx-2"></div>
 
-          {/* Profile Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center gap-3 outline-none group">
               <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
@@ -131,11 +124,10 @@ export default function TopBar() {
         </div>
       </header>
 
-      {/* Invite Modal */}
       <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
         <InviteMemberModal
-          workspaceSlug={currentWorkspace?.workspace.slug || ''}
-          setIsOpen={setIsInviteOpen}
+          workspaceSlug={currentWorkspace?.slug || ''}
+          workspaceId={currentWorkspace?.id || ''}
         />
       </Dialog>
     </>

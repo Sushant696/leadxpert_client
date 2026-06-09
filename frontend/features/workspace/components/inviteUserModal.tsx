@@ -12,31 +12,56 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { showToast } from "@/components/showToast";
+import { useGetInvitationLink } from "../hooks/useGetInvitationLink";
 
 interface InviteMemberModalProps {
+  workspaceId: string;
   workspaceSlug: string;
-  setIsOpen: (open: boolean) => void;
 }
 
-export default function InviteMemberModal({ workspaceSlug, setIsOpen }: InviteMemberModalProps) {
+export default function InviteMemberModal({ workspaceId }: InviteMemberModalProps) {
   const [email, setEmail] = useState("");
   const [copied, setCopied] = useState(false);
+  const invitationMutation = useGetInvitationLink();
+  const [inviteLink, setInviteLink] = useState<string>("");
 
-  // Generate invite link (you'll implement this properly later)
-  const inviteLink = `http://localhost:3000/invite/${workspaceSlug}`;
+  const resolveInviteLink = (data: unknown) => {
+    if (!data || typeof data !== "object") {
+      return "";
+    }
+
+    const payload = data as Record<string, unknown>;
+    const directLink =
+      payload.inviteLink ||
+      payload.link ;
+
+    if (typeof directLink === "string" && directLink.length > 0) {
+      return directLink;  
+    }
+    return "";  
+  };
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(inviteLink);
+    navigator.clipboard.writeText(inviteLink || "");
     setCopied(true);
     showToast.success("Link copied to clipboard");
     setTimeout(() => setCopied(false), 2000);
   };
 
   const handleSendInvite = () => {
-    // TODO: Implement email invite
     showToast.success(`Invite sent to ${email}`);
     setEmail("");
   };
+
+  const handleGenerateLink = async () => {
+    const data = await invitationMutation.mutateAsync(workspaceId);
+    const resolvedLink = resolveInviteLink(data);
+    if (!resolvedLink) {
+      showToast.error("Invite link not returned from server");
+      return;
+    }
+    setInviteLink(resolvedLink);
+  }
 
   return (
     <DialogContent className="sm:max-w-md">
@@ -75,6 +100,12 @@ export default function InviteMemberModal({ workspaceSlug, setIsOpen }: InviteMe
           </div>
         </div>
 
+        <Button
+          onClick={handleGenerateLink}
+        >
+          Generate Invite Link
+        </Button>
+
         {/* Copy Link */}
         <div className="space-y-2">
           <Label>Share Invite Link</Label>
@@ -88,6 +119,7 @@ export default function InviteMemberModal({ workspaceSlug, setIsOpen }: InviteMe
               variant="outline"
               onClick={handleCopyLink}
               className="shrink-0"
+              disabled={!inviteLink}
             >
               {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
             </Button>

@@ -18,26 +18,19 @@ import { Add } from "iconsax-reactjs";
 import useAuthStore from "@/store/auth-store";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import useWorkspaceStore from "@/store/workspace-store";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import useGetUserWorkspaces from "@/features/workspace/hooks/useGetUserWorkspaces";
 import WorkspaceJoinModal from "@/features/workspace/components/WorkspaceJoinModal";
 import WorkspaceCreateModal from "@/features/workspace/components/CreateWorkspaceModal";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import useWorkspaceStore from "@/store/workspace-store";
-import { WorkspaceMember } from "@/features/workspace/workspace-types";
 
 function Dashboard() {
   const { user } = useAuthStore();
-  const { data: workspaces, isLoading } = useGetUserWorkspaces();
-  const [isCreateWorkspaceOpen, setIsCreateWorkspaceOpen] = useState<boolean>(false);
+  const { workspace } = useWorkspaceStore()
   const [isJoinWorkspaceOpen, setIsJoinWorkspaceOpen] = useState(false);
-  const { activeWorkspaceSlug } = useWorkspaceStore();
+  const [isCreateWorkspaceOpen, setIsCreateWorkspaceOpen] = useState<boolean>(false);
+  const currentWorkspace = workspace;
 
-  const currentWorkspace = workspaces?.data?.fullWorkspaces?.find(
-    (w: WorkspaceMember) => w.workspace.slug === activeWorkspaceSlug
-  );
-
-  const hasWorkspaces = workspaces?.data?.usersWorkspaces && workspaces.data.usersWorkspaces.length > 0;
   const currentDate = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
     year: 'numeric',
@@ -56,12 +49,12 @@ function Dashboard() {
         </h1>
         {currentWorkspace && (
           <p className="text-muted-foreground">
-            You're viewing <span className="font-medium text-foreground">{currentWorkspace.workspace.name}</span> workspace
+            You're viewing <span className="font-medium text-foreground">{currentWorkspace.name}</span> workspace
           </p>
         )}
       </header>
 
-      {!hasWorkspaces && !isLoading && (
+      {!currentWorkspace && (
         <Card className="border-primary/20 bg-primary/5">
           <CardHeader className="flex flex-row items-center space-x-4">
             <div className="p-3 bg-primary/10 rounded-lg text-primary">
@@ -94,7 +87,7 @@ function Dashboard() {
         </Card>
       )}
 
-      {hasWorkspaces && (
+      {currentWorkspace && (
         <div className="grid gap-4 md:grid-cols-4">
           <Card>
             <CardContent className="p-6">

@@ -6,11 +6,13 @@ export function useGetInvitationLink() {
   return useMutation({
     mutationKey: ["getInvitationLink"],
     mutationFn: getInviteLinkAction,
-    onSuccess: () => {
-      showToast.success("Invitation link created successfully");
+    onSuccess: (data) => {
+      console.log(data)
+      showToast.success(data.message || "Invitation link created successfully");
     },
     onError: (error: Error) => {
       showToast.error(error.message);
     },
   });
 }
+
