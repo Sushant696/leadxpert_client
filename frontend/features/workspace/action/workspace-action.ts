@@ -1,7 +1,7 @@
 'use server';
 
-import { workspaceApi } from "./workspace-api";
-import { CreateWorkspacePayload, TransformedWorkspace } from "./workspace-types";
+import { workspaceApi } from "../api/workspace-api";
+import { CreateWorkspacePayload, TransformedWorkspace } from "../workspace-types";
 
 export async function createWorkspaceAction(formData: CreateWorkspacePayload) {
   try {
@@ -17,7 +17,7 @@ export async function createWorkspaceAction(formData: CreateWorkspacePayload) {
 
     throw new Error(response.message || 'Failed to create workspace');
   } catch (error: any) {
- 
+
     if (error.response?.data?.message) {
       throw new Error(error.response.data.message);
     }

@@ -9,8 +9,6 @@ import {
   LogOut,
   ChevronDown,
   UserPlus,
-  Users,
-  Building2
 } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -31,6 +29,7 @@ import useWorkspaceStore from '@/store/workspace-store';
 import useGetUserWorkspaces from '@/features/workspace/hooks/useGetUserWorkspaces';
 import InviteMemberModal from '@/features/workspace/components/inviteUserModal';
 import { RESOURCE_BASED_ROLES } from '@/types/user';
+import { Button } from '@/components/ui/button';
 
 export default function TopBar() {
   const { user } = useAuthStore();
@@ -73,14 +72,15 @@ export default function TopBar() {
         {/* Right Side Actions */}
         <div className="flex items-center gap-4">
           {canManage && currentWorkspace && (
-            <button
+            <Button
+              variant="outline"
               onClick={() => setIsInviteOpen(true)}
-              className="flex items-center gap-2 text-muted-foreground hover:text-foreground hover:bg-muted px-3 py-2 rounded-xl text-sm font-medium transition-colors"
+              className="flex items-center gap-2 text-muted-foreground hover:text-foreground hover:bg-muted px-3 py-2 rounded-xl text-sm font-medium transition-colors bg-muted"
               title="Invite team members"
             >
-              <UserPlus size={18} />
+              <UserPlus size={18} className='text-primary' />
               <span className="hidden lg:inline">Invite</span>
-            </button>
+            </Button>
           )}
 
           {/* Notification Bell */}

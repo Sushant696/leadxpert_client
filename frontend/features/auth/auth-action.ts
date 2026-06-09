@@ -13,7 +13,6 @@ export async function loginAction(formData: LoginCredentials) {
       await setAccessToken(response.data?.accessToken);
       await setRefreshToken(response.data?.refreshToken);
       await setUserRole(response.data?.user?.role);
-
       return {
         success: true,
         message: response.message || 'Login successful',
@@ -21,15 +20,14 @@ export async function loginAction(formData: LoginCredentials) {
       };
     }
 
-    return {
-      success: false,
-      message: response.message || 'Login failed'
-    };
+    throw new Error(response.message || 'Login failed');
   } catch (error: any) {
-    return {
-      success: false,
-      error: error.response?.data?.message || "Login failed",
-    };
+    console.log(error, "Login error in action");
+    throw new Error(
+      error.response?.data?.message ||
+      error.message ||
+      "Login failed"
+    );
   }
 }
 

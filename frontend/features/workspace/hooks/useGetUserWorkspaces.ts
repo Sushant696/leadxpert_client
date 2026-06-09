@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { getUserWorkspacesAction } from "../workspace-action"
+import { getUserWorkspacesAction } from "../action/workspace-action"
 
 const useGetUserWorkspaces = () => {
   return useQuery(

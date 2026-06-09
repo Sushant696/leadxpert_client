@@ -1,6 +1,6 @@
 import { apiURLs } from "@/utils/apiUrls";
 import { apiWrapper } from "@/lib/api/api-wrapper";
-import { CreateWorkspacePayload } from "./workspace-types";
+import { CreateWorkspacePayload } from "../workspace-types";
 
 const workspaceApi = {
   createWorkspace: async (data: CreateWorkspacePayload) => {

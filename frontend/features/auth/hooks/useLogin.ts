@@ -16,10 +16,6 @@ export function useLogin() {
   return useMutation({
     mutationFn: async (credentials: { email: string; password: string }) => {
       const result = await loginAction(credentials);
-
-      if (!result.success) {
-        throw new Error(result.error);
-      }
       return result.data;
     },
     onSuccess: (data) => {

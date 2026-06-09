@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { createWorkspaceAction } from "../workspace-action"
+
 import { showToast } from "@/components/showToast";
+import { createWorkspaceAction } from "../action/workspace-action";
 
 const useCreateWorkspace = () => {
   const queryClient = useQueryClient();
