@@ -6,107 +6,68 @@ import SessionExpiredError from "@/lib/auth/session-error-handler";
 import { clearAuthCookies, setAccessToken, setRefreshToken, setUserRole } from "@/lib/auth/cookies";
 
 export async function loginAction(formData: LoginCredentials) {
-  try {
-    const response = await authApi.login(formData);
+  const response = await authApi.login(formData);
 
-    if (response.success) {
-      await setAccessToken(response.data?.accessToken);
-      await setRefreshToken(response.data?.refreshToken);
-      await setUserRole(response.data?.user?.role);
-      return {
-        success: true,
-        message: response.message || 'Login successful',
-        data: response.data.user,
-      };
-    }
-
+  if (!response.success) {
     throw new Error(response.message || 'Login failed');
-  } catch (error: any) {
-    console.log(error, "Login error in action");
-    throw new Error(
-      error.response?.data?.message ||
-      error.message ||
-      "Login failed"
-    );
   }
+
+  await setAccessToken(response.data?.accessToken);
+  await setRefreshToken(response.data?.refreshToken);
+  await setUserRole(response.data?.user?.role);
+
+  return response.data.user;
 }
 
-
 export async function registerAction(formData: RegisterData) {
-  try {
-    const response = await authApi.register(formData);
+  const response = await authApi.register(formData);
 
-    return {
-      success: true,
-      message: response.message || 'Registration successful',
-      data: response.data,
-    };
-  } catch (error: any) {
-    return {
-      success: false,
-      error: error.response?.data?.message || "Registration failed",
-    };
+  if (!response.success) {
+    throw new Error(response.message || 'Registration failed');
   }
+
+  return response.data;
 }
 
 export async function logoutAction() {
-  try {
-    /*
-     * Implement logout api after refresh token is saved in db to remove session from db as well
-        try {
-          await authApi.logout();
-        } catch (error) {
-          await clearAuthCookies();
-          console.log("Logout API call failed, but clearing cookies anyway");
-        }
-    */
-    await clearAuthCookies();
-    return { success: true };
-  } catch (error: any) {
-    return { success: true };
-  }
+  await clearAuthCookies();
+  return { success: true };
 }
 
 export async function getCurrentUserAction() {
   try {
     const response = await authApi.getCurrentUser();
 
-    if (response.success) {
+    if (!response.success) {
       return {
-        success: true,
-        message: response.message,
-        data: response.data,
+        success: false,
+        sessionExpired: response.sessionExpired || false,
+        error: response.message || 'Failed to fetch user data'
       };
     }
 
     return {
-      success: false,
-      sessionExpired: true,
-      message: response.message || 'Failed to fetch user data'
+      success: true,
+      data: response.data
     };
-
   } catch (error: any) {
-    // Check if it's a session expired error
     if (error instanceof SessionExpiredError) {
       return {
         success: false,
         sessionExpired: true,
-        error: error.message,
+        error: error.message
       };
     }
 
     return {
       success: false,
+      sessionExpired: false,
       error: error.message || 'Failed to get user'
     };
   }
 }
 
 export async function clearAuthCookiesAction() {
-  try {
-    await clearAuthCookies();
-    return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message };
-  }
+  await clearAuthCookies();
+  return { success: true };
 }

@@ -22,4 +22,8 @@ export const authApi = {
     return await apiWrapper.post(apiURLs.AUTH.me);
   },
 
+  joinWorkspaceByToken: async (token: string) => {
+    const response = await apiWrapper.post(apiURLs.WORKSPACE.joinByToken(token));
+    return response;
+  }
 };

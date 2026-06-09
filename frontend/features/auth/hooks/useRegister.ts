@@ -11,11 +11,6 @@ export function useRegister() {
   return useMutation({
     mutationFn: async (data: RegisterData) => {
       const result = await registerAction(data);
-
-      if (!result.success) {
-        throw new Error(result.error);
-      }
-
       return result.data;
     },
     onSuccess: () => {

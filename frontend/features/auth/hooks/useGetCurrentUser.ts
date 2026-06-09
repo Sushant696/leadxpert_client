@@ -14,11 +14,10 @@ function useGetCurrentUser() {
     queryFn: async () => {
       const result = await getCurrentUserAction();
       if (!result.success) {
-        // Handle session expiration
         if (result.sessionExpired) {
           router.push('/login?session=expired');
         }
-        throw new Error(result.error || result.message);
+        throw new Error(result.error || result.sessionExpired.message || 'Failed to fetch user data');
       }
       const { role, ...userData } = result.data;
       setUser({
