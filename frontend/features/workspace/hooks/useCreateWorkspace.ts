@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { showToast } from "@/components/showToast";
 import { createWorkspaceAction } from "../action/workspace-action";
@@ -15,8 +15,8 @@ const useCreateWorkspace = () => {
     onError: (error: any) => {
       showToast.error(error.message);
       console.error("Error creating workspace:", error);
-    }
-  })
-}
+    },
+  });
+};
 
-export { useCreateWorkspace }
+export { useCreateWorkspace };

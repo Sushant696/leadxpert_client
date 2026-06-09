@@ -4,13 +4,17 @@ import { CreateWorkspacePayload } from "../workspace-types";
 
 const workspaceApi = {
   createWorkspace: async (data: CreateWorkspacePayload) => {
-    const response = await apiWrapper.post(apiURLs.WORKSPACE.createWorkspace, data);
-    return response;
+    return await apiWrapper.post(apiURLs.WORKSPACE.create, data);
   },
   getUserWorkspaces: async () => {
-    const response = await apiWrapper.get(apiURLs.WORKSPACE.getAllWorkspaces);
-    return response;
-  }
-}
+    return await apiWrapper.get(apiURLs.WORKSPACE.getAll);
+  },
+  updateById: async (workspaceId: string) => {
+    return await apiWrapper.get(apiURLs.WORKSPACE.updateById(`${workspaceId}`));
+  },
+  deleteById: async (workspaceId: string) => {
+    return await apiWrapper.get(apiURLs.WORKSPACE.deleteById(`${workspaceId}`));
+  },
+};
 
 export { workspaceApi };

@@ -1,13 +1,11 @@
-import { useQuery } from "@tanstack/react-query"
-import { getUserWorkspacesAction } from "../action/workspace-action"
+import { useQuery } from "@tanstack/react-query";
+import { getUserWorkspacesAction } from "../action/workspace-action";
 
 const useGetUserWorkspaces = () => {
-  return useQuery(
-    {
-      queryKey: ["workspaces"],
-      queryFn: getUserWorkspacesAction
-    }
-  )
-}
+  return useQuery({
+    queryKey: ["workspaces"],
+    queryFn: getUserWorkspacesAction,
+  });
+};
 
-export default useGetUserWorkspaces
+export default useGetUserWorkspaces;

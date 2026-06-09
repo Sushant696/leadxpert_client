@@ -18,8 +18,10 @@ export interface WorkspaceMember {
 }
 
 export interface TransformedWorkspace {
+  id: string;
   name: string;
   slug: string;
+  role: RESOURCE_BASED_ROLES;
 }
 
 export interface getAllWorkspacesResponse {

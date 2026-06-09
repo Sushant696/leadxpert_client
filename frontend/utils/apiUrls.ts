@@ -5,30 +5,67 @@ export const apiURLs = {
     logout: '/api/auth/logout',
     me: '/api/auth/mee',
     refresh: '/api/auth/refresh',
-    changePassword: "/api/auth/changePassword"
+    changePassword: "/api/auth/changePassword",
   },
+
   FILE: {
     uploadImg: '/api/upload/image',
     uploadMultipleImges: '/api/upload/images',
     deleteImage: "/api/upload/image",
   },
+
   USER: {
     updateUser: '/api/users/update',
     getAllUsers: '/api/users',
     getUserById: (id: string) => `/api/users/${id}`,
     deleteUserById: (id: string) => `/api/users/${id}`,
   },
+
   WORKSPACE: {
-    createWorkspace: '/api/workspace',
-    getAllWorkspaces: '/api/workspace',
-    getWorkspaceById: (id: string) => `/api/workspace/${id}`,
-    updateWorkspaceById: (id: string) => `/api/workspace/${id}`,
-    deleteWorkspaceById: (id: string) => `/api/workspace/${id}`,
+    // WORKSPACE CRUD
+    create: '/api/workspace',
+    getAll: '/api/workspace',
+    getById: (workspaceId: string) => `/api/workspace/${workspaceId}`,
+    updateById: (workspaceId: string) => `/api/workspace/${workspaceId}`,
+    deleteById: (workspaceId: string) => `/api/workspace/${workspaceId}`,
+
+    // INVITES
+    invite: {
+      createLink: (workspaceId: string) =>
+        `/api/workspace/${workspaceId}/invite/link`,
+
+      createByEmail: (workspaceId: string) =>
+        `/api/workspace/${workspaceId}/invite/email`,
+
+      getActive: (workspaceId: string) =>
+        `/api/workspace/${workspaceId}/invites`,
+
+      revoke: (workspaceId: string, inviteId: string) =>
+        `/api/workspace/${workspaceId}/invites/${inviteId}`,
+    },
+
+    // JOIN WORKSPACE
+    joinByToken: (token: string) =>
+      `/api/workspace/join/${token}`,
+
+    // MEMBERS
+    members: {
+      getAll: (workspaceId: string) =>
+        `/api/workspace/${workspaceId}/members`,
+
+      updateRole: (workspaceId: string) =>
+        `/api/workspace/${workspaceId}/members`,
+
+      remove: (workspaceId: string) =>
+        `/api/workspace/${workspaceId}/members`,
+    },
   },
+
   FORGOTPASSWORD: {
     verifyOTP: '/api/forgotPassword/verifyOTP',
     checkEmail: '/api/forgotPassword/checkEmail',
     generateOTP: '/api/forgotPassword/generateOTP',
     changePassword: '/api/forgotPassword/changePassword',
   },
-}
+};
+
