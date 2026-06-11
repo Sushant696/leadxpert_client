@@ -1,41 +1,36 @@
-"use client";
+"use client"
 
 import { useState } from 'react';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { Link, ChevronDown, Plus, Settings, ChevronRight } from 'lucide-react';
+import { Settings, ChevronRight, Plus } from 'lucide-react';
 
 import NavItem from './navItem';
 import { Dialog } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { NAV_ITEMS } from './items';
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import WorkspaceJoinModal from '@/features/workspace/components/WorkspaceJoinModal';
 import WorkspaceCreateModal from '@/features/workspace/components/CreateWorkspaceModal';
-import WorkspacesListing from '@/features/workspace/components/workspacesList';
 import useWorkspaceStore from '@/store/workspace-store';
-import useGetUserWorkspaces from '@/features/workspace/hooks/useGetUserWorkspaces';
 import { cn } from '@/lib/utils';
+import { RESOURCE_BASED_ROLES } from '@/types/user';
+import WorkspaceDropdown from '@/features/workspace/components/workspacesDropDown';
+import getInitials from '@/utils/getInitials';
 
 const Sidebar = () => {
   const pathname = usePathname();
   const router = useRouter();
   const [isCreateWorkspaceOpen, setIsCreateWorkspaceOpen] = useState<boolean>(false);
   const [isJoinWorkspaceOpen, setIsJoinWorkspaceOpen] = useState(false);
-  const { activeWorkspaceSlug } = useWorkspaceStore();
-  const { data: workspaces } = useGetUserWorkspaces();
+  const { workspace } = useWorkspaceStore();
 
-  const currentWorkspace = workspaces?.data?.fullWorkspaces?.find(
-    (w: any) => w.workspace.slug === activeWorkspaceSlug
-  );
-
+  const currentWorkspace = workspace;
   const userRole = currentWorkspace?.role;
-  const canManage = userRole === "SUPER_ADMIN" || userRole === "ADMIN";
+  const canManage = userRole === RESOURCE_BASED_ROLES.SUPER_ADMIN || userRole === RESOURCE_BASED_ROLES.ADMIN;
 
   return (
     <aside className="w-64 border-r bg-surface p-4 sticky top-0 shadow-sm h-screen flex flex-col">
-      {/* Logo */}
       <div className="flex items-center gap-3 mb-6 px-2">
         <Image src="/logoiconblack.png" alt="leadXpert logo" width={40} height={40} className='w-10' />
         <div>
@@ -44,20 +39,15 @@ const Sidebar = () => {
         </div>
       </div>
 
-      {/* Workspace Switcher */}
       <div className="mb-2">
-        <button className="w-full border border-border bg-background/50 rounded-xl p-2.5 flex justify-between items-center text-sm font-medium hover:bg-muted transition-all group">
-          <span className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-primary rounded-lg flex items-center justify-center text-[10px] text-white font-bold">M</div>
-            <span className="text-primary/80 group-hover:text-primary">Mesh Studio</span>
-          </span>
-          <ChevronDown size={14} className="text-muted-foreground" />
-        </button>
+        <WorkspaceDropdown
+          onCreateWorkspace={() => setIsCreateWorkspaceOpen(true)}
+          onJoinWorkspace={() => setIsJoinWorkspaceOpen(true)}
+        />
       </div>
 
       <Separator className="my-4 opacity-50" />
 
-      {/* Navigation Items */}
       <nav className="space-y-1 pr-1">
         {NAV_ITEMS.map((item) => (
           <NavItem
@@ -66,51 +56,52 @@ const Sidebar = () => {
             label={item.label}
             href={item.href}
             active={pathname === item.href}
-            isAi={item.isAi}
           />
         ))}
       </nav>
 
       <Separator className="my-4 opacity-50" />
 
-      {/* Workspaces Header */}
       <div className='flex items-center justify-between'>
-        <h6 className='text-sm text-muted-foreground'>Workspaces</h6>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button variant={"ghost"} className="p-1 rounded-md hover:bg-muted hover:text-primary">
-              <Plus size={16} />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent
-            side="right"
-            align="start"
-            className="w-48 p-1"
-          >
-            <button
-              onClick={() => setIsCreateWorkspaceOpen(true)}
-              className="w-full flex items-center gap-2 px-2 py-2 text-sm rounded-md hover:bg-muted"
-            >
-              <Plus size={16} className='text-primary' />
-              Create workspace
-            </button>
-
-            <button
-              onClick={() => setIsJoinWorkspaceOpen(true)}
-              className="w-full flex items-center gap-2 px-2 py-2 text-sm rounded-md hover:bg-muted"
-            >
-              <Link size={16} className='text-primary' />
-              Join workspace
-            </button>
-          </PopoverContent>
-        </Popover>
+        <h6 className='text-sm text-muted-foreground'>Pipelines</h6>
+        {canManage && (
+          <Button variant={"ghost"} className="p-1 rounded-md hover:bg-muted hover:text-primary">
+            <Plus size={16} />
+          </Button>
+        )}
       </div>
 
-      {/* Workspace Listing - Fixed height with scroll */}
-      <WorkspacesListing />
-
-      {/* Spacer to push settings to bottom */}
-      <div className="flex-1" />
+      <div className="space-y-1 flex-1 overflow-y-auto p-1 mt-2">
+        {currentWorkspace ? (
+          <>
+            {/* Dymmy pipeline items*/}
+            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 group bg-primary/10 text-primary">
+              <div className='w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary'>
+                {getInitials("Sales Pipeline")}
+              </div>
+              <span className="text-sm font-bold truncate">Sales Pipeline</span>
+            </button>
+            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 group text-muted-foreground hover:bg-muted hover:text-primary">
+              <div className='w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary'>
+                {getInitials("Marketing Leads")}
+              </div>
+              <span className="text-sm font-medium truncate">Marketing Leads</span>
+            </button>
+            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 group text-muted-foreground hover:bg-muted hover:text-primary">
+              <div className='w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary'>
+                {getInitials("Partnership Deals")}
+              </div>
+              <span className="text-sm font-medium truncate">Partnership Deals</span>
+            </button>
+          </>
+        ) : (
+          <div className="mt-3 px-3 py-4 text-center">
+            <p className="text-xs text-muted-foreground">
+              Select a workspace to view pipelines
+            </p>
+          </div>
+        )}
+      </div>
 
       {/* Workspace Settings - Always at bottom */}
       {currentWorkspace && (

@@ -4,8 +4,6 @@ import {
   Users,
   Tag,
   CheckSquare,
-  Sparkles,
-  PhoneCall,
 } from 'lucide-react';
 
 export const NAV_ITEMS = [
@@ -14,8 +12,6 @@ export const NAV_ITEMS = [
   { label: 'Clients', icon: Users, href: '/dashboard/clients' },
   { label: 'Deals', icon: Tag, href: '/dashboard/deals' },
   { label: 'Tasks', icon: CheckSquare, href: '/dashboard/tasks' },
-  { label: 'Assistant', icon: Sparkles, href: '/dashboard/assistant', isAi: true },
-  { label: 'Follow-ups', icon: PhoneCall, href: '/dashboard/follow-ups' },
 ];
 
 export const ProtectedPaths = [

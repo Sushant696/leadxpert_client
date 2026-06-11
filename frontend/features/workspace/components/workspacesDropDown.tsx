@@ -1,0 +1,135 @@
+"use client";
+
+import { ChevronDown, Plus, Link, Check } from "lucide-react";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import getInitials from "@/utils/getInitials";
+import { RESOURCE_BASED_ROLES } from "@/types/user";
+import useWorkspaceStore from "@/store/workspace-store";
+import useGetUserWorkspaces from "@/features/workspace/hooks/useGetUserWorkspaces";
+
+interface WorkspaceDropdownProps {
+  onCreateWorkspace: () => void;
+  onJoinWorkspace: () => void;
+}
+
+function WorkspaceDropdown({ onCreateWorkspace, onJoinWorkspace }: WorkspaceDropdownProps) {
+  const { data, isLoading } = useGetUserWorkspaces();
+  const { workspace, setWorkspace, isActiveWorkspace } = useWorkspaceStore();
+
+  if (isLoading || !data) {
+    return (
+      <div className="w-full border border-border bg-background/50 rounded-xl p-2.5">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 bg-muted animate-pulse rounded-lg" />
+          <div className="flex-1">
+            <div className="h-3 bg-muted animate-pulse rounded w-20" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const ownedWorkspaces = data.filter((ws) => ws.role === RESOURCE_BASED_ROLES.SUPER_ADMIN);
+  const joinedWorkspaces = data.filter((ws) => ws.role !== RESOURCE_BASED_ROLES.SUPER_ADMIN);
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="w-full border border-border bg-background/50 rounded-xl p-2.5 flex justify-between items-center text-sm font-medium hover:bg-muted transition-all group">
+          <span className="flex items-center gap-2">
+            <div className="w-6 h-6 bg-primary rounded-lg flex items-center justify-center text-[10px] text-white font-bold">
+              {workspace ? getInitials(workspace.name) : "?"}
+            </div>
+            <span className="text-primary/80 group-hover:text-primary truncate max-w-[140px]">
+              {workspace?.name || "Select workspace"}
+            </span>
+          </span>
+          <ChevronDown size={14} className="text-muted-foreground flex-shrink-0" />
+        </button>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent className="w-64" align="start">
+        {ownedWorkspaces.length > 0 && (
+          <div className="">
+            <div className="px-2 py-1.5">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Your Workspaces
+              </span>
+            </div>
+            {ownedWorkspaces.map((ws) => (
+              <DropdownMenuItem
+                key={ws.slug}
+                onClick={() => setWorkspace(ws)}
+                className="flex items-center gap-2 cursor-pointer focus:bg-muted focus:text-foreground "
+              >
+                <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
+                  {getInitials(ws.name)}
+                </div>
+                <span className="flex-1 truncate">{ws.name}</span>
+                {isActiveWorkspace(ws.slug) && (
+                  <Check size={14} className="text-primary" />
+                )}
+              </DropdownMenuItem>
+            ))}
+          </div>
+        )}
+
+        {joinedWorkspaces.length > 0 && (
+          <>
+            {joinedWorkspaces.length > 0 && <DropdownMenuSeparator />}
+            <div className="px-2 py-1.5">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Joined Workspaces
+              </span>
+            </div>
+            {joinedWorkspaces.map((ws) => (
+              <DropdownMenuItem
+                key={ws.slug}
+                onClick={() => setWorkspace(ws)}
+                className="flex items-center gap-2 cursor-pointer focus:bg-muted focus:text-foreground"
+              >
+                <div className="w-6 h-6 rounded-lg bg-muted flex items-center justify-center text-[10px] font-bold text-muted-foreground">
+                  {getInitials(ws.name)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="truncate">{ws.name}</div>
+                  <div className="text-[10px] text-muted-foreground capitalize">
+                    {ws.role.toLowerCase().replace('_', ' ')}
+                  </div>
+                </div>
+                {isActiveWorkspace(ws.slug) && (
+                  <Check size={14} className="text-primary" />
+                )}
+              </DropdownMenuItem>
+            ))}
+          </>
+        )}
+
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={onCreateWorkspace}
+          className="flex items-center gap-2 cursor-pointer text-primary focus:bg-primary/10 focus:text-foreground"
+        >
+          <Plus size={16} />
+          Create workspace
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={onJoinWorkspace}
+          className="flex items-center gap-2 cursor-pointer text-primary focus:bg-primary/10 focus:text-foreground"
+        >
+          <Link size={16} />
+          Join workspace
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+export default WorkspaceDropdown;
