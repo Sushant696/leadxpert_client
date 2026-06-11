@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { MagicStar } from 'iconsax-reactjs';
 
 import {
   DropdownMenu,
@@ -21,13 +22,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Dialog } from "@/components/ui/dialog";
 import getInitials from '@/utils/getInitials';
 import useAuthStore from '@/store/auth-store';
-import { useLogout } from '@/features/auth/hooks/useLogout';
-import useWorkspaceStore from '@/store/workspace-store';
-import { RESOURCE_BASED_ROLES } from '@/types/user';
 import { Button } from '@/components/ui/button';
+import { Dialog } from "@/components/ui/dialog";
+import NewPopover from '@/components/NewPopover';
+import { RESOURCE_BASED_ROLES } from '@/types/user';
+import useWorkspaceStore from '@/store/workspace-store';
+import { useLogout } from '@/features/auth/hooks/useLogout';
 import InviteMemberModal from '@/features/workspace/components/inviteUserModal';
 
 export default function TopBar() {
@@ -56,11 +58,7 @@ export default function TopBar() {
               className="w-full bg-muted/30 border border-input rounded-xl py-2 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 transition-all"
             />
           </div>
-
-          <button className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-semibold hover:bg-primary/90 transition-colors">
-            <Plus size={18} />
-            <span>New</span>
-          </button>
+          <NewPopover />
         </div>
 
         <div className="flex items-center gap-4">
@@ -76,14 +74,17 @@ export default function TopBar() {
             </Button>
           )}
 
-
+          <Button className='bg-gradient-to-r from-primary to-secondary text-white hover:from-primary/90 hover:to-secondary/90  rounded-xl'>
+            <MagicStar size={18} className='' variant='Bulk' />
+            Assistant
+          </Button>
+          <div className="h-8 w-px bg-border mx-2"></div>
           {/* Notification Bell */}
           <button className="p-2 text-muted-foreground hover:bg-muted rounded-lg relative transition-colors">
             <Bell size={20} />
             <span className="absolute top-2 right-2.5 w-2 h-2 bg-destructive border-2 border-background rounded-full"></span>
           </button>
 
-          <div className="h-8 w-px bg-border mx-2"></div>
 
           <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center gap-3 outline-none group">
