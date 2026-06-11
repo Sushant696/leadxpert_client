@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ListTodo,
   UserPlus,
@@ -16,20 +16,41 @@ import {
 import { Add } from "iconsax-reactjs";
 
 import useAuthStore from "@/store/auth-store";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import useWorkspaceStore from "@/store/workspace-store";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import WorkspaceJoinModal from "@/features/workspace/components/WorkspaceJoinModal";
 import WorkspaceCreateModal from "@/features/workspace/components/CreateWorkspaceModal";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { useJoinWorkspace } from "@/features/auth/hooks/useJoinWorkspace";
 
 function Dashboard() {
-  const { user } = useAuthStore();
+  const { user, token } = useAuthStore();
   const { workspace } = useWorkspaceStore()
   const [isJoinWorkspaceOpen, setIsJoinWorkspaceOpen] = useState(false);
   const [isCreateWorkspaceOpen, setIsCreateWorkspaceOpen] = useState<boolean>(false);
   const currentWorkspace = workspace;
+  const isInviteTokenPresent = token?.token ? true : false;
+  const [joinWorkspaceModal, setJoinWorkspaceModal] = useState(false)
+
+  const joinWorkspaceMutation = useJoinWorkspace(
+    token?.token ?? "",
+    () => setJoinWorkspaceModal(false)
+  )
+
+  useEffect(() => {
+    if (isInviteTokenPresent) {
+      setJoinWorkspaceModal(true);
+    }
+  }, [isInviteTokenPresent])
+
+  const handleDialogChange = (open: boolean) => {
+    setJoinWorkspaceModal(open)
+    if (!open && token?.token) {
+      useAuthStore.getState().setInviteToken({ token: "" })
+    }
+  }
 
   const currentDate = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
@@ -248,6 +269,27 @@ function Dashboard() {
         </Card>
       </section>
 
+
+      <Dialog open={joinWorkspaceModal} onOpenChange={handleDialogChange}>
+        <DialogContent className="max-w-lg sm:max-w-md m-2">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">Join a Workspace</DialogTitle>
+            <DialogDescription>
+              You've been invited to join a workspace. Click below to accept the invitation.
+            </DialogDescription>
+          </DialogHeader>
+          <div>
+            <Button
+              variant="default"
+              className="w-full mb-4"
+              onClick={() => joinWorkspaceMutation.mutate()}
+              disabled={joinWorkspaceMutation.isPending}
+            >
+              {joinWorkspaceMutation.isPending ? "Joining..." : "Join Workspace"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
       <Dialog open={isCreateWorkspaceOpen} onOpenChange={setIsCreateWorkspaceOpen}>
         <WorkspaceCreateModal setIsCreateWorkspaceOpen={setIsCreateWorkspaceOpen} />
       </Dialog>
@@ -255,7 +297,7 @@ function Dashboard() {
       <Dialog open={isJoinWorkspaceOpen} onOpenChange={setIsJoinWorkspaceOpen}>
         <WorkspaceJoinModal setIsJoinWorkspaceOpen={setIsJoinWorkspaceOpen} />
       </Dialog>
-    </div>
+    </div >
   );
 }
 

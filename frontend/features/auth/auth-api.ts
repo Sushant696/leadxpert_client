@@ -2,6 +2,7 @@ import { apiURLs } from "@/utils/apiUrls";
 import axiosInstance from "@/lib/api/axios";
 import { apiWrapper } from "@/lib/api/api-wrapper";
 import { LoginCredentials, RegisterData } from "./auth.types";
+import { headers } from "next/headers";
 
 export const authApi = {
   login: async (credentials: LoginCredentials) => {
@@ -22,8 +23,12 @@ export const authApi = {
     return await apiWrapper.post(apiURLs.AUTH.me);
   },
 
-  joinWorkspaceByToken: async (token: string) => {
-    const response = await apiWrapper.post(apiURLs.WORKSPACE.joinByToken(token));
-    return response;
+  joinWorkspaceByToken: async (token: string, accessToken?: string) => {
+    const response = await axiosInstance.post(apiURLs.WORKSPACE.joinByToken(token), {}, {
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
+    return response.data
   }
 };

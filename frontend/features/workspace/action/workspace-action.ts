@@ -22,10 +22,10 @@ export async function getUserWorkspacesAction() {
   }
   const usersWorkspaces: TransformedWorkspace[] =
     response.data.workspaces.map((w: WorkspaceMember) => ({
-      id: w.workspace._id,
-      name: w.workspace.name,
-      slug: w.workspace.slug,
-      role : w.role
+      id: w?.workspace?._id,
+      name: w?.workspace?.name,
+      slug: w?.workspace?.slug,
+      role: w?.role
     }));
 
   return usersWorkspaces

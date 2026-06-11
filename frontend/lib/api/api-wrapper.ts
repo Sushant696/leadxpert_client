@@ -20,7 +20,7 @@ async function makeAuthenticatedRequest<T>(config: RequestConfig): Promise<T> {
     try {
       accessToken = await refreshAccessToken();
     } catch (refreshError: any) {
-      throw new SessionExpiredError('No access token available');
+      throw new SessionExpiredError('Please login to continue');
     }
   }
 

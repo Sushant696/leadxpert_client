@@ -3,7 +3,13 @@
 import { authApi } from "./auth-api";
 import { LoginCredentials, RegisterData } from "./auth.types";
 import SessionExpiredError from "@/lib/auth/session-error-handler";
-import { clearAuthCookies, setAccessToken, setRefreshToken, setUserRole } from "@/lib/auth/cookies";
+import {
+  clearAuthCookies,
+  getAccessToken,
+  setAccessToken,
+  setRefreshToken,
+  setUserRole
+} from "@/lib/auth/cookies";
 
 export async function loginAction(formData: LoginCredentials) {
   const response = await authApi.login(formData);
@@ -21,7 +27,6 @@ export async function loginAction(formData: LoginCredentials) {
 
 export async function registerAction(formData: RegisterData) {
   const response = await authApi.register(formData);
-
   if (!response.success) {
     throw new Error(response.message || 'Registration failed');
   }
@@ -64,6 +69,29 @@ export async function getCurrentUserAction() {
       sessionExpired: false,
       error: error.message || 'Failed to get user'
     };
+  }
+}
+
+export async function joinWorkspaceAction(token: string) {
+  const accessToken = await getAccessToken();
+  if (!accessToken) {
+    return {
+      success: false,
+      status: 401,
+      message: "Please login to join the workspace",
+    }
+  }
+
+  const response = await authApi.joinWorkspaceByToken(token, accessToken);
+
+  if (!response.success) {
+    throw new Error(response.message || "Failed to join workspace");
+  }
+
+  return {
+    success: response.success || false,
+    status: response.status,
+    message: response.message || "Operation completed",
   }
 }
 

@@ -12,22 +12,28 @@ export function useLogin() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const setUser = useAuthStore((s) => s.setUser);
+  const token = useAuthStore((s) => s.token);
+  const setInviteToken = useAuthStore((s) => s.setInviteToken)
 
   return useMutation({
     mutationFn: loginAction,
-    onSuccess: (user) => {
+    onSuccess: async (user) => {
       const { role, ...userData } = user;
       setUser(userData);
       queryClient.invalidateQueries({ queryKey: ["mee"] });
 
+      showToast.success("Login successful!");
+
       if (role?.toUpperCase() === UserRoles.ADMIN) {
         router.push("/admin/");
       } else {
-        router.push("/dashboard/");
+        if (token?.token) {
+          setInviteToken({ token: token.token });
+        }
+        router.push("/dashboard");
       }
-
-      showToast.success("Login successful!");
     },
+
     onError: (error: Error) => {
       showToast.error(error.message);
     },

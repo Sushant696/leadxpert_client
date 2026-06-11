@@ -7,6 +7,7 @@ import useAuthStore from '@/store/auth-store'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'iconsax-reactjs'
 import { clearAuthCookiesAction } from '@/features/auth/auth-action'
+import useWorkspaceStore from '@/store/workspace-store'
 
 
 function UnauthorizedClient() {
@@ -14,6 +15,8 @@ function UnauthorizedClient() {
 
   const type = searchParams.get('type')
   const clearUser = useAuthStore(state => state.clearUser)
+  const clearWorkspace = useWorkspaceStore((s) => s.clearWorkspace);
+
 
   const handleNavigateToHome = () => {
     clearAuthCookiesAction()
@@ -22,6 +25,7 @@ function UnauthorizedClient() {
 
   useEffect(() => {
     clearUser()
+    clearWorkspace()
     localStorage.clear()
   }, [clearUser])
 
