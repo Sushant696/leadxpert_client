@@ -7,6 +7,9 @@ interface Workspace {
   name: string;
   role: RESOURCE_BASED_ROLES;
   slug?: string;
+  profilePicture?: string;
+  businessType?: string;
+  teamSize?: number;
 }
 
 interface WorkspaceStore {

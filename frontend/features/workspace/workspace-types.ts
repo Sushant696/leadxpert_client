@@ -5,8 +5,9 @@ export interface Workspace {
   name: string;
   slug: string;
   owner: string;
-  businessType: string | null;
   teamSize: number | null;
+  businessType: string | null;
+  profilePicture: string | null;
   members: string[];
   createdAt: string;
   updatedAt: string;
@@ -47,6 +48,15 @@ export interface CreateWorkspaceResponse {
 
 export interface CreateWorkspacePayload {
   name: string;
+  profilePicture?: string;
   businessType?: string;
   teamSize?: number;
 }
+
+export interface updateWorkspacePayload {
+  name?: string;
+  profilePicture?: string;
+  businessType?: string;
+  teamSize?: number;
+}
+

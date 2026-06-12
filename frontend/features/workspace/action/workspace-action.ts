@@ -4,6 +4,7 @@ import { workspaceApi } from "../api/workspace-api";
 import {
   CreateWorkspacePayload,
   TransformedWorkspace,
+  updateWorkspacePayload,
   WorkspaceMember,
 } from "../workspace-types";
 
@@ -22,11 +23,24 @@ export async function getUserWorkspacesAction() {
   }
   const usersWorkspaces: TransformedWorkspace[] =
     response.data.workspaces.map((w: WorkspaceMember) => ({
+      role: w?.role,
       id: w?.workspace?._id,
       name: w?.workspace?.name,
       slug: w?.workspace?.slug,
-      role: w?.role
+      profilePicture: w?.workspace?.profilePicture
     }));
-
   return usersWorkspaces
 }
+
+export async function updateWorkspaceAction(workspaceId: string, formData: updateWorkspacePayload) {
+  const response = await workspaceApi.updateWorkspace(workspaceId, formData);
+  if (!response.success) {
+    throw new Error(response.message || "Failed to update workspace");
+  }
+  return {
+    success: true,
+    message: response.message,
+    data: response.data
+  };
+}
+
