@@ -2,16 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { User, ShieldCheck, HelpCircle } from 'lucide-react';
+import { NavItem } from './items';
 
-export default function SubSidebar() {
+interface SubSidebarProps {
+  navItems: NavItem[];
+}
 
+export default function SubSidebar({ navItems }: SubSidebarProps) {
   const pathname = usePathname();
-  const navItems = [
-    { name: 'User Profile', icon: User, href: "/dashboard/settings/user-profile" },
-    { name: 'Account Status', icon: ShieldCheck, href: "/dashboard/settings/account-status" },
-    { name: 'Help & Support', icon: HelpCircle, href: "/dashboard/settings/help-support" },
-  ];
 
   return (
     <aside className="w-64 border-r border-border bg-surface flex flex-col shrink-0">

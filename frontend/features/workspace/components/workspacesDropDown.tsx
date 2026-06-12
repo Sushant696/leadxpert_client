@@ -1,10 +1,9 @@
 "use client";
 
-import { ChevronDown, Plus, Link, Check } from "lucide-react";
+import { ChevronDown, Check } from "lucide-react";
 
 import {
-  DropdownMenu,
-  DropdownMenuContent,
+  DropdownMenu, DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -14,12 +13,7 @@ import { RESOURCE_BASED_ROLES } from "@/types/user";
 import useWorkspaceStore from "@/store/workspace-store";
 import useGetUserWorkspaces from "@/features/workspace/hooks/useGetUserWorkspaces";
 
-interface WorkspaceDropdownProps {
-  onCreateWorkspace: () => void;
-  onJoinWorkspace: () => void;
-}
-
-function WorkspaceDropdown({ onCreateWorkspace, onJoinWorkspace }: WorkspaceDropdownProps) {
+function WorkspaceDropdown() {
   const { data, isLoading } = useGetUserWorkspaces();
   const { workspace, setWorkspace, isActiveWorkspace } = useWorkspaceStore();
 
@@ -112,21 +106,6 @@ function WorkspaceDropdown({ onCreateWorkspace, onJoinWorkspace }: WorkspaceDrop
           </>
         )}
 
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={onCreateWorkspace}
-          className="flex items-center gap-2 cursor-pointer text-primary focus:bg-primary/10 focus:text-foreground"
-        >
-          <Plus size={16} />
-          Create workspace
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={onJoinWorkspace}
-          className="flex items-center gap-2 cursor-pointer text-primary focus:bg-primary/10 focus:text-foreground"
-        >
-          <Link size={16} />
-          Join workspace
-        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

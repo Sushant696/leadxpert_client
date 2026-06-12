@@ -108,7 +108,7 @@ const Sidebar = () => {
         <>
           <Separator className="my-3 opacity-50" />
           <button
-            onClick={() => router.push('/settings/workspace')}
+            onClick={() => router.push('/dashboard/workspace/general')}
             disabled={!canManage}
             className={cn(
               "w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all group",

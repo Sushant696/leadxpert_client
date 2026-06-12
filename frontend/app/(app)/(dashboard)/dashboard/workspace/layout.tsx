@@ -2,7 +2,7 @@
 
 import React from 'react';
 import SubSidebar from '@/components/navigation_dashboard/sub-sidebar/sidebar';
-import { NAV_ITEMS_USER_SETTINGS } from '@/components/navigation_dashboard/sub-sidebar/items';
+import { NAV_ITEMS_WORKSPACE_SETTINGS } from '@/components/navigation_dashboard/sub-sidebar/items';
 
 export default function Layout({
   children,
@@ -11,7 +11,7 @@ export default function Layout({
 }) {
   return (
     <div className="flex h-full w-full bg-background ">
-      <SubSidebar navItems={NAV_ITEMS_USER_SETTINGS} />
+      <SubSidebar navItems={NAV_ITEMS_WORKSPACE_SETTINGS} />
       <main className="flex-1 overflow-y-auto p-4">
         {children}
       </main>
