@@ -87,9 +87,9 @@ export async function joinWorkspaceAction(token: string) {
   if (!response.success) {
     throw new Error(response.message || "Failed to join workspace");
   }
-
   return {
-    success: response.success || false,
+    success: response.success,
+    data: response.data,
     status: response.status,
     message: response.message || "Operation completed",
   }

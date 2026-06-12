@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { showToast } from "@/components/showToast";
 import { updateWorkspacePayload } from "../workspace-types";
 import { updateWorkspaceAction } from "../action/workspace-action";
+import useWorkspaceStore from "@/store/workspace-store";
 
 interface UpdateWorkspaceParams {
   workspaceId: string;
@@ -11,10 +12,14 @@ interface UpdateWorkspaceParams {
 
 const useUpdateWorkspace = () => {
   const queryClient = useQueryClient();
+  const { setWorkspace } = useWorkspaceStore()
   return useMutation({
     mutationKey: ["update-workspace"],
     mutationFn: ({ workspaceId, data }: UpdateWorkspaceParams) => updateWorkspaceAction(workspaceId, data),
     onSuccess: (data) => {
+      if (data?.data?.updatedWorkspace) {
+        setWorkspace(data.data.updatedWorkspace);
+      }
       showToast.success(data.message || "Workspace updated successfully");
       queryClient.invalidateQueries({ queryKey: ["workspaces"] });
     },

@@ -3,10 +3,12 @@ import { useRouter } from "next/navigation";
 import { showToast } from "@/components/showToast";
 import { joinWorkspaceAction } from "../auth-action";
 import useAuthStore from "@/store/auth-store";
+import useWorkspaceStore from "@/store/workspace-store";
 
 export function useJoinWorkspace(token: string, onSuccessCallback?: () => void) {
   const router = useRouter()
   const { setInviteToken } = useAuthStore()
+  const { setWorkspace } = useWorkspaceStore()
 
   return useMutation({
     mutationKey: ['join-workspace'],
@@ -45,7 +47,9 @@ export function useJoinWorkspace(token: string, onSuccessCallback?: () => void) 
         return
       }
 
-      // Success
+      if (data?.data?.workspace) {
+        setWorkspace(data.data.workspace);
+      }
       setInviteToken({ token: "" })
       showToast.success("Successfully joined the workspace!")
       router.push("/dashboard")

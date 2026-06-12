@@ -16,7 +16,6 @@ import useGetUserWorkspaces from "@/features/workspace/hooks/useGetUserWorkspace
 function WorkspaceDropdown() {
   const { data, isLoading } = useGetUserWorkspaces();
   const { workspace, setWorkspace, isActiveWorkspace } = useWorkspaceStore();
-
   if (isLoading || !data) {
     return (
       <div className="w-full border border-border bg-background/50 rounded-xl p-2.5">
@@ -39,9 +38,9 @@ function WorkspaceDropdown() {
         <button className="w-full border border-border bg-background/50 rounded-xl p-2.5 flex justify-between items-center text-sm font-medium hover:bg-muted transition-all group">
           <span className="flex items-center gap-2">
             <div className="w-6 h-6 bg-primary rounded-lg flex items-center justify-center text-[10px] text-white font-bold">
-              {workspace ? getInitials(workspace.name) : "?"}
+              {workspace?.profilePicture ? getInitials(workspace.name) : "?"}
             </div>
-            <span className="text-primary/80 group-hover:text-primary truncate max-w-[140px]">
+            <span className="text-primary/80 group-hover:text-primary truncate max-w-[140px] capitalize">
               {workspace?.name || "Select workspace"}
             </span>
           </span>
@@ -66,7 +65,7 @@ function WorkspaceDropdown() {
                 <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
                   {getInitials(ws.name)}
                 </div>
-                <span className="flex-1 truncate">{ws.name}</span>
+                <span className="flex-1 truncate capitalize">{ws.name}</span>
                 {isActiveWorkspace(ws.slug) && (
                   <Check size={14} className="text-primary" />
                 )}
@@ -93,7 +92,7 @@ function WorkspaceDropdown() {
                   {getInitials(ws.name)}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="truncate">{ws.name}</div>
+                  <div className="truncate capitalize">{ws.name}</div>
                   <div className="text-[10px] text-muted-foreground capitalize">
                     {ws.role.toLowerCase().replace('_', ' ')}
                   </div>

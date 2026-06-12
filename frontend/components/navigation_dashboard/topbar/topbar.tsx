@@ -36,12 +36,17 @@ export default function TopBar() {
   const { user } = useAuthStore();
   const logoutMutation = useLogout();
   const router = useRouter();
-  const { workspace } = useWorkspaceStore();
+  const { workspace, clearWorkspace } = useWorkspaceStore();
   const [isInviteOpen, setIsInviteOpen] = useState(false);
   const currentWorkspace = workspace;
 
   const userRole = currentWorkspace?.role;
   const canManage = userRole === RESOURCE_BASED_ROLES.SUPER_ADMIN || userRole === RESOURCE_BASED_ROLES.ADMIN;
+
+  const handleLogout = async () => {
+    clearWorkspace();
+    await logoutMutation.mutateAsync();
+  }
 
   return (
     <>
@@ -116,7 +121,7 @@ export default function TopBar() {
               <DropdownMenuSeparator className="bg-border" />
 
               <DropdownMenuItem
-                onClick={() => logoutMutation.mutate()}
+                onClick={handleLogout}
                 className="flex items-center gap-2 cursor-pointer py-2 text-destructive focus:bg-destructive/10 focus:text-destructive">
                 <LogOut size={16} /> <span className="text-sm font-medium">Sign Out</span>
               </DropdownMenuItem>

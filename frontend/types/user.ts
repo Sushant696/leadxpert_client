@@ -1,10 +1,10 @@
 export type UserRole = 'ADMIN' | 'USER'
-export type RESOURCE_BASED_ROLES = "SUPER_ADMIN" | "ADMIN" | "MEMBER";
+export type RESOURCE_BASED_ROLES = "SUPER_ADMIN" | "ADMIN" | "AGENT";
 
 export const RESOURCE_BASED_ROLES = {
   SUPER_ADMIN: "SUPER_ADMIN",
   ADMIN: "ADMIN",
-  MEMBER: "MEMBER"
+  AGENT: "AGENT"
 } as const
 
 export const UserRoles = {

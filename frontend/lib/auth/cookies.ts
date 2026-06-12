@@ -45,7 +45,7 @@ export const setAuthCookies = async (
 
   cookieStore.set('accessToken', accessToken, cookieConfig.accessTokenConfig);
   cookieStore.set('refreshToken', refreshToken, cookieConfig.refreshTokenConfig);
-
+    
   if (role) {
     cookieStore.set('userRole', role, cookieConfig.roleConfig);
   }

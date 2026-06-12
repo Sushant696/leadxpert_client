@@ -22,14 +22,12 @@ export const apiURLs = {
   },
 
   WORKSPACE: {
-    // WORKSPACE CRUD
     create: '/api/workspace',
     getAll: '/api/workspace',
     getById: (workspaceId: string) => `/api/workspace/${workspaceId}`,
     updateById: (workspaceId: string) => `/api/workspace/${workspaceId}`,
     deleteById: (workspaceId: string) => `/api/workspace/${workspaceId}`,
 
-    // INVITES
     invite: {
       createLink: (workspaceId: string) =>
         `/api/workspace/${workspaceId}/invite/link`,
@@ -44,11 +42,9 @@ export const apiURLs = {
         `/api/workspace/${workspaceId}/invites/${inviteId}`,
     },
 
-    // JOIN WORKSPACE
     joinByToken: (token: string) =>
       `/api/workspace/join/${token}`,
 
-    // MEMBERS
     members: {
       getAll: (workspaceId: string) =>
         `/api/workspace/${workspaceId}/members`,

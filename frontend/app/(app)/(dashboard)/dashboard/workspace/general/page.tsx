@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Save, X, Loader2 } from "lucide-react";
 
@@ -40,27 +40,44 @@ function Page() {
     },
   });
 
+  useEffect(() => {
+    if (workspace?.profilePicture) {
+      setImagePreview(workspace.profilePicture);
+    }
+  }, [workspace?.profilePicture]);
+
+  useEffect(() => {
+    if (workspace) {
+      reset({
+        name: workspace.name || "",
+        businessType: workspace.businessType || "",
+        teamSize: workspace.teamSize || undefined,
+      });
+    }
+  }, [workspace, reset]);
   const hasChanges = isDirty || workspaceImage !== null;
 
   const handleImageSelect = (file: File | null) => {
-    setWorkspaceImage(file);
     if (file) {
+      setWorkspaceImage(file);
       const formData: FormData = new FormData();
       formData.append("image", file);
       uploadImageMutation.mutate(formData, {
         onSuccess: (data) => {
           setImageUrl(data?.data?.result.url || null);
-          console.log("Image uploaded successfully:", data?.data?.result.url);
         },
         onError: (error) => {
           console.error("Error uploading image:", error);
         },
       });
+    } else {
+      setWorkspaceImage(null);
+      setImageUrl(null);
+      setImagePreview(null);
     }
   };
 
   const onSubmit = async (data: WorkspaceFormData) => {
-
     if (
       (workspace?.id && workspace?.role === RESOURCE_BASED_ROLES.ADMIN) ||
       workspace?.role === RESOURCE_BASED_ROLES.SUPER_ADMIN
@@ -77,19 +94,15 @@ function Page() {
         data: cleanedData,
       });
     }
-    setWorkspaceImage(null);
-    reset(data);
-  };
 
-  const handleCancel = () => {
-    reset();
     setWorkspaceImage(null);
-    setImagePreview(imagePreview);
+    setImageUrl(null);
+    reset(data);
   };
 
   return (
     <div className="flex-1 overflow-auto bg-background">
-      <div className=" mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-4">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-4">
         <div className="mb-4 sm:mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
             General Settings
@@ -104,18 +117,8 @@ function Page() {
             <div className="fixed sm:sticky bottom-0 left-0 right-0 sm:bottom-4 bg-card/95 sm:bg-card/50 backdrop-blur-sm border-t sm:border border-border sm:rounded-xl p-4 shadow-lg sm:shadow-none z-10">
               <div className="max-w-5xl mx-auto flex items-center justify-end gap-3">
                 <Button
-                  type="button"
-                  onClick={handleCancel}
-                  disabled={updateWorkspaceMutation.isPending}
-                  variant="outline"
-                  className="flex-1 sm:flex-initial"
-                >
-                  <X size={16} className="mr-2" />
-                  Cancel
-                </Button>
-                <Button
                   type="submit"
-                  disabled={uploadImageMutation.isPending}
+                  disabled={uploadImageMutation.isPending || updateWorkspaceMutation.isPending}
                   className="flex-1 sm:flex-initial bg-gradient-to-r from-primary to-primary-light hover:shadow-lg hover:shadow-primary/25"
                 >
                   {updateWorkspaceMutation.isPending ? (
@@ -145,9 +148,14 @@ function Page() {
                       setPreview={setImagePreview}
                     />
                   </div>
-                  <p className="font-medium text-foreground">
-                    Workspace Profile
-                  </p>
+                  <div className="flex-1 pt-2">
+                    <p className="font-medium text-foreground mb-2">
+                      Workspace Logo
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Accepted formats: PNG, JPG, JPEG, SVG, WebP
+                    </p>
+                  </div>
                 </div>
 
                 <div>
@@ -179,8 +187,8 @@ function Page() {
                 </div>
               </div>
 
-              <div className="w-full flex justify-between gap-6 items-center">
-                <div className="w-1/2">
+              <div className="w-full flex flex-col sm:flex-row justify-between gap-4 sm:gap-6 items-center">
+                <div className="w-full sm:w-1/2">
                   <label
                     htmlFor="workspace-type"
                     className="block text-sm font-medium text-foreground mb-2"
@@ -203,7 +211,7 @@ function Page() {
                   </select>
                 </div>
 
-                <div className="w-1/2">
+                <div className="w-full sm:w-1/2">
                   <label
                     htmlFor="team-size"
                     className="block text-sm font-medium text-foreground mb-2"
