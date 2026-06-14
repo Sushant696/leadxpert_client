@@ -1,22 +1,22 @@
 "use client"
 
-import { useState } from 'react';
 import Image from 'next/image';
+import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Settings, ChevronRight, Plus } from 'lucide-react';
 
 import NavItem from './navItem';
+import { cn } from '@/lib/utils';
+import { NAV_ITEMS } from './items';
+import getInitials from '@/utils/getInitials';
 import { Dialog } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { RESOURCE_BASED_ROLES } from '@/types/user';
 import { Separator } from '@/components/ui/separator';
-import { NAV_ITEMS } from './items';
+import useWorkspaceStore from '@/store/workspace-store';
+import WorkspaceDropdown from '@/features/workspace/components/WorkspacesDropDown';
 import WorkspaceJoinModal from '@/features/workspace/components/WorkspaceJoinModal';
 import WorkspaceCreateModal from '@/features/workspace/components/CreateWorkspaceModal';
-import useWorkspaceStore from '@/store/workspace-store';
-import { cn } from '@/lib/utils';
-import { RESOURCE_BASED_ROLES } from '@/types/user';
-import WorkspaceDropdown from '@/features/workspace/components/workspacesDropDown';
-import getInitials from '@/utils/getInitials';
 
 const Sidebar = () => {
   const pathname = usePathname();

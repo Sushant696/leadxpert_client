@@ -29,7 +29,7 @@ import NewPopover from '@/components/NewPopover';
 import { RESOURCE_BASED_ROLES } from '@/types/user';
 import useWorkspaceStore from '@/store/workspace-store';
 import { useLogout } from '@/features/auth/hooks/useLogout';
-import InviteMemberModal from '@/features/workspace/components/inviteUserModal';
+import InviteMemberModal from '@/features/workspace/components/InviteUserModal';
 
 export default function TopBar() {
   const { user } = useAuthStore();

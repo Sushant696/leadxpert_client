@@ -18,7 +18,7 @@ export function useLogin() {
   return useMutation({
     mutationFn: loginAction,
     onSuccess: async (user) => {
-      const { role, ...userData } = user;
+      const { role, _id, ...userData } = user;
       setUser(userData);
       queryClient.invalidateQueries({ queryKey: ["mee"] });
 

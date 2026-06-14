@@ -36,7 +36,7 @@ function WorkspaceDropdown() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="w-full border border-border bg-background/50 rounded-xl p-2.5 flex justify-between items-center text-sm font-medium hover:bg-muted transition-all group">
+        <button className="w-full border border-border bg-background/50 rounded-xl p-2 flex justify-between items-center text-sm font-medium hover:bg-muted transition-all group">
           <span className="flex items-center gap-2">
             {workspace?.profilePicture ? (
               <img
@@ -45,12 +45,12 @@ function WorkspaceDropdown() {
                 alt={workspace.name}
               />
             ) : (
-              <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-sm">
+              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-sm">
                 {getInitials(workspace?.name || "?")}
               </div>
             )}
 
-            <span className="text-lg text-primary/80 group-hover:text-primary truncate max-w-[140px] capitalize">
+            <span className="text-primary/90 group-hover:text-primary truncate max-w-[140px] capitalize">
               {workspace?.name || "Select workspace"}
             </span>
           </span>

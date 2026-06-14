@@ -3,7 +3,7 @@
 import { memberApi } from "../api/member-api";
 import { UpdateMemberRoleType } from "../types/member-type";
 
-export async function getAllWorkspaceMembers(workspaceId: string) {
+export async function getAllWorkspaceMembersAction(workspaceId: string) {
   const response = await memberApi.getMemberList(workspaceId);
   if (!response.success) {
     throw new Error(response.message || "Failed to fetch workspace members");
@@ -19,7 +19,7 @@ export async function updateMemberRole(
   if (response.success) {
     throw new Error(
       response.message ||
-        "Failed to update member role, please try again later",
+      "Failed to update member role, please try again later",
     );
   }
   return response.data;
