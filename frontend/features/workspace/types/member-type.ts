@@ -14,6 +14,7 @@ export interface WorkspaceMember extends User {
 }
 
 export interface Member {
+  workspaceId: string;
   membershipId: string;
   role: RESOURCE_BASED_ROLES;
   joinedAt: string;

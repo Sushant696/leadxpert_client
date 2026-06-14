@@ -10,6 +10,8 @@ function useGetAllMembers(workspaceId?: string) {
       return getAllWorkspaceMembersAction(workspaceId)
     },
     enabled: !!workspaceId,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
   })
 }
 

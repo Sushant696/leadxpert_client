@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { showToast } from "@/components/showToast";
 import { joinWorkspaceAction } from "../auth-action";
@@ -7,6 +7,7 @@ import useWorkspaceStore from "@/store/workspace-store";
 
 export function useJoinWorkspace(token: string, onSuccessCallback?: () => void) {
   const router = useRouter()
+  const queryClient = useQueryClient()
   const { setInviteToken } = useAuthStore()
   const { setWorkspace } = useWorkspaceStore()
 
@@ -50,8 +51,11 @@ export function useJoinWorkspace(token: string, onSuccessCallback?: () => void) 
       if (data?.data?.workspace) {
         setWorkspace(data.data.workspace);
       }
+      queryClient.invalidateQueries({ queryKey: ["workspaces"] })
+      queryClient.invalidateQueries({ queryKey: ["members"] })
       setInviteToken({ token: "" })
       showToast.success("Successfully joined the workspace!")
+
       router.push("/dashboard")
       if (onSuccessCallback) onSuccessCallback()
     },

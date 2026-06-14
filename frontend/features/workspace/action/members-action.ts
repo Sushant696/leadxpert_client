@@ -11,12 +11,12 @@ export async function getAllWorkspaceMembersAction(workspaceId: string) {
   return response.data;
 }
 
-export async function updateMemberRole(
+export async function updateRoleAction(
   workspaceId: string,
   data: UpdateMemberRoleType,
 ) {
   const response = await memberApi.updateMemberRole(workspaceId, data);
-  if (response.success) {
+  if (!response.success) {
     throw new Error(
       response.message ||
       "Failed to update member role, please try again later",
@@ -25,9 +25,9 @@ export async function updateMemberRole(
   return response.data;
 }
 
-export async function removeMemberFromWorkspace(workspaceId: string) {
-  const response = await memberApi.removeMember(workspaceId);
-  if (response.success) {
+export async function removeMemberFromWorkspaceAction(workspaceId: string, userId: string) {
+  const response = await memberApi.removeMember(workspaceId, userId);
+  if (!response.success) {
     throw new Error(
       response.message || "Failed to remove member, please try again later",
     );

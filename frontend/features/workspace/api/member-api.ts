@@ -10,15 +10,16 @@ const memberApi = {
 
   updateMemberRole: async (workspaceId: string, data: UpdateMemberRoleType) => {
     const response = await apiWrapper.patch(
-      `/workspace/${workspaceId}/members`,
+      apiURLs.WORKSPACE.members.updateRole(workspaceId),
       data,
     );
     return response;
   },
 
-  removeMember: async (workspaceId: string) => {
+  removeMember: async (workspaceId: string, data: UpdateMemberRoleType) => {
     const response = await apiWrapper.delete(
-      `/workspace/${workspaceId}/members`,
+      apiURLs.WORKSPACE.members.remove(workspaceId),
+      { data },
     );
     return response;
   },
