@@ -40,10 +40,7 @@ const Sidebar = () => {
       </div>
 
       <div className="mb-2">
-        <WorkspaceDropdown
-          onCreateWorkspace={() => setIsCreateWorkspaceOpen(true)}
-          onJoinWorkspace={() => setIsJoinWorkspaceOpen(true)}
-        />
+        <WorkspaceDropdown />
       </div>
 
       <Separator className="my-4 opacity-50" />
@@ -103,18 +100,18 @@ const Sidebar = () => {
         )}
       </div>
 
-      {/* Workspace Settings - Always at bottom */}
       {currentWorkspace && (
         <>
           <Separator className="my-3 opacity-50" />
           <button
-            onClick={() => router.push('/dashboard/workspace/general')}
-            disabled={!canManage}
+            onClick={() => {
+              canManage ?
+                router.push('/dashboard/workspace/general')
+                :
+                router.push('/dashboard/workspace/members')
+            }}
             className={cn(
-              "w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all group",
-              canManage
-                ? "text-muted-foreground hover:bg-muted hover:text-primary cursor-pointer"
-                : "text-muted-foreground/50 cursor-not-allowed"
+              "w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all group text-muted-foreground hover:bg-muted hover:text-primary cursor-pointer"
             )}
             title={!canManage ? "Only admins can access workspace settings" : "Workspace settings"}
           >
@@ -127,7 +124,8 @@ const Sidebar = () => {
             )}
           </button>
         </>
-      )}
+      )
+      }
 
       {/* Modals */}
       <Dialog open={isCreateWorkspaceOpen} onOpenChange={setIsCreateWorkspaceOpen}>
@@ -137,7 +135,7 @@ const Sidebar = () => {
       <Dialog open={isJoinWorkspaceOpen} onOpenChange={setIsJoinWorkspaceOpen}>
         <WorkspaceJoinModal setIsJoinWorkspaceOpen={setIsJoinWorkspaceOpen} />
       </Dialog>
-    </aside>
+    </aside >
   );
 };
 

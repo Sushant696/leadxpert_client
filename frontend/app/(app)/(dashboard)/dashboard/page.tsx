@@ -1,29 +1,26 @@
 "use client"
 
-import { useEffect, useState } from "react";
 import {
   ListTodo,
-  UserPlus,
   ArrowRight,
-  ChevronRight,
   Briefcase,
   CheckCircle2,
   Users,
   TrendingUp,
   Clock,
-  Target
 } from "lucide-react";
 import { Add } from "iconsax-reactjs";
+import { useEffect, useState } from "react";
 
 import useAuthStore from "@/store/auth-store";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import useWorkspaceStore from "@/store/workspace-store";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useJoinWorkspace } from "@/features/auth/hooks/useJoinWorkspace";
 import WorkspaceJoinModal from "@/features/workspace/components/WorkspaceJoinModal";
 import WorkspaceCreateModal from "@/features/workspace/components/CreateWorkspaceModal";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { useJoinWorkspace } from "@/features/auth/hooks/useJoinWorkspace";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 function Dashboard() {
   const { user, token } = useAuthStore();
@@ -168,65 +165,7 @@ function Dashboard() {
         </div>
       )}
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card className="group hover:border-primary/50 transition-all cursor-pointer">
-          <CardContent className="p-6 space-y-4">
-            <div className="flex justify-between items-start">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-xs font-medium text-primary uppercase tracking-wider">
-                  <div className="h-2 w-2 rounded-full bg-primary" />
-                  Quick Start
-                </div>
-                <h3 className="text-xl font-bold">Add New Contact</h3>
-                <p className="text-sm text-muted-foreground">About 2 minutes</p>
-              </div>
-              <div className="p-2 bg-muted rounded-lg group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                <UserPlus className="h-6 w-6" />
-              </div>
-            </div>
 
-            <p className="text-muted-foreground text-sm">
-              Add leads manually and track all their interactions in one place.
-            </p>
-
-            <div className="flex items-center justify-between pt-2">
-              <Button variant="outline" className="font-semibold group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                Add Contact
-              </Button>
-              <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="group hover:border-primary/50 transition-all cursor-pointer">
-          <CardContent className="p-6 space-y-4">
-            <div className="flex justify-between items-start">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  <Target className="h-3 w-3" />
-                  Track Revenue
-                </div>
-                <h3 className="text-xl font-bold">Create a Deal</h3>
-                <p className="text-sm text-muted-foreground">About 1 minute</p>
-              </div>
-              <div className="p-2 bg-muted rounded-lg group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                <Briefcase className="h-6 w-6" />
-              </div>
-            </div>
-
-            <p className="text-muted-foreground text-sm">
-              Track potential revenue and move deals through your sales pipeline.
-            </p>
-
-            <div className="flex items-center justify-between pt-2">
-              <Button variant="outline" className="font-semibold group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                Create Deal
-              </Button>
-              <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
 
       <section className="space-y-4">
         <div className="flex justify-between items-center">

@@ -23,6 +23,7 @@ export interface TransformedWorkspace {
   name: string;
   slug: string;
   role: RESOURCE_BASED_ROLES;
+  profilePicture: string | undefined;
 }
 
 export interface getAllWorkspacesResponse {

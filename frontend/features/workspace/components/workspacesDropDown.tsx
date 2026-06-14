@@ -16,6 +16,7 @@ import useGetUserWorkspaces from "@/features/workspace/hooks/useGetUserWorkspace
 function WorkspaceDropdown() {
   const { data, isLoading } = useGetUserWorkspaces();
   const { workspace, setWorkspace, isActiveWorkspace } = useWorkspaceStore();
+
   if (isLoading || !data) {
     return (
       <div className="w-full border border-border bg-background/50 rounded-xl p-2.5">
@@ -37,10 +38,19 @@ function WorkspaceDropdown() {
       <DropdownMenuTrigger asChild>
         <button className="w-full border border-border bg-background/50 rounded-xl p-2.5 flex justify-between items-center text-sm font-medium hover:bg-muted transition-all group">
           <span className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-primary rounded-lg flex items-center justify-center text-[10px] text-white font-bold">
-              {workspace?.profilePicture ? getInitials(workspace.name) : "?"}
-            </div>
-            <span className="text-primary/80 group-hover:text-primary truncate max-w-[140px] capitalize">
+            {workspace?.profilePicture ? (
+              <img
+                className="w-10 h-10 rounded-lg border border-border object-cover"
+                src={workspace.profilePicture}
+                alt={workspace.name}
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-sm">
+                {getInitials(workspace?.name || "?")}
+              </div>
+            )}
+
+            <span className="text-lg text-primary/80 group-hover:text-primary truncate max-w-[140px] capitalize">
               {workspace?.name || "Select workspace"}
             </span>
           </span>
@@ -50,7 +60,7 @@ function WorkspaceDropdown() {
 
       <DropdownMenuContent className="w-64" align="start">
         {ownedWorkspaces.length > 0 && (
-          <div className="">
+          <div>
             <div className="px-2 py-1.5">
               <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                 Your Workspaces
@@ -60,11 +70,20 @@ function WorkspaceDropdown() {
               <DropdownMenuItem
                 key={ws.slug}
                 onClick={() => setWorkspace(ws)}
-                className="flex items-center gap-2 cursor-pointer focus:bg-muted focus:text-foreground "
+                className="flex items-center gap-2 cursor-pointer focus:bg-muted focus:text-foreground"
               >
-                <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
-                  {getInitials(ws.name)}
-                </div>
+                {ws.profilePicture ? (
+                  <img
+                    className="w-6 h-6 rounded-lg border border-border object-cover"
+                    src={ws.profilePicture}
+                    alt={ws.name}
+                  />
+                ) : (
+                  <div className="w-6 h-6 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-[10px]">
+                    {getInitials(ws.name)}
+                  </div>
+                )}
+
                 <span className="flex-1 truncate capitalize">{ws.name}</span>
                 {isActiveWorkspace(ws.slug) && (
                   <Check size={14} className="text-primary" />
@@ -76,7 +95,7 @@ function WorkspaceDropdown() {
 
         {joinedWorkspaces.length > 0 && (
           <>
-            {joinedWorkspaces.length > 0 && <DropdownMenuSeparator />}
+            {ownedWorkspaces.length > 0 && <DropdownMenuSeparator />}
             <div className="px-2 py-1.5">
               <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                 Joined Workspaces
@@ -88,9 +107,18 @@ function WorkspaceDropdown() {
                 onClick={() => setWorkspace(ws)}
                 className="flex items-center gap-2 cursor-pointer focus:bg-muted focus:text-foreground"
               >
-                <div className="w-6 h-6 rounded-lg bg-muted flex items-center justify-center text-[10px] font-bold text-muted-foreground">
-                  {getInitials(ws.name)}
-                </div>
+                {ws.profilePicture ? (
+                  <img
+                    className="w-6 h-6 rounded-lg border border-border object-cover"
+                    src={ws.profilePicture}
+                    alt={ws.name}
+                  />
+                ) : (
+                  <div className="w-6 h-6 rounded-lg bg-muted flex items-center justify-center text-muted-foreground font-bold text-[10px]">
+                    {getInitials(ws.name)}
+                  </div>
+                )}
+
                 <div className="flex-1 min-w-0">
                   <div className="truncate capitalize">{ws.name}</div>
                   <div className="text-[10px] text-muted-foreground capitalize">
@@ -104,7 +132,6 @@ function WorkspaceDropdown() {
             ))}
           </>
         )}
-
       </DropdownMenuContent>
     </DropdownMenu>
   );

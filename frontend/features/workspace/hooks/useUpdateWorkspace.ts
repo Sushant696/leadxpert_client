@@ -17,8 +17,8 @@ const useUpdateWorkspace = () => {
     mutationKey: ["update-workspace"],
     mutationFn: ({ workspaceId, data }: UpdateWorkspaceParams) => updateWorkspaceAction(workspaceId, data),
     onSuccess: (data) => {
-      if (data?.data?.updatedWorkspace) {
-        setWorkspace(data.data.updatedWorkspace);
+      if (data?.data?.workspace) {
+        setWorkspace(data.data.workspace);
       }
       showToast.success(data.message || "Workspace updated successfully");
       queryClient.invalidateQueries({ queryKey: ["workspaces"] });

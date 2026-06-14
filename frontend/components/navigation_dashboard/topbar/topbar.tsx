@@ -3,7 +3,6 @@
 import {
   Search,
   Bell,
-  Plus,
   User,
   Settings,
   LogOut,
@@ -67,22 +66,27 @@ export default function TopBar() {
         </div>
 
         <div className="flex items-center gap-4">
+
           {canManage && currentWorkspace && (
-            <Button
-              variant="outline"
-              onClick={() => setIsInviteOpen(true)}
-              className="flex items-center gap-2 text-muted-foreground hover:text-foreground hover:bg-muted px-3 py-2 rounded-xl text-sm font-medium transition-colors bg-muted"
-              title="Invite team members"
-            >
-              <UserPlus size={18} className='text-primary' />
-              <span className="hidden lg:inline">Invite</span>
-            </Button>
+            <>
+              <Button
+                variant="outline"
+                onClick={() => setIsInviteOpen(true)}
+                className="flex items-center gap-2 text-muted-foreground hover:text-foreground hover:bg-muted px-3 py-2 rounded-xl text-sm font-medium transition-colors bg-muted"
+                title="Invite team members"
+              >
+                <UserPlus size={18} className='text-primary' />
+                <span className="hidden lg:inline">Invite</span>
+              </Button>
+              <div className="h-8 w-px bg-border mx-2"></div>
+            </>
           )}
 
           <Button className='bg-gradient-to-r from-primary to-secondary text-white hover:from-primary/90 hover:to-secondary/90  rounded-xl'>
             <MagicStar size={18} className='' variant='Bulk' />
             Assistant
           </Button>
+
           <div className="h-8 w-px bg-border mx-2"></div>
           {/* Notification Bell */}
           <button className="p-2 text-muted-foreground hover:bg-muted rounded-lg relative transition-colors">
@@ -93,8 +97,18 @@ export default function TopBar() {
 
           <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center gap-3 outline-none group">
-              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
-                {getInitials(user?.name || '')}
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
+                {
+                  user?.profilePicture ?
+                    <img
+                      className="w-10 h-10 rounded-lg border border-border object-cover"
+                      src={user.profilePicture}
+                      alt={user.name}
+                    />
+                    :
+
+                    getInitials(user?.name || '')
+                }
               </div>
               <div className="text-left hidden md:block">
                 <p className="text-xs font-bold leading-none text-foreground capitalize">{user?.name}</p>
