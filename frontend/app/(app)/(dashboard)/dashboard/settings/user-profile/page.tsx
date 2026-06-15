@@ -20,6 +20,7 @@ import useAuthStore from '@/store/auth-store';
 import { Button } from '@/components/ui/button';
 import useUploadImage from '@/features/upload/hooks/useUploadImage';
 import useUpdateUser from '@/features/user/hooks/useUpdateUser';
+import { VerifyEmailModal } from '@/features/auth/components/verifyEmailModal';
 
 interface ProfileFormData {
   name: string;
@@ -31,6 +32,7 @@ const ProfileSettings = () => {
   const uploadImageMutation = useUploadImage();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -84,7 +86,7 @@ const ProfileSettings = () => {
   const onSubmit = (data: ProfileFormData) => {
     const updateData = {
       name: data.name,
-      profilePicture: uploadedImageUrl || user?.profilePicture || ''
+      profilePicture: uploadedImageUrl || user?.profilePicture
     };
     updateUserMutation.mutate(updateData, {
       onSuccess: () => {
@@ -163,12 +165,6 @@ const ProfileSettings = () => {
               </div>
 
               <div className="flex-1 pb-2">
-                <div className="flex items-center gap-3 mb-1">
-                  <h1 className="text-3xl font-bold text-foreground tracking-tight capitalize">{user?.name}</h1>
-                  <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider border border-primary/20">
-                    {user?.role || 'User'}
-                  </span>
-                </div>
                 <div className="flex items-center gap-4 text-sm text-muted-foreground font-medium">
                   <span className="flex items-center gap-1.5">
                     <Mail className="w-3.5 h-3.5" />
@@ -214,16 +210,6 @@ const ProfileSettings = () => {
                         className="w-full bg-surface-variant/30 border border-border rounded-lg px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all disabled:opacity-70 disabled:bg-transparent"
                       />
                     </div>
-
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Role</label>
-                      <input
-                        type="text"
-                        value={user?.role || 'User'}
-                        disabled
-                        className="w-full bg-muted/50 border border-border/50 rounded-lg px-4 py-3 text-sm font-medium text-muted-foreground cursor-not-allowed"
-                      />
-                    </div>
                   </div>
 
                   <div className="space-y-2">
@@ -242,12 +228,15 @@ const ProfileSettings = () => {
                             VERIFIED
                           </span>
                         ) : (
-                          <button type="button" className="text-xs font-bold text-warning hover:underline flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => setIsVerifyModalOpen(true)}
+                            className="text-xs font-bold text-warning hover:text-warning/80 hover:underline flex items-center gap-1 transition-colors"
+                          >
                             <AlertCircle className="w-3.5 h-3.5" />
                             Verify
                           </button>
-                        )}
-                      </div>
+                        )}                      </div>
                     </div>
                   </div>
 
@@ -315,6 +304,10 @@ const ProfileSettings = () => {
           </div>
         </div>
       </div>
+      <VerifyEmailModal
+        isOpen={isVerifyModalOpen}
+        onClose={() => setIsVerifyModalOpen(false)}
+      />
     </div>
   );
 };

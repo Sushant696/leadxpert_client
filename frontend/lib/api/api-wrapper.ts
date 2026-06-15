@@ -117,6 +117,6 @@ export const apiWrapper = {
   patch: <T = any>(url: string, data?: any, headers?: Record<string, string>) =>
     makeAuthenticatedRequest<T>({ url, method: 'PATCH', data, headers }),
 
-  delete: <T = any>(url: string, headers?: Record<string, string>) =>
-    makeAuthenticatedRequest<T>({ url, method: 'DELETE', headers }),
+  delete: <T = any>(url: string, data?: any, headers?: Record<string, string>) =>
+    makeAuthenticatedRequest<T>({ url, method: 'DELETE', data, headers }),
 };

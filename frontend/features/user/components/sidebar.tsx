@@ -1,5 +1,6 @@
 "use client";
 
+import Image from 'next/image';
 import {
   LayoutDashboardIcon,
   Users,
@@ -21,7 +22,7 @@ const AdminSidebar = () => {
     <aside className="w-64 h-screen border-r bg-surface flex flex-col p-4 sticky top-0 shadow-sm">
       {/* 1. Header & Logo */}
       <div className="flex items-center gap-3 mb-6 px-2">
-        <img src="/logoiconblack.png" alt="leadXpert logo" className='w-10' />
+        <Image src="/logoiconblack.png" alt="leadXpert logo" width={40} height={40} className='w-10' />
         <div>
           <h1 className="font-bold text-sm leading-tight text-primary">leadXpert</h1>
           <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">CRM Engine</p>

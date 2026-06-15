@@ -5,11 +5,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { logoutAction } from "../auth-action";
 import useAuthStore from "@/store/auth-store";
 import { showToast } from "@/components/showToast";
+import useWorkspaceStore from "@/store/workspace-store";
 
 export function useLogout() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const clearUser = useAuthStore((s) => s.clearUser);
+  const clearWorkspace = useWorkspaceStore((s) => s.clearWorkspace);
+
 
   return useMutation({
     mutationFn: async () => {
@@ -23,6 +26,7 @@ export function useLogout() {
     },
     onError: (error: Error) => {
       clearUser();
+      clearWorkspace()
       queryClient.clear();
       router.push("/login");
     },

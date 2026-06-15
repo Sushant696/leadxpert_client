@@ -50,12 +50,7 @@ export async function getAllUserAction(params: getAllUsersParams) {
         data: response?.data,
       };
     }
-
-    return {
-      success: false,
-      message: response.message || 'Failed to update profile'
-    };
-
+    throw new Error(response.message || 'Failed to retrive users');
   } catch (error: any) {
     if (error instanceof SessionExpiredError) {
       return {
@@ -64,7 +59,6 @@ export async function getAllUserAction(params: getAllUsersParams) {
         error: error.message,
       };
     }
-
     return {
       success: false,
       error: error.message || 'Failed to update profile'

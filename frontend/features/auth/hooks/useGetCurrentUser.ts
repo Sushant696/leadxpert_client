@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 
-import { UserRole } from "@/types/user";
 import useAuthStore from "@/store/auth-store";
 import { getCurrentUserAction } from "@/features/auth/auth-action";
 
@@ -11,24 +10,22 @@ function useGetCurrentUser() {
   const router = useRouter();
   const setUser = useAuthStore((s) => s.setUser);
   return useQuery({
-    queryKey: ["current-user"],
+    queryKey: ["mee"],
     queryFn: async () => {
       const result = await getCurrentUserAction();
       if (!result.success) {
-        // Handle session expiration
         if (result.sessionExpired) {
           router.push('/login?session=expired');
         }
-        throw new Error(result.error || result.message);
+        throw new Error(result.error || result.sessionExpired.message || 'Failed to fetch user data');
       }
+      const { role, ...userData } = result.data;
       setUser({
-        ...result.data,
+        ...userData,
       });
-
       return result.data;
     },
-    staleTime: 5 * 60 * 1000,
-    refetchOnMount: 'always',
+    refetchOnMount: true,
     refetchOnWindowFocus: true,
     retry: false,
   });

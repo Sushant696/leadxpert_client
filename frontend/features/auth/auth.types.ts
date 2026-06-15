@@ -25,3 +25,23 @@ export interface LoginResponse {
     lastName: string;
   };
 }
+
+export interface ForgotPasswordData {
+  email: string;
+}
+
+export interface ResetPasswordData {
+  code: string;
+  email: string;
+  newPassword: string;
+}
+
+export interface VerifyEmailData {
+  code: string;
+}
+
+export interface VerifyResetCodeData {
+  email: string;
+  code: string;
+}
+
