@@ -25,8 +25,7 @@ function useGetCurrentUser() {
       });
       return result.data;
     },
-    staleTime: 5 * 60 * 1000,
-    refetchOnMount: 'always',
+    refetchOnMount: true,
     refetchOnWindowFocus: true,
     retry: false,
   });

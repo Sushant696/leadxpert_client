@@ -6,6 +6,10 @@ export const apiURLs = {
     me: '/api/auth/mee',
     refresh: '/api/auth/refresh',
     changePassword: "/api/auth/changePassword",
+    forgotPassword: '/api/auth/forgot-password',
+    resetPassword: '/api/auth/reset-password',
+    verifyEmail: '/api/auth/verify-email',
+    sendVerification: '/api/auth/send-verification',
   },
 
   FILE: {

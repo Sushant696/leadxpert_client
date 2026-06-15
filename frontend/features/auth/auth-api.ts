@@ -1,8 +1,7 @@
 import { apiURLs } from "@/utils/apiUrls";
 import axiosInstance from "@/lib/api/axios";
 import { apiWrapper } from "@/lib/api/api-wrapper";
-import { LoginCredentials, RegisterData } from "./auth.types";
-import { headers } from "next/headers";
+import { ForgotPasswordData, LoginCredentials, RegisterData, ResetPasswordData, VerifyEmailData } from "./auth.types";
 
 export const authApi = {
   login: async (credentials: LoginCredentials) => {
@@ -30,5 +29,23 @@ export const authApi = {
       }
     });
     return response.data
-  }
+  },
+
+  forgotPassword: async (data: ForgotPasswordData) => {
+    const response = await axiosInstance.post(apiURLs.AUTH.forgotPassword, data);
+    return response.data;
+  },
+
+  resetPassword: async (data: ResetPasswordData) => {
+    const response = await axiosInstance.post(apiURLs.AUTH.resetPassword, data);
+    return response.data;
+  },
+
+  verifyEmail: async (data: VerifyEmailData) => {
+    return await apiWrapper.post(apiURLs.AUTH.verifyEmail, data);
+  },
+
+  sendVerification: async () => {
+    return await apiWrapper.post(apiURLs.AUTH.sendVerification);
+  },
 };

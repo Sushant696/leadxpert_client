@@ -1,8 +1,12 @@
 "use server";
 
-import { authApi } from "./auth-api";
-import { LoginCredentials, RegisterData } from "./auth.types";
-import SessionExpiredError from "@/lib/auth/session-error-handler";
+import {
+  LoginCredentials,
+  RegisterData,
+  ForgotPasswordData,
+  ResetPasswordData,
+  VerifyEmailData
+} from "./auth.types";
 import {
   clearAuthCookies,
   getAccessToken,
@@ -10,6 +14,8 @@ import {
   setRefreshToken,
   setUserRole
 } from "@/lib/auth/cookies";
+import { authApi } from "./auth-api";
+import SessionExpiredError from "@/lib/auth/session-error-handler";
 
 export async function loginAction(formData: LoginCredentials) {
   const response = await authApi.login(formData);
@@ -98,4 +104,36 @@ export async function joinWorkspaceAction(token: string) {
 export async function clearAuthCookiesAction() {
   await clearAuthCookies();
   return { success: true };
+}
+
+export async function forgotPasswordAction(data: ForgotPasswordData) {
+  const response = await authApi.forgotPassword(data);
+  if (!response.success) {
+    throw new Error(response.message || 'Failed to send reset email');
+  }
+  return response.data;
+}
+
+export async function resetPasswordAction(data: ResetPasswordData) {
+  const response = await authApi.resetPassword(data);
+  if (!response.success) {
+    throw new Error(response.message || 'Failed to reset password');
+  }
+  return response.data;
+}
+
+export async function verifyEmailAction(data: VerifyEmailData) {
+  const response = await authApi.verifyEmail(data);
+  if (!response.success) {
+    throw new Error(response.message || 'Failed to verify email');
+  }
+  return response.data;
+}
+
+export async function sendVerificationAction() {
+  const response = await authApi.sendVerification();
+  if (!response.success) {
+    throw new Error(response.message || 'Failed to send verification email');
+  }
+  return response.data;
 }

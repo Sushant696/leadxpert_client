@@ -1,3 +1,4 @@
+import { NAV_ITEMS_USER_SETTINGS } from '@/components/navigation_dashboard/sub-sidebar/items';
 import { RESOURCE_BASED_ROLES } from '@/types/user';
 
 export const WORKSPACE_ROUTE_PERMISSIONS = {
@@ -20,15 +21,26 @@ export const WORKSPACE_ROUTE_PERMISSIONS = {
   ],
 } as const;
 
+const USER_SETTINGS_ROUTES = NAV_ITEMS_USER_SETTINGS.map(
+  item => item.href
+);
+
 export const canAccessRoute = (
   route: string,
-  userRole?: string
+  workspaceRole?: string
 ): boolean => {
-  if (!userRole) return false;
 
-  const allowedRoles = WORKSPACE_ROUTE_PERMISSIONS[
+  // user settings -> always accessible
+  if (USER_SETTINGS_ROUTES.includes(route)) {
+    return true;
+  }
+
+  if (!workspaceRole) return false;
+
+  const allowedRoles =
+    WORKSPACE_ROUTE_PERMISSIONS[
     route as keyof typeof WORKSPACE_ROUTE_PERMISSIONS
-  ];
+    ];
 
-  return allowedRoles?.includes(userRole as any) ?? false;
+  return allowedRoles?.includes(workspaceRole as any) ?? false;
 };

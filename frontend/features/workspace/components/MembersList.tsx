@@ -35,21 +35,17 @@ function MembersList() {
   const removeMemberMutation = useRemoveWorkspaceUser()
 
   const currentUserId = currentUser?.id
-
-  const currentMember = useMemo(() => {
-    if (!members || !currentUserId) return null
-    return members.find((m: Member) => m.user._id === currentUserId || m.user.id === currentUserId) ?? null
-  }, [members, currentUserId])
+  const currentUserRole = workspace?.role as RESOURCE_BASED_ROLES | undefined
 
   const getUserId = (member: Member): string => member.user._id || member.user.id
 
   const canManageMember = (targetMember: Member): boolean => {
-    if (!currentMember) return false
+    if (!currentUserRole) return false
     if (getUserId(targetMember) === currentUserId) return false
 
-    if (currentMember.role === RESOURCE_BASED_ROLES.SUPER_ADMIN) return true
+    if (currentUserRole === RESOURCE_BASED_ROLES.SUPER_ADMIN) return true
 
-    if (currentMember.role === RESOURCE_BASED_ROLES.ADMIN) {
+    if (currentUserRole === RESOURCE_BASED_ROLES.ADMIN) {
       return targetMember.role === RESOURCE_BASED_ROLES.AGENT
     }
 
@@ -57,60 +53,50 @@ function MembersList() {
   }
 
   const canPromote = (targetMember: Member): boolean => {
-    if (!currentMember) return false
+    if (!currentUserRole) return false
 
-    const isSuperAdmin = currentMember.role === RESOURCE_BASED_ROLES.SUPER_ADMIN
-    const isAdmin = currentMember.role === RESOURCE_BASED_ROLES.ADMIN
-    const targetIsAgent = targetMember.role === RESOURCE_BASED_ROLES.AGENT
-
-    return (isSuperAdmin || isAdmin) && targetIsAgent
+    return (
+      (currentUserRole === RESOURCE_BASED_ROLES.SUPER_ADMIN ||
+        currentUserRole === RESOURCE_BASED_ROLES.ADMIN) &&
+      targetMember.role === RESOURCE_BASED_ROLES.AGENT
+    )
   }
 
   const canDemote = (targetMember: Member): boolean => {
-    if (!currentMember) return false
+    if (!currentUserRole) return false
 
     return (
-      currentMember.role === RESOURCE_BASED_ROLES.SUPER_ADMIN &&
+      currentUserRole === RESOURCE_BASED_ROLES.SUPER_ADMIN &&
       targetMember.role === RESOURCE_BASED_ROLES.ADMIN
     )
   }
 
   const canRemove = (targetMember: Member): boolean => {
-    if (!currentMember) return false
+    if (!currentUserRole) return false
     if (getUserId(targetMember) === currentUserId) return false
 
-    if (currentMember.role === RESOURCE_BASED_ROLES.SUPER_ADMIN) return true
-
-    return false
+    return currentUserRole === RESOURCE_BASED_ROLES.SUPER_ADMIN
   }
 
   const handlePromote = (member: Member) => {
     updateMemberRoleMutation.mutate({
       workspaceId: member.workspaceId,
-      data: {
-        userId: getUserId(member),
-        role: RESOURCE_BASED_ROLES.ADMIN
-      }
+      data: { userId: getUserId(member), role: RESOURCE_BASED_ROLES.ADMIN }
     })
   }
 
   const handleDemote = (member: Member) => {
     updateMemberRoleMutation.mutate({
       workspaceId: member.workspaceId,
-      data: {
-        userId: getUserId(member),
-        role: RESOURCE_BASED_ROLES.AGENT
-      }
+      data: { userId: getUserId(member), role: RESOURCE_BASED_ROLES.AGENT }
     })
   }
 
   const handleRemove = (member: Member) => {
-    if (confirm(`Are you sure you want to remove ${member.user.name}?`)) {
-      removeMemberMutation.mutate({
-        workspaceId: member.workspaceId,
-        userId: getUserId(member)
-      })
-    }
+    removeMemberMutation.mutate({
+      workspaceId: member.workspaceId,
+      userId: getUserId(member)
+    })
   }
 
   const getRoleBadgeColor = (role: RESOURCE_BASED_ROLES): string => {
@@ -240,7 +226,6 @@ function MembersList() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56">
-
                       {canPromote(member) && (
                         <DropdownMenuItem
                           onClick={() => handlePromote(member)}
@@ -280,7 +265,6 @@ function MembersList() {
                           </span>
                         </DropdownMenuItem>
                       )}
-
                     </DropdownMenuContent>
                   </DropdownMenu>
                 )}
