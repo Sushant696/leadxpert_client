@@ -31,11 +31,11 @@ export interface ForgotPasswordData {
 }
 
 export interface ResetPasswordData {
-  token: string;
-  password: string;
-  confirmPassword: string;
+  code: string;
+  email: string;
+  newPassword: string;
 }
 
 export interface VerifyEmailData {
-  otp: string;
+  code: string;
 }

@@ -20,6 +20,7 @@ import useAuthStore from '@/store/auth-store';
 import { Button } from '@/components/ui/button';
 import useUploadImage from '@/features/upload/hooks/useUploadImage';
 import useUpdateUser from '@/features/user/hooks/useUpdateUser';
+import { VerifyEmailModal } from '@/features/auth/components/verifyEmailModal';
 
 interface ProfileFormData {
   name: string;
@@ -31,6 +32,7 @@ const ProfileSettings = () => {
   const uploadImageMutation = useUploadImage();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -226,12 +228,15 @@ const ProfileSettings = () => {
                             VERIFIED
                           </span>
                         ) : (
-                          <button type="button" className="text-xs font-bold text-warning hover:underline flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => setIsVerifyModalOpen(true)}
+                            className="text-xs font-bold text-warning hover:text-warning/80 hover:underline flex items-center gap-1 transition-colors"
+                          >
                             <AlertCircle className="w-3.5 h-3.5" />
                             Verify
                           </button>
-                        )}
-                      </div>
+                        )}                      </div>
                     </div>
                   </div>
 
@@ -299,6 +304,10 @@ const ProfileSettings = () => {
           </div>
         </div>
       </div>
+      <VerifyEmailModal
+        isOpen={isVerifyModalOpen}
+        onClose={() => setIsVerifyModalOpen(false)}
+      />
     </div>
   );
 };
