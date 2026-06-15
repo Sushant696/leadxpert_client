@@ -39,3 +39,9 @@ export interface ResetPasswordData {
 export interface VerifyEmailData {
   code: string;
 }
+
+export interface VerifyResetCodeData {
+  email: string;
+  code: string;
+}
+

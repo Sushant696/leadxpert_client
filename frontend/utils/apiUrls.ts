@@ -7,9 +7,11 @@ export const apiURLs = {
     refresh: '/api/auth/refresh',
     changePassword: "/api/auth/changePassword",
     forgotPassword: '/api/auth/forgot-password',
+    verifyResetCode: '/api/auth/verify-reset-code',
     resetPassword: '/api/auth/reset-password',
     verifyEmail: '/api/auth/verify-email',
     sendVerification: '/api/auth/send-verification',
+
   },
 
   FILE: {
@@ -59,13 +61,6 @@ export const apiURLs = {
       remove: (workspaceId: string) =>
         `/api/workspace/${workspaceId}/members`,
     },
-  },
-
-  FORGOTPASSWORD: {
-    verifyOTP: '/api/forgotPassword/verifyOTP',
-    checkEmail: '/api/forgotPassword/checkEmail',
-    generateOTP: '/api/forgotPassword/generateOTP',
-    changePassword: '/api/forgotPassword/changePassword',
   },
 };
 

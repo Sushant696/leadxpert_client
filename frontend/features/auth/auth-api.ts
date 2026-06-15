@@ -1,7 +1,14 @@
 import { apiURLs } from "@/utils/apiUrls";
 import axiosInstance from "@/lib/api/axios";
 import { apiWrapper } from "@/lib/api/api-wrapper";
-import { ForgotPasswordData, LoginCredentials, RegisterData, ResetPasswordData, VerifyEmailData } from "./auth.types";
+import {
+  ForgotPasswordData,
+  LoginCredentials,
+  RegisterData,
+  ResetPasswordData,
+  VerifyEmailData,
+  VerifyResetCodeData
+} from "./auth.types";
 
 export const authApi = {
   login: async (credentials: LoginCredentials) => {
@@ -45,7 +52,13 @@ export const authApi = {
     return await apiWrapper.post(apiURLs.AUTH.verifyEmail, data);
   },
 
+  verifyResetCode: async (data: VerifyResetCodeData) => {
+    const response = await axiosInstance.post(apiURLs.AUTH.verifyResetCode, data);
+    return response.data;
+  },
+
   sendVerification: async () => {
     return await apiWrapper.post(apiURLs.AUTH.sendVerification);
   },
+
 };

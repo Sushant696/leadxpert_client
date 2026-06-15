@@ -47,7 +47,7 @@ function LoginForm() {
             <Label htmlFor="password" className="text-sm font-medium text-foreground">
               Password
             </Label>
-            <Link href="/" className="text-sm text-primary hover:text-primary-dark transition-colors">
+            <Link href="/forgot-password" className="text-sm text-primary hover:text-primary-dark transition-colors">
               Forgot password?
             </Link>
           </div>

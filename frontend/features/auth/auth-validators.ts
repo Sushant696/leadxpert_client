@@ -29,13 +29,17 @@ export const forgotPasswordSchema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email"),
 });
 
+export const verifyResetCodeSchema = z.object({
+  email: z.string().email(),
+  code: z.string().min(1, "Code is required"),
+});
+
 export const resetPasswordSchema = z.object({
-  token: z.string().min(1, "Token is required"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-  confirmPassword: z.string().min(8, "Password must match"),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords do not match!",
-  path: ["confirmPassword"],
+  email: z.string().email(),
+  code: z.string().min(1),
+  newPassword: z
+    .string()
+    .min(8, "Password must be at least 8 characters"),
 });
 
 export const verifyEmailSchema = z.object({

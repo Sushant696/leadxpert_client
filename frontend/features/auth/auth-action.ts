@@ -5,7 +5,8 @@ import {
   RegisterData,
   ForgotPasswordData,
   ResetPasswordData,
-  VerifyEmailData
+  VerifyEmailData,
+  VerifyResetCodeData
 } from "./auth.types";
 import {
   clearAuthCookies,
@@ -126,6 +127,14 @@ export async function verifyEmailAction(data: VerifyEmailData) {
   const response = await authApi.verifyEmail(data);
   if (!response.success) {
     throw new Error(response.message || 'Failed to verify email');
+  }
+  return response.data;
+}
+
+export async function verifyResetCodeAction(data: VerifyResetCodeData) {
+  const response = await authApi.verifyResetCode(data);
+  if (!response.success) {
+    throw new Error(response.message || 'Invalid or expired code');
   }
   return response.data;
 }
