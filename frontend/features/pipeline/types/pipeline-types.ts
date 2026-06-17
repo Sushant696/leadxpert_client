@@ -61,9 +61,18 @@ export interface PipelineSummary {
 
 export interface PipelineStageRef {
   _id: string;
+  pipelineId: string;
+  workspaceId: string;
   name: string;
+  description?: string | null;
   color: string;
-  order: number;
+  type: "OPEN" | "WON" | "LOST";
+  order?: number;
+  probability: number;
+  leadCount: number;
+  totalValue: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface PipelineWithStages extends Pipeline {
