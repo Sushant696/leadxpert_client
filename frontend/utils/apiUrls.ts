@@ -62,5 +62,16 @@ export const apiURLs = {
         `/api/workspace/${workspaceId}/members`,
     },
   },
+
+  PIPELINE: {
+    create: (workspaceId: string) => `/api/pipeline/${workspaceId}/create`,
+    getAll: (workspaceId: string) => `/api/pipeline/${workspaceId}/all`,
+    getById: (workspaceId: string, pipelineId: string) =>
+      `/api/pipeline/${workspaceId}/pipeline/${pipelineId}`,
+    updateById: (workspaceId: string, pipelineId: string) =>
+      `/api/pipeline/${workspaceId}/pipelines/${pipelineId}/update`,
+    deleteById: (workspaceId: string, pipelineId: string) =>
+      `/api/pipeline/${workspaceId}/pipelines/${pipelineId}/delete`,
+  },
 };
 
