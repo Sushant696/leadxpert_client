@@ -1,9 +1,12 @@
 "use client"
 
+import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Settings, ChevronRight, Plus } from 'lucide-react';
+
+import useGetPipelines from '@/features/pipeline/hooks/useGetPipelines';
 
 import NavItem from './navItem';
 import { cn } from '@/lib/utils';
@@ -28,6 +31,10 @@ const Sidebar = () => {
   const currentWorkspace = workspace;
   const userRole = currentWorkspace?.role;
   const canManage = userRole === RESOURCE_BASED_ROLES.SUPER_ADMIN || userRole === RESOURCE_BASED_ROLES.ADMIN;
+
+  const { data: pipelines, isLoading: isPipelinesLoading } = useGetPipelines(
+    currentWorkspace?.id ?? ""
+  );
 
   return (
     <aside className="w-64 border-r bg-surface p-4 sticky top-0 shadow-sm h-screen flex flex-col">
@@ -71,25 +78,44 @@ const Sidebar = () => {
       <div className="space-y-1 flex-1 overflow-y-auto p-1 mt-2">
         {currentWorkspace ? (
           <>
-            {/* Dymmy pipeline items*/}
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 group bg-primary/10 text-primary">
-              <div className='w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary'>
-                {getInitials("Sales Pipeline")}
+            {isPipelinesLoading ? (
+              Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-3 px-3 py-2 rounded-xl animate-pulse">
+                  <div className="w-6 h-6 rounded-lg bg-muted flex-shrink-0" />
+                  <div className="h-3 bg-muted rounded w-3/4" />
+                </div>
+              ))
+            ) : pipelines && pipelines.length > 0 ? (
+              pipelines.map((pipeline) => {
+                const isActive = pathname === `/dashboard/pipeline/${pipeline._id}`;
+                return (
+                  <Link
+                    key={pipeline._id}
+                    href={`/dashboard/pipeline/${pipeline._id}`}
+                    className={cn(
+                      "w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 group",
+                      isActive
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:bg-muted hover:text-primary"
+                    )}
+                  >
+                    <div
+                      className="w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0"
+                      style={{ backgroundColor: pipeline.color }}
+                    >
+                      {pipeline.icon ?? getInitials(pipeline.name)}
+                    </div>
+                    <span className={cn("text-sm truncate", isActive ? "font-bold" : "font-medium")}>
+                      {pipeline.name}
+                    </span>
+                  </Link>
+                );
+              })
+            ) : (
+              <div className="mt-3 px-3 py-4 text-center">
+                <p className="text-xs text-muted-foreground">No pipelines yet</p>
               </div>
-              <span className="text-sm font-bold truncate">Sales Pipeline</span>
-            </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 group text-muted-foreground hover:bg-muted hover:text-primary">
-              <div className='w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary'>
-                {getInitials("Marketing Leads")}
-              </div>
-              <span className="text-sm font-medium truncate">Marketing Leads</span>
-            </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 group text-muted-foreground hover:bg-muted hover:text-primary">
-              <div className='w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary'>
-                {getInitials("Partnership Deals")}
-              </div>
-              <span className="text-sm font-medium truncate">Partnership Deals</span>
-            </button>
+            )}
           </>
         ) : (
           <div className="mt-3 px-3 py-4 text-center">
