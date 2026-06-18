@@ -36,7 +36,9 @@ function StatCard({
 }) {
   return (
     <div className="bg-card border border-border rounded-xl p-4 flex items-center gap-3">
-      <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${colorClass}`}>
+      <div
+        className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${colorClass}`}
+      >
         <Icon size={16} />
       </div>
       <div className="min-w-0">
@@ -56,7 +58,9 @@ function StageColumn({ stage }: { stage: PipelineStageRef }) {
             className="w-2.5 h-2.5 rounded-full shrink-0"
             style={{ backgroundColor: stage.color }}
           />
-          <span className="text-sm font-semibold text-primary truncate">{stage.name}</span>
+          <span className="text-sm font-semibold text-primary truncate">
+            {stage.name}
+          </span>
         </div>
         <div className="flex items-center gap-1.5 shrink-0 ml-2">
           <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-full font-medium">
@@ -72,7 +76,9 @@ function StageColumn({ stage }: { stage: PipelineStageRef }) {
         <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
           <Users size={14} className="text-muted-foreground" />
         </div>
-        <p className="text-xs text-muted-foreground font-medium">No leads yet</p>
+        <p className="text-xs text-muted-foreground font-medium">
+          No leads yet
+        </p>
         <p className="text-[10px] text-muted-foreground/60">Drag leads here</p>
       </div>
     </div>
@@ -124,7 +130,7 @@ function PipelineDashboard() {
 
   const { data: pipeline, isLoading } = useGetSinglePipeline(
     workspace?.id ?? "",
-    pipelineId
+    pipelineId,
   );
 
   if (isLoading) return <PipelineSkeleton />;
@@ -147,17 +153,46 @@ function PipelineDashboard() {
     }).format(val);
 
   const statCards = [
-    { label: "Total Leads",  value: stats.totalLeads,           icon: Users,      colorClass: "bg-blue-100 text-blue-600" },
-    { label: "Open Leads",   value: stats.openLeads,            icon: TrendingUp, colorClass: "bg-amber-100 text-amber-600" },
-    { label: "Won Leads",    value: stats.wonLeads,             icon: Trophy,     colorClass: "bg-green-100 text-green-600" },
-    { label: "Lost Leads",   value: stats.lostLeads,            icon: XCircle,    colorClass: "bg-red-100 text-red-600" },
-    { label: "Total Value",  value: formatValue(stats.totalValue), icon: DollarSign, colorClass: "bg-purple-100 text-purple-600" },
-    { label: "Won Value",    value: formatValue(stats.wonValue),   icon: Star,       colorClass: "bg-emerald-100 text-emerald-600" },
+    {
+      label: "Total Leads",
+      value: stats.totalLeads,
+      icon: Users,
+      colorClass: "bg-blue-100 text-blue-600",
+    },
+    {
+      label: "Open Leads",
+      value: stats.openLeads,
+      icon: TrendingUp,
+      colorClass: "bg-amber-100 text-amber-600",
+    },
+    {
+      label: "Won Leads",
+      value: stats.wonLeads,
+      icon: Trophy,
+      colorClass: "bg-green-100 text-green-600",
+    },
+    {
+      label: "Lost Leads",
+      value: stats.lostLeads,
+      icon: XCircle,
+      colorClass: "bg-red-100 text-red-600",
+    },
+    {
+      label: "Total Value",
+      value: formatValue(stats.totalValue),
+      icon: DollarSign,
+      colorClass: "bg-purple-100 text-purple-600",
+    },
+    {
+      label: "Won Value",
+      value: formatValue(stats.wonValue),
+      icon: Star,
+      colorClass: "bg-emerald-100 text-emerald-600",
+    },
   ];
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-
       <div className="shrink-0 px-6 pt-2 pb-4 border-b border-border bg-surface">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3">
@@ -201,7 +236,8 @@ function PipelineDashboard() {
                   {pipeline.visibility.replace("_", " ")}
                 </Badge>
                 <Badge variant="outline" className="text-[10px]">
-                  {pipeline.stages.length} stage{pipeline.stages.length !== 1 ? "s" : ""}
+                  {pipeline.stages.length} stage
+                  {pipeline.stages.length !== 1 ? "s" : ""}
                 </Badge>
               </div>
             </div>

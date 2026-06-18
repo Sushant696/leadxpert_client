@@ -10,35 +10,23 @@ export const CreatePipelineSchema = z.object({
 
   description: z
     .string()
-    .max(500, "Description must be at most 500 characters")
-    .trim()
-    .optional()
-    .or(z.literal(""))
-    .transform((val) => (val === "" ? null : val ?? null)),
+    .optional(),
 
   color: z
-    .string()
-    .regex(/^#[0-9A-Fa-f]{6}$/, "Color must be a valid hex color")
-    .default("#3B82F6"),
+    .string(),
 
   icon: z
     .string()
-    .max(10, "Icon must be at most 10 characters")
-    .optional()
-    .or(z.literal(""))
-    .transform((val) => (val === "" ? null : val ?? null)),
+    .optional(),
 
   currency: z
-    .nativeEnum(Currency)
-    .default(Currency.NPR),
+    .nativeEnum(Currency),
 
   vertical: z
-    .nativeEnum(BusinessVertical)
-    .default(BusinessVertical.GENERAL),
+    .nativeEnum(BusinessVertical),
 
   visibility: z
-    .nativeEnum(PipelineVisibility)
-    .default(PipelineVisibility.WORKSPACE),
+    .nativeEnum(PipelineVisibility),
 
   memberIds: z
     .array(z.string())

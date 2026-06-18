@@ -97,9 +97,9 @@ function WorkspaceCreateModal({ setIsCreateWorkspaceOpen }: WorkspaceCreateModal
           <div className="flex items-start gap-2">
             <Building2 className="h-5 w-5 text-primary mt-0.5" />
             <div className="space-y-1">
-              <p className="font-medium text-sm">You'll be the Super Admin</p>
+              <p className="font-medium text-sm">You&apos;ll be the Super Admin</p>
               <p className="text-xs text-muted-foreground">
-                As the creator, you'll have full control over workspace settings, pipelines, and team member permissions.
+                As the creator, you&apos;ll have full control over workspace settings, pipelines, and team member permissions.
               </p>
             </div>
           </div>
