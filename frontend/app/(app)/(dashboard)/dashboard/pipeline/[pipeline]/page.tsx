@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  Archive,
-  Plus,
-  Settings2,
-} from "lucide-react";
+import { Archive, Plus, Settings2 } from "lucide-react";
 import { useState } from "react";
 import { useParams } from "next/navigation";
 
@@ -52,7 +48,7 @@ function PipelineDashboard() {
     setTimeout(() => {
       setIsApplyingTemplate(false);
       showToast.info(
-        `Template "${template.label}" will create ${template.stages.length} stages. Bulk creation API coming soon!`
+        `Template "${template.label}" will create ${template.stages.length} stages. Bulk creation API coming soon!`,
       );
     }, 1000);
   };
@@ -124,7 +120,10 @@ function PipelineDashboard() {
           <div className="flex items-center gap-2 shrink-0">
             <Button
               onClick={() => setPipelineSettingsOpen(true)}
-              variant="outline" size="sm" className="text-xs gap-1.5">
+              variant="outline"
+              size="sm"
+              className="text-xs gap-1.5"
+            >
               <Settings2 size={13} /> Settings
             </Button>
             <Button size="sm" className="text-xs gap-1.5">
@@ -144,6 +143,7 @@ function PipelineDashboard() {
         </div>
       )}
 
+      {/* Main Content Area */}
       {hasStages ? (
         <div className="flex-1 overflow-x-auto overflow-y-hidden">
           <div className="flex gap-4 p-6 h-full">

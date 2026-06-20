@@ -58,145 +58,136 @@ function EmptyPipelineState({
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="min-h-full flex flex-col items-center justify-center p-8">
-      <div className="max-w-5xl w-full">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4">
-            <Layers className="w-8 h-8 text-primary" />
+        <div className="max-w-5xl w-full">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4">
+              <Layers className="w-8 h-8 text-primary" />
+            </div>
+            <h2 className="text-2xl font-bold text-foreground mb-2">
+              Set up your pipeline stages
+            </h2>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              Choose a template to get started quickly, or create your own
+              stages from scratch.
+            </p>
           </div>
-          <h2 className="text-2xl font-bold text-foreground mb-2">
-            Set up your pipeline stages
-          </h2>
-          <p className="text-muted-foreground max-w-md mx-auto">
-            Choose a template to get started quickly, or create your own stages
-            from scratch.
-          </p>
-        </div>
 
-        {/* Template Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-          {STARTER_TEMPLATES.map((template) => (
-            <button
-              key={template.id}
-              onClick={() => handleTemplateClick(template)}
-              className={cn(
-                "group relative p-4 rounded-xl border-2 text-left transition-all duration-200",
-                "hover:shadow-lg hover:-translate-y-0.5",
-                selectedTemplate?.id === template.id
-                  ? "border-primary bg-primary/5 shadow-md"
-                  : "border-border bg-card hover:border-primary/50",
-              )}
-            >
-              {/* Recommended Badge */}
-              {template.isRecommended && (
-                <div className="absolute -top-2.5 left-4 px-2 py-0.5 bg-primary text-primary-foreground text-[10px] font-semibold rounded-full flex items-center gap-1">
-                  <Sparkles size={10} />
-                  Recommended
-                </div>
-              )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            {STARTER_TEMPLATES.map((template) => (
+              <button
+                key={template.id}
+                onClick={() => handleTemplateClick(template)}
+                className={cn(
+                  "group relative p-4 rounded-xl border-2 text-left transition-all duration-200",
+                  "hover:shadow-lg hover:-translate-y-0.5",
+                  selectedTemplate?.id === template.id
+                    ? "border-primary bg-primary/5 shadow-md"
+                    : "border-border bg-card hover:border-primary/50",
+                )}
+              >
+                {template.isRecommended && (
+                  <div className="absolute -top-2.5 left-4 px-2 py-0.5 bg-primary text-primary-foreground text-[10px] font-semibold rounded-full flex items-center gap-1">
+                    <Sparkles size={10} />
+                    Recommended
+                  </div>
+                )}
 
-              {/* Icon & Title */}
-              <div className="flex items-start gap-3 mb-3">
-                <div
-                  className="w-10 h-10 rounded-lg flex items-center justify-center text-lg shrink-0"
-                  style={{
-                    backgroundColor: template.accentColor + "20",
-                    border: `1.5px solid ${template.accentColor}`,
-                  }}
-                >
-                  {template.icon}
+                <div className="flex items-start gap-3 mb-3">
+                  <div
+                    className="w-10 h-10 rounded-lg flex items-center justify-center text-lg shrink-0"
+                    style={{
+                      backgroundColor: template.accentColor + "20",
+                      border: `1.5px solid ${template.accentColor}`,
+                    }}
+                  >
+                    {template.icon}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-semibold text-foreground text-sm truncate">
+                      {template.label}
+                    </h3>
+                    <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">
+                      {template.description}
+                    </p>
+                  </div>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-semibold text-foreground text-sm truncate">
-                    {template.label}
-                  </h3>
-                  <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">
-                    {template.description}
-                  </p>
-                </div>
-              </div>
 
-              {/* Stage Preview */}
-              {template.stages.length > 0 ? (
-                <div className="flex items-center gap-1.5 mb-3">
-                  {template.stages.slice(0, 5).map((stage, idx) => (
-                    <div
-                      key={idx}
-                      className="w-3 h-3 rounded-full shrink-0"
-                      style={{ backgroundColor: stage.color }}
-                      title={stage.name}
-                    />
-                  ))}
-                  {template.stages.length > 5 && (
-                    <span className="text-[10px] text-muted-foreground ml-1">
-                      +{template.stages.length - 5} more
+                {template.stages.length > 0 ? (
+                  <div className="flex items-center gap-1.5 mb-3">
+                    {template.stages.slice(0, 5).map((stage, idx) => (
+                      <div
+                        key={idx}
+                        className="w-3 h-3 rounded-full shrink-0"
+                        style={{ backgroundColor: stage.color }}
+                        title={stage.name}
+                      />
+                    ))}
+                    {template.stages.length > 5 && (
+                      <span className="text-[10px] text-muted-foreground ml-1">
+                        +{template.stages.length - 5} more
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1.5 mb-3">
+                    <Plus size={12} className="text-muted-foreground" />
+                    <span className="text-xs text-muted-foreground">
+                      Create your own
                     </span>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-medium text-muted-foreground">
+                    {template.stages.length > 0
+                      ? `${template.stages.length} stages`
+                      : "Manual setup"}
+                  </span>
+
+                  {template.stages.length > 0 && (
+                    <button
+                      onClick={(e) => handlePreview(e, template)}
+                      className="text-[10px] font-medium text-primary hover:underline"
+                    >
+                      Preview
+                    </button>
                   )}
                 </div>
-              ) : (
-                <div className="flex items-center gap-1.5 mb-3">
-                  <Plus size={12} className="text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground">
-                    Create your own
-                  </span>
-                </div>
-              )}
 
-              {/* Footer */}
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-medium text-muted-foreground">
-                  {template.stages.length > 0
-                    ? `${template.stages.length} stages`
-                    : "Manual setup"}
-                </span>
-
-                {template.stages.length > 0 && (
-                  <button
-                    onClick={(e) => handlePreview(e, template)}
-                    className="text-[10px] font-medium text-primary hover:underline"
-                  >
-                    Preview
-                  </button>
+                {selectedTemplate?.id === template.id && (
+                  <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                    <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                  </div>
                 )}
-              </div>
-
-              {/* Selected Checkmark */}
-              {selectedTemplate?.id === template.id && (
-                <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                  <Check className="w-3 h-3 text-white" strokeWidth={3} />
-                </div>
-              )}
-            </button>
-          ))}
-        </div>
-
-        {/* Action Button */}
-        {selectedTemplate && selectedTemplate.id !== "manual" && (
-          <div className="flex justify-center">
-            <Button
-              size="lg"
-              onClick={handleApplyTemplate}
-              disabled={isLoading}
-              className="gap-2 px-8"
-            >
-              {isLoading ? (
-                <>
-                  <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
-                  Creating stages...
-                </>
-              ) : (
-                <>
-                  Apply &quot;{selectedTemplate.label}&quot;
-                  <ArrowRight size={16} />
-                </>
-              )}
-            </Button>
+              </button>
+            ))}
           </div>
-        )}
-      </div>
+
+          {selectedTemplate && selectedTemplate.id !== "manual" && (
+            <div className="flex justify-center">
+              <Button
+                size="lg"
+                onClick={handleApplyTemplate}
+                disabled={isLoading}
+                className="gap-2 px-8"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                    Creating stages...
+                  </>
+                ) : (
+                  <>
+                    Apply &quot;{selectedTemplate.label}&quot;
+                    <ArrowRight size={16} />
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Preview Dialog */}
       <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
         <DialogContent className="max-w-lg max-h-[80vh] overflow-hidden flex flex-col">
           {previewTemplate && (
