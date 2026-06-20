@@ -1,13 +1,11 @@
 import { StageType } from "./types/pipeline-stage.types";
 import { BusinessVertical } from "./types/pipeline-types";
 
-// ═══════════════════════════════════════════════════════════════════════════════
 // STARTER TEMPLATES
 //
 // Shown when a pipeline has no stages yet.
 // User can select a template to bulk-create stages or start from scratch.
 // After creation, stages are fully customizable.
-// ═══════════════════════════════════════════════════════════════════════════════
 
 export type StarterStageDef = {
   name: string;

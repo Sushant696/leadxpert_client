@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Users,
   Archive,
   Plus,
   Settings2,
@@ -15,14 +14,20 @@ import useWorkspaceStore from "@/store/workspace-store";
 import useGetSinglePipeline from "@/features/pipeline/hooks/useGetSinglePipeline";
 import { PipelineSkeleton } from "@/features/pipeline/components/pipelineSkeleton";
 import PipelineSettingsModal from "@/features/pipeline/components/settings/PipelineSettingModal";
+import CreatePipelineStageModal from "@/features/pipeline/components/CreatePipelineStageModal";
+import EmptyPipelineState from "@/features/pipeline/components/EmptyPipelineState";
 import statsCards from "@/features/pipeline/pipelineConstants";
 import { StatCard } from "@/features/pipeline/components/StatCard";
 import { StageColumn } from "@/features/pipeline/components/StageColumn";
+import { StarterTemplate } from "@/features/pipeline/templateConstants";
+import { showToast } from "@/components/showToast";
 
 function PipelineDashboard() {
   const { pipeline: pipelineId } = useParams<{ pipeline: string }>();
   const { workspace } = useWorkspaceStore();
   const [isPipelineSettingsOpen, setPipelineSettingsOpen] = useState(false);
+  const [isCreateStageOpen, setIsCreateStageOpen] = useState(false);
+  const [isApplyingTemplate, setIsApplyingTemplate] = useState(false);
 
   const { data: pipeline, isLoading } = useGetSinglePipeline(
     workspace?.id ?? "",
@@ -39,7 +44,25 @@ function PipelineDashboard() {
     );
   }
 
+  const handleApplyTemplate = async (template: StarterTemplate) => {
+    // TODO: Implement bulk stage creation API
+    setIsApplyingTemplate(true);
+
+    // Simulate API call - will replace later with actual api
+    setTimeout(() => {
+      setIsApplyingTemplate(false);
+      showToast.info(
+        `Template "${template.label}" will create ${template.stages.length} stages. Bulk creation API coming soon!`
+      );
+    }, 1000);
+  };
+
+  const handleCreateManually = () => {
+    setIsCreateStageOpen(true);
+  };
+
   const { stats } = pipeline;
+  const hasStages = pipeline.stages.length > 0;
 
   const formatValue = (val: number) =>
     new Intl.NumberFormat("en-US", {
@@ -111,30 +134,60 @@ function PipelineDashboard() {
         </div>
       </div>
 
-      <div className="shrink-0 px-6 py-4 border-b border-border">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          {statCards.map((s) => (
-            <StatCard key={s.label} {...s} />
-          ))}
-        </div>
-      </div>
-
-      <div className="flex-1 overflow-x-auto overflow-y-hidden">
-        <div className="flex gap-4 p-6 h-full">
-          {pipeline.stages.map((stage) => (
-            <StageColumn key={stage._id} stage={stage} />
-          ))}
-
-          <div className="shrink-0 w-72 pt-0.5">
-            <button className="w-full h-11 border-2 border-dashed border-border rounded-xl flex items-center justify-center gap-2 text-muted-foreground text-sm font-medium hover:border-primary hover:text-primary transition-colors">
-              <Plus size={14} /> Add Stage
-            </button>
+      {hasStages && (
+        <div className="shrink-0 px-6 py-4 border-b border-border">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {statCards.map((s) => (
+              <StatCard key={s.label} {...s} />
+            ))}
           </div>
         </div>
-      </div>
-      {isPipelineSettingsOpen &&
-        <PipelineSettingsModal isOpen={isPipelineSettingsOpen} setIsOpen={setPipelineSettingsOpen} pipeline={pipeline} workspaceId={workspace?.id} />
-      }
+      )}
+
+      {hasStages ? (
+        <div className="flex-1 overflow-x-auto overflow-y-hidden">
+          <div className="flex gap-4 p-6 h-full">
+            {pipeline.stages.map((stage) => (
+              <StageColumn
+                key={stage._id}
+                stage={stage}
+                workspaceId={workspace?.id ?? ""}
+                pipelineId={pipelineId}
+              />
+            ))}
+
+            <div className="shrink-0 w-72 pt-0.5">
+              <button
+                onClick={() => setIsCreateStageOpen(true)}
+                className="w-full h-11 border-2 border-dashed border-border rounded-xl flex items-center justify-center gap-2 text-muted-foreground text-sm font-medium hover:border-primary hover:text-primary transition-colors"
+              >
+                <Plus size={14} /> Add Stage
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <EmptyPipelineState
+          pipelineName={pipeline.name}
+          onSelectTemplate={handleApplyTemplate}
+          onCreateManually={handleCreateManually}
+          isLoading={isApplyingTemplate}
+        />
+      )}
+      {isPipelineSettingsOpen && (
+        <PipelineSettingsModal
+          isOpen={isPipelineSettingsOpen}
+          setIsOpen={setPipelineSettingsOpen}
+          pipeline={pipeline}
+          workspaceId={workspace?.id}
+        />
+      )}
+      <CreatePipelineStageModal
+        isOpen={isCreateStageOpen}
+        setIsOpen={setIsCreateStageOpen}
+        workspaceId={workspace?.id ?? ""}
+        pipelineId={pipelineId}
+      />
     </div>
   );
 }
