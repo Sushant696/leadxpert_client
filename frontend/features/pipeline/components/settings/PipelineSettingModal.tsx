@@ -41,6 +41,7 @@ import {
   TPipelineSettingsForm
 } from "../../validators/pipeline-validators";
 import useUpdatePipeline from "../../hooks/useUpdatePipeline";
+import useDeletePipeline from "../../hooks/useDeletePipeline";
 
 interface PipelineTypes extends Pipeline {
   dealCount?: number;
@@ -61,6 +62,7 @@ function PipelineSettingsModal({
 }: PipelineSettingsModalProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const updatePipelineMutation = useUpdatePipeline(pipeline.workspaceId, pipeline._id);
+  const deletePipelineMutation = useDeletePipeline(pipeline.workspaceId);
   const {
     register,
     handleSubmit,
@@ -88,7 +90,7 @@ function PipelineSettingsModal({
   };
 
   const handleDelete = () => {
-    console.log("Deleting pipeline:", pipeline?._id);
+    deletePipelineMutation.mutate(pipeline._id);
     setShowDeleteDialog(false);
     setIsOpen(false);
   };
