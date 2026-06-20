@@ -40,6 +40,7 @@ import {
   PipelineSettingsSchema,
   TPipelineSettingsForm
 } from "../../validators/pipeline-validators";
+import useUpdatePipeline from "../../hooks/useUpdatePipeline";
 
 interface PipelineTypes extends Pipeline {
   dealCount?: number;
@@ -59,7 +60,7 @@ function PipelineSettingsModal({
   pipeline,
 }: PipelineSettingsModalProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-
+  const updatePipelineMutation = useUpdatePipeline(pipeline.workspaceId, pipeline._id);
   const {
     register,
     handleSubmit,
@@ -82,7 +83,7 @@ function PipelineSettingsModal({
   const selectedCurrency = useWatch({ control, name: "currency" });
 
   const onSubmit = async (data: TPipelineSettingsForm) => {
-    console.log("Updating pipeline:", data);
+    updatePipelineMutation.mutate(data);
     setIsOpen(false);
   };
 
