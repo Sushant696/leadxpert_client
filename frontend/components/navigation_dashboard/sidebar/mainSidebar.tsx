@@ -163,7 +163,7 @@ const Sidebar = () => {
       }
 
       {/* Modals */}
-      <Dialog open={isCreatePipelineOpen} onOpenChange={setIsCreatePipelineOpen}>
+      <Dialog  open={isCreatePipelineOpen} onOpenChange={setIsCreatePipelineOpen}>
         <CreatePipelineModal
           workspaceId={currentWorkspace?.id ?? ""}
           setIsCreatePipelineOpen={setIsCreatePipelineOpen}

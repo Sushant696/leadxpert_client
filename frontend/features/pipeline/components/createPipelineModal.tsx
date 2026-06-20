@@ -94,7 +94,7 @@ function CreatePipelineModal({
   };
 
   return (
-    <DialogContent className="max-w-3xl! sm:max-w-xl">
+    <DialogContent className="max-w-3xl! sm:max-w-xl max-h-[80vh] overflow-hidden flex flex-col">
       <div className="relative overflow-hidden">
         <div className="relative flex items-start gap-4">
           <div>
@@ -108,7 +108,10 @@ function CreatePipelineModal({
         </div>
       </div>
       <Separator />
-      <form onSubmit={handleSubmit(onSubmit)} className="px-2 pb-4 space-y-5">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex-1 overflow-y-auto space-y-5 px-2 pb-4"
+      >
         {/* Pipeline Name */}
         <div className="space-y-1.5">
           <Label
@@ -121,7 +124,8 @@ function CreatePipelineModal({
             {...register("name")}
             id="pipeline-name"
             placeholder="e.g., IT Consultancy Sales, Digital Marketing Leads"
-            className="h-10 rounded-lg border-border/70 bg-surface focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary transition-colors placeholder:text-muted-foreground/60"
+            className="h-10 rounded-lg border-border/70 bg-surface focus-visible:ring-1 focus-visible:ring-primary
+             focus-visible:border-primary transition-colors placeholder:text-muted-foreground/60"
           />
           {errors.name && (
             <p className="text-xs text-destructive flex items-center gap-1">
