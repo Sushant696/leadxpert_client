@@ -3,9 +3,7 @@ import { pipelineApi } from "../api/pipeline-api";
 import {
   CreatePipelinePayload,
   UpdatePipelinePayload,
-  Pipeline,
   PipelineSummary,
-  PipelineWithStages,
 } from "../types/pipeline-types";
 
 export async function createPipelineAction(
@@ -16,7 +14,7 @@ export async function createPipelineAction(
   if (!response.success) {
     throw new Error(response.message || "Failed to create pipeline");
   }
-  return response.data as { pipeline: Pipeline };
+  return response.data;
 }
 
 export async function getPipelinesAction(workspaceId: string) {
@@ -36,7 +34,7 @@ export async function getSinglePipelineAction(
   if (!response.success) {
     throw new Error(response.message || "Failed to fetch pipeline");
   }
-  return response.data.pipeline as PipelineWithStages;
+  return response.data.pipeline
 }
 
 export async function updatePipelineAction(
@@ -51,7 +49,7 @@ export async function updatePipelineAction(
   return {
     success: true,
     message: response.message,
-    data: response.data as { pipeline: Pipeline },
+    data: response.data
   };
 }
 
