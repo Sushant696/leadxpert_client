@@ -49,7 +49,6 @@ function WorkspaceDropdown() {
                 {getInitials(workspace?.name || "?")}
               </div>
             )}
-
             <span className="text-primary/90 group-hover:text-primary truncate max-w-[140px] capitalize">
               {workspace?.name || "Select workspace"}
             </span>

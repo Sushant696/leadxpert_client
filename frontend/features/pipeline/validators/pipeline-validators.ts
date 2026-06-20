@@ -33,7 +33,17 @@ export const CreatePipelineSchema = z.object({
     .optional(),
 });
 
+export const PipelineSettingsSchema = CreatePipelineSchema.pick({
+  name: true,
+  description: true,
+  color: true,
+  vertical: true,
+  currency: true,
+});
+
+
 export const UpdatePipelineSchema = CreatePipelineSchema.partial();
 
 export type TCreatePipelineForm = z.infer<typeof CreatePipelineSchema>;
 export type TUpdatePipelineForm = z.infer<typeof UpdatePipelineSchema>;
+export type TPipelineSettingsForm = z.infer<typeof PipelineSettingsSchema>;
