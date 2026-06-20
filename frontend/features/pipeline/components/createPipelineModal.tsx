@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { ArrowRight, Check } from "lucide-react";
 import { useForm, Controller, useWatch } from "react-hook-form";
@@ -15,7 +15,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import useCreatePipeline from "../hooks/useCreatePipeline";
-import { CreatePipelineSchema, TCreatePipelineForm } from "../validators/pipeline-validators";
+import {
+  CreatePipelineSchema,
+  TCreatePipelineForm,
+} from "../validators/pipeline-validators";
 import {
   BusinessVertical,
   Currency,
@@ -23,54 +26,22 @@ import {
   CreatePipelinePayload,
 } from "../types/pipeline-types";
 import { Separator } from "@/components/ui/separator";
+import {
+  AVAILABLE_CURRENCIES,
+  PRESET_COLORS,
+  VERTICAL_ICONS,
+  VERTICAL_LABELS,
+} from "../types/sharedTypes";
 
 interface CreatePipelineModalProps {
   workspaceId: string;
   setIsCreatePipelineOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-const VERTICAL_LABELS: Record<BusinessVertical, string> = {
-    [BusinessVertical.GENERAL]: "General",
-    [BusinessVertical.REAL_ESTATE]: "Real Estate",
-    [BusinessVertical.IT_SOFTWARE]: "IT & Software",
-    [BusinessVertical.LEGAL_FINANCIAL]: "Legal & Financial",
-    [BusinessVertical.RECRUITMENT]: "Recruitment",
-    [BusinessVertical.EVENT_MANAGEMENT]: "Event Management",
-    [BusinessVertical.EDUCATION_CONSULTANCY]: "Education Consultancy",
-    [BusinessVertical.DIGITAL_MARKETING]: "Digital Marketing"
-};
-
-const VERTICAL_ICONS: Record<BusinessVertical, string> = {
-    [BusinessVertical.GENERAL]: "⚡",
-    [BusinessVertical.REAL_ESTATE]: "🏢",
-    [BusinessVertical.IT_SOFTWARE]: "💻",
-    [BusinessVertical.LEGAL_FINANCIAL]: "⚖️",
-    [BusinessVertical.RECRUITMENT]: "👥",
-    [BusinessVertical.EVENT_MANAGEMENT]: "🎪",
-    [BusinessVertical.EDUCATION_CONSULTANCY]: "🎓",
-    [BusinessVertical.DIGITAL_MARKETING]: "📱"
-};
-
-const PRESET_COLORS = [
-  { hex: "#1E40AF", label: "Ocean" },
-  { hex: "#3B82F6", label: "Sky" },
-  { hex: "#F97316", label: "Ember" },
-  { hex: "#EF4444", label: "Crimson" },
-  { hex: "#10B981", label: "Jade" },
-  { hex: "#8B5CF6", label: "Violet" },
-  { hex: "#EC4899", label: "Rose" },
-  { hex: "#F59E0B", label: "Gold" },
-];
-
-const AVAILABLE_CURRENCIES = [
-  { code: Currency.NPR, label: "NPR", symbol: "₨" },
-  { code: Currency.USD, label: "USD", symbol: "$" },
-  { code: Currency.EUR, label: "EUR", symbol: "€" },
-  { code: Currency.GBP, label: "GBP", symbol: "£" },
-  { code: Currency.INR, label: "INR", symbol: "₹" },
-];
-
-function CreatePipelineModal({ workspaceId, setIsCreatePipelineOpen }: CreatePipelineModalProps) {
+function CreatePipelineModal({
+  workspaceId,
+  setIsCreatePipelineOpen,
+}: CreatePipelineModalProps) {
   const {
     register,
     handleSubmit,
@@ -89,9 +60,21 @@ function CreatePipelineModal({ workspaceId, setIsCreatePipelineOpen }: CreatePip
   });
 
   const createPipelineMutation = useCreatePipeline(workspaceId);
-  const selectedColor = useWatch({ control, name: "color", defaultValue: "#1E40AF" });
-  const selectedVertical = useWatch({ control, name: "vertical", defaultValue: BusinessVertical.GENERAL });
-  const selectedCurrency = useWatch({ control, name: "currency", defaultValue: Currency.NPR });
+  const selectedColor = useWatch({
+    control,
+    name: "color",
+    defaultValue: "#1E40AF",
+  });
+  const selectedVertical = useWatch({
+    control,
+    name: "vertical",
+    defaultValue: BusinessVertical.GENERAL,
+  });
+  const selectedCurrency = useWatch({
+    control,
+    name: "currency",
+    defaultValue: Currency.NPR,
+  });
 
   const onSubmit = async (data: TCreatePipelineForm) => {
     const payload: CreatePipelinePayload = {
@@ -111,11 +94,8 @@ function CreatePipelineModal({ workspaceId, setIsCreatePipelineOpen }: CreatePip
   };
 
   return (
-    <DialogContent
-      className="max-w-3xl! sm:max-w-xl"
-    >
-      <div
-        className="relative overflow-hidden">
+    <DialogContent className="max-w-3xl! sm:max-w-xl">
+      <div className="relative overflow-hidden">
         <div className="relative flex items-start gap-4">
           <div>
             <DialogTitle className="text-xl font-bold  tracking-tight">
@@ -131,7 +111,10 @@ function CreatePipelineModal({ workspaceId, setIsCreatePipelineOpen }: CreatePip
       <form onSubmit={handleSubmit(onSubmit)} className="px-2 pb-4 space-y-5">
         {/* Pipeline Name */}
         <div className="space-y-1.5">
-          <Label htmlFor="pipeline-name" className="text-sm font-semibold text-foreground">
+          <Label
+            htmlFor="pipeline-name"
+            className="text-sm font-semibold text-foreground"
+          >
             Pipeline Name <span className="text-accent">*</span>
           </Label>
           <Input
@@ -150,9 +133,14 @@ function CreatePipelineModal({ workspaceId, setIsCreatePipelineOpen }: CreatePip
 
         {/* Description */}
         <div className="space-y-1.5">
-          <Label htmlFor="pipeline-desc" className="text-sm font-semibold text-foreground">
+          <Label
+            htmlFor="pipeline-desc"
+            className="text-sm font-semibold text-foreground"
+          >
             Description{" "}
-            <span className="text-xs font-normal text-muted-foreground ml-1">Optional</span>
+            <span className="text-xs font-normal text-muted-foreground ml-1">
+              Optional
+            </span>
           </Label>
           <textarea
             {...register("description")}
@@ -165,7 +153,9 @@ function CreatePipelineModal({ workspaceId, setIsCreatePipelineOpen }: CreatePip
 
         {/* Color picker */}
         <div className="space-y-2">
-          <Label className="text-sm font-semibold text-foreground">Pipeline Color</Label>
+          <Label className="text-sm font-semibold text-foreground">
+            Pipeline Color
+          </Label>
           <div className="flex items-center gap-2 flex-wrap">
             {PRESET_COLORS.map(({ hex, label }) => (
               <button
@@ -197,11 +187,16 @@ function CreatePipelineModal({ workspaceId, setIsCreatePipelineOpen }: CreatePip
                 className="w-8 h-8 rounded-full border-2 border-dashed border-border flex items-center justify-center text-muted-foreground text-lg leading-none select-none"
                 style={
                   !PRESET_COLORS.some((c) => c.hex === selectedColor)
-                    ? { backgroundColor: selectedColor, borderColor: selectedColor }
+                    ? {
+                        backgroundColor: selectedColor,
+                        borderColor: selectedColor,
+                      }
                     : {}
                 }
               >
-                {PRESET_COLORS.some((c) => c.hex === selectedColor) ? "+" : (
+                {PRESET_COLORS.some((c) => c.hex === selectedColor) ? (
+                  "+"
+                ) : (
                   <Check className="h-4 w-4 text-white" strokeWidth={3} />
                 )}
               </div>
@@ -223,7 +218,9 @@ function CreatePipelineModal({ workspaceId, setIsCreatePipelineOpen }: CreatePip
         <div className="border-t border-border/50" />
 
         <div className="space-y-3">
-          <Label className="text-sm font-semibold text-foreground">Business Vertical</Label>
+          <Label className="text-sm font-semibold text-foreground">
+            Business Vertical
+          </Label>
           <Controller
             name="vertical"
             control={control}
@@ -238,7 +235,7 @@ function CreatePipelineModal({ workspaceId, setIsCreatePipelineOpen }: CreatePip
                       "flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all duration-200",
                       selectedVertical === vertical
                         ? "border-primary bg-primary/10"
-                        : "border-border/50 bg-surface hover:border-border hover:bg-muted"
+                        : "border-border/50 bg-surface hover:border-border hover:bg-muted",
                     )}
                   >
                     <span className="text-3xl">{VERTICAL_ICONS[vertical]}</span>
@@ -257,7 +254,9 @@ function CreatePipelineModal({ workspaceId, setIsCreatePipelineOpen }: CreatePip
 
         {/* Currency - Button Grid */}
         <div className="space-y-3">
-          <Label className="text-sm font-semibold text-foreground">Currency</Label>
+          <Label className="text-sm font-semibold text-foreground">
+            Currency
+          </Label>
           <Controller
             name="currency"
             control={control}
@@ -272,11 +271,13 @@ function CreatePipelineModal({ workspaceId, setIsCreatePipelineOpen }: CreatePip
                       "flex flex-col items-center justify-center gap-1.5 p-3 rounded-lg border-2 transition-all duration-200",
                       selectedCurrency === code
                         ? "border-primary bg-primary/10"
-                        : "border-border/50 bg-surface hover:border-border hover:bg-muted"
+                        : "border-border/50 bg-surface hover:border-border hover:bg-muted",
                     )}
                   >
                     <span className="text-xl font-semibold">{symbol}</span>
-                    <span className="text-xs font-medium text-muted-foreground">{label}</span>
+                    <span className="text-xs font-medium text-muted-foreground">
+                      {label}
+                    </span>
                   </button>
                 ))}
               </div>
