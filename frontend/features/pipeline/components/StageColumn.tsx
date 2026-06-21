@@ -159,15 +159,14 @@ export function StageColumn({
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem className="text-xs cursor-pointer">
+                  Add Lead
+                </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => setIsEditing(true)}
                   className="text-xs cursor-pointer"
                 >
                   Edit Stage
-                </DropdownMenuItem>
-
-                <DropdownMenuItem className="text-xs cursor-pointer">
-                  View Details
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />

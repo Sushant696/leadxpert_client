@@ -14,9 +14,13 @@ import CreatePipelineStageModal from "@/features/pipeline/components/CreatePipel
 import EmptyPipelineState from "@/features/pipeline/components/EmptyPipelineState";
 import statsCards from "@/features/pipeline/pipelineConstants";
 import { StatCard } from "@/features/pipeline/components/StatCard";
-import { StageColumn } from "@/features/pipeline/components/StageColumn";
+import { SortableStageColumn } from "@/features/pipeline/components/SortableStageColumn";
 import { StarterTemplate } from "@/features/pipeline/templateConstants";
 import useBulkCreatePipelineStage from "@/features/pipeline/hooks/useBulkCreatePipelineStage";
+import useReorderPipelineStages from "@/features/pipeline/hooks/useReorderPipelineStages";
+import { DragDropProvider } from "@dnd-kit/react";
+import { move } from "@dnd-kit/helpers";
+import { PipelineStageRef } from "@/features/pipeline/types/pipeline-types";
 
 function PipelineDashboard() {
   const { pipeline: pipelineId } = useParams<{ pipeline: string }>();
@@ -26,13 +30,18 @@ function PipelineDashboard() {
   const [isApplyingTemplate, setIsApplyingTemplate] = useState(false);
   const bulkCreateStageMutation = useBulkCreatePipelineStage(
     workspace?.id ?? "",
-    pipelineId);
+    pipelineId,
+  );
+  const reorderMutation = useReorderPipelineStages(
+    workspace?.id ?? "",
+    pipelineId,
+  );
+  const [optimisticStages, setOptimisticStages] = useState<PipelineStageRef[] | null>(null);
 
   const { data: pipeline, isLoading } = useGetSinglePipeline(
     workspace?.id ?? "",
     pipelineId,
   );
-  console.log("Pipeline data:", pipeline, "Loading state:", isLoading);
   if (isLoading) return <PipelineSkeleton />;
 
   if (!pipeline) {
@@ -140,27 +149,51 @@ function PipelineDashboard() {
 
       {/* Main Content Area */}
       {hasStages ? (
-        <div className="flex-1 overflow-x-auto overflow-y-hidden">
-          <div className="flex gap-4 p-6 h-full">
-            {pipeline.stages.map((stage) => (
-              <StageColumn
-                key={stage._id}
-                stage={stage}
-                workspaceId={workspace?.id ?? ""}
-                pipelineId={pipelineId}
-              />
-            ))}
+        <DragDropProvider
+          onDragEnd={(event) => {
+            const stages = optimisticStages ?? pipeline.stages;
+            const stageIds = stages.map((s) => s._id);
+            const reorderedIds = move(stageIds, event) as string[];
 
-            <div className="shrink-0 w-72 pt-0.5">
-              <button
-                onClick={() => setIsCreateStageOpen(true)}
-                className="w-full h-11 border-2 border-dashed border-border rounded-xl flex items-center justify-center gap-2 text-muted-foreground text-sm font-medium hover:border-primary hover:text-primary transition-colors"
-              >
-                <Plus size={14} /> Add Stage
-              </button>
+            const orderChanged = stageIds.some((id, i) => id !== reorderedIds[i]);
+
+            if (orderChanged) {
+              const stageMap = new Map(stages.map((s) => [s._id, s]));
+              const reordered = reorderedIds.map((id) => stageMap.get(id)!);
+
+              setOptimisticStages(reordered);
+              reorderMutation.mutate(
+                { stageIds: reorderedIds },
+                {
+                  onSettled: () => setOptimisticStages(null),
+                },
+              );
+            }
+          }}
+        >
+          <div className="flex-1 overflow-x-auto overflow-y-hidden">
+            <div className="flex gap-4 p-6 h-full">
+              {(optimisticStages ?? pipeline.stages).map((stage, index) => (
+                <SortableStageColumn
+                  key={stage._id}
+                  stage={stage}
+                  workspaceId={workspace?.id ?? ""}
+                  pipelineId={pipelineId}
+                  index={index}
+                />
+              ))}
+
+              <div className="shrink-0 w-72 pt-0.5">
+                <button
+                  onClick={() => setIsCreateStageOpen(true)}
+                  className="w-full h-11 border-2 border-dashed border-border rounded-xl flex items-center justify-center gap-2 text-muted-foreground text-sm font-medium hover:border-primary hover:text-primary transition-colors"
+                >
+                  <Plus size={14} /> Add Stage
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        </DragDropProvider>
       ) : (
         <EmptyPipelineState
           pipelineName={pipeline.name}
