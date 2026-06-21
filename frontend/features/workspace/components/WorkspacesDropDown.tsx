@@ -1,9 +1,11 @@
 "use client";
 
 import { ChevronDown, Check } from "lucide-react";
+import { useRouter, usePathname } from "next/navigation";
 
 import {
-  DropdownMenu, DropdownMenuContent,
+  DropdownMenu,
+  DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -13,9 +15,31 @@ import { RESOURCE_BASED_ROLES } from "@/types/user";
 import useWorkspaceStore from "@/store/workspace-store";
 import useGetUserWorkspaces from "@/features/workspace/hooks/useGetUserWorkspaces";
 
+interface Workspace {
+  id: string;
+  name: string;
+  role: RESOURCE_BASED_ROLES;
+  slug?: string;
+  profilePicture?: string;
+  businessType?: string;
+  teamSize?: number;
+}
+
 function WorkspaceDropdown() {
+  const router = useRouter();
+  const pathname = usePathname();
   const { data, isLoading } = useGetUserWorkspaces();
   const { workspace, setWorkspace, isActiveWorkspace } = useWorkspaceStore();
+
+  const handleWorkspaceChange = (newWorkspace: Workspace) => {
+    setWorkspace(newWorkspace);
+    // Check if user is on a pipeline page
+    const isPipelinePage = pathname.includes("/pipeline/");
+
+    if (isPipelinePage) {
+      router.push(`/dashboard`);
+    }
+  };
 
   if (isLoading || !data) {
     return (
@@ -30,8 +54,12 @@ function WorkspaceDropdown() {
     );
   }
 
-  const ownedWorkspaces = data.filter((ws) => ws.role === RESOURCE_BASED_ROLES.SUPER_ADMIN);
-  const joinedWorkspaces = data.filter((ws) => ws.role !== RESOURCE_BASED_ROLES.SUPER_ADMIN);
+  const ownedWorkspaces = data.filter(
+    (ws) => ws.role === RESOURCE_BASED_ROLES.SUPER_ADMIN,
+  );
+  const joinedWorkspaces = data.filter(
+    (ws) => ws.role !== RESOURCE_BASED_ROLES.SUPER_ADMIN,
+  );
 
   return (
     <DropdownMenu>
@@ -49,12 +77,14 @@ function WorkspaceDropdown() {
                 {getInitials(workspace?.name || "?")}
               </div>
             )}
-
             <span className="text-primary/90 group-hover:text-primary truncate max-w-[140px] capitalize">
               {workspace?.name || "Select workspace"}
             </span>
           </span>
-          <ChevronDown size={14} className="text-muted-foreground flex-shrink-0" />
+          <ChevronDown
+            size={14}
+            className="text-muted-foreground flex-shrink-0"
+          />
         </button>
       </DropdownMenuTrigger>
 
@@ -69,7 +99,7 @@ function WorkspaceDropdown() {
             {ownedWorkspaces.map((ws) => (
               <DropdownMenuItem
                 key={ws.slug}
-                onClick={() => setWorkspace(ws)}
+                onClick={() => handleWorkspaceChange(ws)}
                 className="flex items-center gap-2 cursor-pointer focus:bg-muted focus:text-foreground"
               >
                 {ws.profilePicture ? (
@@ -104,7 +134,7 @@ function WorkspaceDropdown() {
             {joinedWorkspaces.map((ws) => (
               <DropdownMenuItem
                 key={ws.slug}
-                onClick={() => setWorkspace(ws)}
+                onClick={() => handleWorkspaceChange(ws)}
                 className="flex items-center gap-2 cursor-pointer focus:bg-muted focus:text-foreground"
               >
                 {ws.profilePicture ? (
@@ -122,7 +152,7 @@ function WorkspaceDropdown() {
                 <div className="flex-1 min-w-0">
                   <div className="truncate capitalize">{ws.name}</div>
                   <div className="text-[10px] text-muted-foreground capitalize">
-                    {ws.role.toLowerCase().replace('_', ' ')}
+                    {ws.role.toLowerCase().replace("_", " ")}
                   </div>
                 </div>
                 {isActiveWorkspace(ws.slug) && (

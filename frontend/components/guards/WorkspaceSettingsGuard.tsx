@@ -27,7 +27,7 @@ function WorkspaceSettingsGuard({ children }: WorkspaceSettingsGuardProps) {
             Access Restricted
           </h1>
           <p className="text-muted-foreground mb-6">
-            You don't have permission to access this page. Only workspace admins can modify these settings.
+            You don&apos;t have permission to access this page. Only workspace admins can modify these settings.
           </p>
           <div className="space-y-2 text-sm text-muted-foreground">
             <p>Your current role: <span className="font-semibold text-foreground">{workspace?.role || 'Unknown'}</span></p>
