@@ -21,12 +21,15 @@ import useReorderPipelineStages from "@/features/pipeline/hooks/useReorderPipeli
 import { DragDropProvider } from "@dnd-kit/react";
 import { move } from "@dnd-kit/helpers";
 import { PipelineStageRef } from "@/features/pipeline/types/pipeline-types";
+import useGetLeads from "@/features/lead/hooks/useGetLeads";
+import { CreateLeadModal } from "@/features/lead/components/CreateLeadModal";
 
 function PipelineDashboard() {
   const { pipeline: pipelineId } = useParams<{ pipeline: string }>();
   const { workspace } = useWorkspaceStore();
   const [isPipelineSettingsOpen, setPipelineSettingsOpen] = useState(false);
   const [isCreateStageOpen, setIsCreateStageOpen] = useState(false);
+  const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(false);
   const [isApplyingTemplate, setIsApplyingTemplate] = useState(false);
   const bulkCreateStageMutation = useBulkCreatePipelineStage(
     workspace?.id ?? "",
@@ -36,12 +39,20 @@ function PipelineDashboard() {
     workspace?.id ?? "",
     pipelineId,
   );
-  const [optimisticStages, setOptimisticStages] = useState<PipelineStageRef[] | null>(null);
+  const [optimisticStages, setOptimisticStages] = useState<
+    PipelineStageRef[] | null
+  >(null);
 
   const { data: pipeline, isLoading } = useGetSinglePipeline(
     workspace?.id ?? "",
     pipelineId,
   );
+
+  const { data: allLeads = [], isLoading: isLoadingLeads } = useGetLeads(
+    workspace?.id ?? "",
+    pipelineId,
+  );
+
   if (isLoading) return <PipelineSkeleton />;
 
   if (!pipeline) {
@@ -130,7 +141,11 @@ function PipelineDashboard() {
             >
               <Settings2 size={13} /> Settings
             </Button>
-            <Button size="sm" className="text-xs gap-1.5">
+            <Button
+              onClick={() => setIsCreateLeadOpen(true)}
+              size="sm"
+              className="text-xs gap-1.5"
+            >
               <Plus size={13} /> Add Lead
             </Button>
           </div>
@@ -155,7 +170,9 @@ function PipelineDashboard() {
             const stageIds = stages.map((s) => s._id);
             const reorderedIds = move(stageIds, event) as string[];
 
-            const orderChanged = stageIds.some((id, i) => id !== reorderedIds[i]);
+            const orderChanged = stageIds.some(
+              (id, i) => id !== reorderedIds[i],
+            );
 
             if (orderChanged) {
               const stageMap = new Map(stages.map((s) => [s._id, s]));
@@ -180,6 +197,8 @@ function PipelineDashboard() {
                   workspaceId={workspace?.id ?? ""}
                   pipelineId={pipelineId}
                   index={index}
+                  leads={allLeads}
+                  isLoadingLeads={isLoadingLeads}
                 />
               ))}
 
@@ -214,6 +233,12 @@ function PipelineDashboard() {
       <CreatePipelineStageModal
         isOpen={isCreateStageOpen}
         setIsOpen={setIsCreateStageOpen}
+        workspaceId={workspace?.id ?? ""}
+        pipelineId={pipelineId}
+      />
+      <CreateLeadModal
+        isOpen={isCreateLeadOpen}
+        onClose={() => setIsCreateLeadOpen(false)}
         workspaceId={workspace?.id ?? ""}
         pipelineId={pipelineId}
       />
