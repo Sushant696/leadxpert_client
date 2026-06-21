@@ -1,14 +1,15 @@
-"use client";
-
 import { useSortable } from "@dnd-kit/react/sortable";
 import { PipelineStageRef } from "../types/pipeline-types";
 import { StageColumn } from "./StageColumn";
+import { Lead } from "@/features/lead/types/lead-types";
 
 interface SortableStageColumnProps {
   stage: PipelineStageRef;
   workspaceId: string;
   pipelineId: string;
   index: number;
+  leads: Lead[];
+  isLoadingLeads: boolean;
 }
 
 export function SortableStageColumn({
@@ -16,12 +17,14 @@ export function SortableStageColumn({
   workspaceId,
   pipelineId,
   index,
+  leads,
+  isLoadingLeads,
 }: SortableStageColumnProps) {
   const { ref, isDragging } = useSortable({
     id: stage._id,
     index,
   });
-
+  const stageLeads = leads.filter((lead) => lead.stageId._id === stage._id);
   return (
     <div
       ref={ref}
@@ -31,7 +34,10 @@ export function SortableStageColumn({
         stage={stage}
         workspaceId={workspaceId}
         pipelineId={pipelineId}
+        leads={stageLeads}
+        isLoadingLeads={isLoadingLeads}
       />
     </div>
   );
 }
+
