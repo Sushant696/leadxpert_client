@@ -1,8 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { showToast } from "@/components/showToast";
 import { deletePipelineAction } from "../action/pipeline-action";
+import { useRouter } from "next/navigation";
 
 const useDeletePipeline = (workspaceId: string) => {
+  const router = useRouter()
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -12,6 +14,7 @@ const useDeletePipeline = (workspaceId: string) => {
     onSuccess: () => {
       showToast.success("Pipeline deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["pipelines", workspaceId] });
+      router.push(`/dashboard`)
     },
     onError: (error: Error | any) => {
       showToast.error(error.message);
