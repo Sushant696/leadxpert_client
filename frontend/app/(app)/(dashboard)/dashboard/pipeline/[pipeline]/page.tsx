@@ -16,7 +16,7 @@ import statsCards from "@/features/pipeline/pipelineConstants";
 import { StatCard } from "@/features/pipeline/components/StatCard";
 import { StageColumn } from "@/features/pipeline/components/StageColumn";
 import { StarterTemplate } from "@/features/pipeline/templateConstants";
-import { showToast } from "@/components/showToast";
+import useBulkCreatePipelineStage from "@/features/pipeline/hooks/useBulkCreatePipelineStage";
 
 function PipelineDashboard() {
   const { pipeline: pipelineId } = useParams<{ pipeline: string }>();
@@ -24,6 +24,9 @@ function PipelineDashboard() {
   const [isPipelineSettingsOpen, setPipelineSettingsOpen] = useState(false);
   const [isCreateStageOpen, setIsCreateStageOpen] = useState(false);
   const [isApplyingTemplate, setIsApplyingTemplate] = useState(false);
+  const bulkCreateStageMutation = useBulkCreatePipelineStage(
+    workspace?.id ?? "",
+    pipelineId);
 
   const { data: pipeline, isLoading } = useGetSinglePipeline(
     workspace?.id ?? "",
@@ -41,16 +44,8 @@ function PipelineDashboard() {
   }
 
   const handleApplyTemplate = async (template: StarterTemplate) => {
-    // TODO: Implement bulk stage creation API
+    await bulkCreateStageMutation.mutateAsync(template.id);
     setIsApplyingTemplate(true);
-
-    // Simulate API call - will replace later with actual api
-    setTimeout(() => {
-      setIsApplyingTemplate(false);
-      showToast.info(
-        `Template "${template.label}" will create ${template.stages.length} stages. Bulk creation API coming soon!`,
-      );
-    }, 1000);
   };
 
   const handleCreateManually = () => {
@@ -169,6 +164,7 @@ function PipelineDashboard() {
       ) : (
         <EmptyPipelineState
           pipelineName={pipeline.name}
+          mutation={bulkCreateStageMutation}
           onSelectTemplate={handleApplyTemplate}
           onCreateManually={handleCreateManually}
           isLoading={isApplyingTemplate}

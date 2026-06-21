@@ -22,6 +22,22 @@ export async function createPipelineStageAction(
   return response.data;
 }
 
+export async function bulkCreatePipelineStageAction(
+  workspaceId: string,
+  pipelineId: string,
+  id: string,
+) {
+  const response = await pipelineStageApi.bulkCreatePipelineStages(
+    workspaceId,
+    pipelineId,
+    id,
+  );
+  if (!response.success) {
+    throw new Error(response.message || "Failed to bulk create pipeline stage");
+  }
+  return response.data;
+}
+
 export async function updatePipelineStageAction(
   workspaceId: string,
   pipelineId: string,

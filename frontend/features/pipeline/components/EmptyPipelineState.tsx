@@ -16,15 +16,18 @@ import {
   StarterTemplate,
   StarterStageDef,
 } from "../templateConstants";
+import useBulkCreatePipelineStage from "../hooks/useBulkCreatePipelineStage";
 
 interface EmptyPipelineStateProps {
   pipelineName: string;
+  mutation: ReturnType<typeof useBulkCreatePipelineStage>;
   onSelectTemplate: (template: StarterTemplate) => void;
   onCreateManually: () => void;
   isLoading?: boolean;
 }
 
 function EmptyPipelineState({
+  mutation,
   onSelectTemplate,
   onCreateManually,
   isLoading = false,
@@ -51,6 +54,7 @@ function EmptyPipelineState({
 
   const handleApplyTemplate = () => {
     if (selectedTemplate) {
+      //   mutation.mutate(selectedTemplate.id);
       onSelectTemplate(selectedTemplate);
     }
   };
@@ -74,7 +78,7 @@ function EmptyPipelineState({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
             {STARTER_TEMPLATES.map((template) => (
-              <button
+              <div
                 key={template.id}
                 onClick={() => handleTemplateClick(template)}
                 className={cn(
@@ -159,7 +163,7 @@ function EmptyPipelineState({
                     <Check className="w-3 h-3 text-white" strokeWidth={3} />
                   </div>
                 )}
-              </button>
+              </div>
             ))}
           </div>
 

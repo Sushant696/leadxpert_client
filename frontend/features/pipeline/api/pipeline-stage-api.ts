@@ -21,6 +21,16 @@ const pipelineStageApi = {
       pipelineStageData,
     );
   },
+  bulkCreatePipelineStages: async (
+    workspaceId: string,
+    pipelineId: string,
+    id: string,
+  ): Promise<CreatePipelineStageResponse> => {
+    return await apiWrapper.post(
+      apiURLs.PIPELINE_STAGE.bulkCreate(workspaceId, pipelineId),
+      { id },
+    );
+  },
 
   updatePipelineStage: async (
     workspaceId: string,

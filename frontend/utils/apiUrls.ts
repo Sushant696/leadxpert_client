@@ -72,6 +72,8 @@ export const apiURLs = {
   PIPELINE_STAGE: {
     create: (workspaceId: string, pipelineId: string) =>
       `/api/pipeline-stage/${workspaceId}/pipelines/${pipelineId}/stages`,
+    bulkCreate: (workspaceId: string, pipelineId: string) =>
+      `/api/pipeline-stage/${workspaceId}/pipelines/${pipelineId}/bulkStage`,
     update: (workspaceId: string, pipelineId: string, stageId: string) =>
       `/api/pipeline-stage/${workspaceId}/pipelines/${pipelineId}/stages/${stageId}`,
     delete: (workspaceId: string, pipelineId: string, stageId: string) =>
