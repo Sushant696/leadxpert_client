@@ -81,4 +81,36 @@ export const apiURLs = {
     reorder: (workspaceId: string, pipelineId: string) =>
       `/api/pipeline-stage/${workspaceId}/pipelines/${pipelineId}/stages/reorder`,
   },
+
+  LEAD: {
+    create: (workspaceId: string, pipelineId: string) =>
+      `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads`,
+    getAll: (workspaceId: string, pipelineId: string) =>
+      `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads`,
+    getById: (workspaceId: string, pipelineId: string, leadId: string) =>
+      `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads/${leadId}`,
+    update: (workspaceId: string, pipelineId: string, leadId: string) =>
+      `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads/${leadId}`,
+    moveToStage: (workspaceId: string, pipelineId: string, leadId: string) =>
+      `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads/${leadId}/stage`,
+    assign: (workspaceId: string, pipelineId: string, leadId: string) =>
+      `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads/${leadId}/assign`,
+    convert: (workspaceId: string, pipelineId: string, leadId: string) =>
+      `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads/${leadId}/convert`,
+    markLost: (workspaceId: string, pipelineId: string, leadId: string) =>
+      `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads/${leadId}/lost`,
+    archive: (workspaceId: string, pipelineId: string, leadId: string) =>
+      `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads/${leadId}`,
+  },
+
+  CONTACT: {
+    getAll: (workspaceId: string) => `/api/contact/${workspaceId}/contacts`,
+    getById: (workspaceId: string, contactId: string) =>
+      `/api/contact/${workspaceId}/contacts/${contactId}`,
+    create: (workspaceId: string) => `/api/contact/${workspaceId}/contacts`,
+    update: (workspaceId: string, contactId: string) =>
+      `/api/contact/${workspaceId}/contacts/${contactId}`,
+    delete: (workspaceId: string, contactId: string) =>
+      `/api/contact/${workspaceId}/contacts/${contactId}`,
+  },
 };
