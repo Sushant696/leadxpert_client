@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Users, MoreVertical, Trash2 } from "lucide-react";
+import { Users, MoreVertical, Trash2, Loader2 } from "lucide-react";
 import { PipelineStageRef } from "../types/pipeline-types";
 import {
   DropdownMenu,
@@ -20,21 +20,32 @@ import {
 } from "@/components/ui/alert-dialog";
 import useUpdatePipelineStage from "../hooks/useUpdatePipelineStage";
 import useDeletePipelineStage from "../hooks/useDeletePipelineStage";
+import { LeadCard } from "@/features/lead/components/LeadCard";
+import { LeadDetailsModal } from "@/features/lead/components/LeadDetailsModal";
+import { CreateLeadModal } from "@/features/lead/components/CreateLeadModal";
+import { Lead } from "@/features/lead/types/lead-types";
 
 interface StageColumnProps {
   stage: PipelineStageRef;
   workspaceId: string;
   pipelineId: string;
+  leads: Lead[];
+  isLoadingLeads: boolean;
 }
 
 export function StageColumn({
   stage,
   workspaceId,
   pipelineId,
+  leads,
+  isLoadingLeads,
 }: StageColumnProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [stageName, setStageName] = useState(stage.name);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
+  const [isCreateLeadModalOpen, setIsCreateLeadModalOpen] = useState(false);
 
   const updateStageMutation = useUpdatePipelineStage(
     workspaceId,
@@ -42,6 +53,14 @@ export function StageColumn({
     stage._id,
   );
   const deleteStageMutation = useDeletePipelineStage(workspaceId, pipelineId);
+
+  // Filter leads for this stage
+  const stageLeads = leads.filter((lead) => lead.stageId._id === stage._id);
+
+  const handleLeadClick = (lead: Lead) => {
+    setSelectedLead(lead);
+    setIsLeadModalOpen(true);
+  };
 
   const handleNameChange = () => {
     if (stageName.trim() === stage.name) {
@@ -159,7 +178,10 @@ export function StageColumn({
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem className="text-xs cursor-pointer">
+                <DropdownMenuItem
+                  onClick={() => setIsCreateLeadModalOpen(true)}
+                  className="text-xs cursor-pointer"
+                >
                   Add Lead
                 </DropdownMenuItem>
                 <DropdownMenuItem
@@ -192,18 +214,58 @@ export function StageColumn({
           </div>
         </div>
 
-        <div className="flex-1 min-h-105 border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center gap-2 bg-card/50">
-          <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
-            <Users size={14} className="text-muted-foreground" />
-          </div>
-          <p className="text-xs text-muted-foreground font-medium">
-            No leads yet
-          </p>
-          <p className="text-[10px] text-muted-foreground/60">
-            Drag leads here
-          </p>
+        {/* Leads Container */}
+        <div className="flex-1 min-h-100 rounded-xl flex flex-col gap-2 overflow-y-auto">
+          {isLoadingLeads ? (
+            <div className="flex items-center justify-center h-40">
+              <Loader2 size={20} className="animate-spin text-muted-foreground" />
+            </div>
+          ) : stageLeads.length === 0 ? (
+            <div className="border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center gap-2 bg-card/50 h-40">
+              <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
+                <Users size={14} className="text-muted-foreground" />
+              </div>
+              <p className="text-xs text-muted-foreground font-medium">
+                No leads yet
+              </p>
+              <p className="text-[10px] text-muted-foreground/60">
+                Drag leads here
+              </p>
+            </div>
+          ) : (
+            <>
+              {stageLeads.map((lead) => (
+                <LeadCard
+                  key={lead._id}
+                  lead={lead}
+                  onClick={() => handleLeadClick(lead)}
+                />
+              ))}
+            </>
+          )}
         </div>
       </div>
+
+      {/* Lead Details Modal */}
+      <LeadDetailsModal
+        isOpen={isLeadModalOpen}
+        onClose={() => {
+          setIsLeadModalOpen(false);
+          setSelectedLead(null);
+        }}
+        lead={selectedLead}
+        workspaceId={workspaceId}
+        pipelineId={pipelineId}
+      />
+
+      {/* Create Lead Modal */}
+      <CreateLeadModal
+        isOpen={isCreateLeadModalOpen}
+        onClose={() => setIsCreateLeadModalOpen(false)}
+        workspaceId={workspaceId}
+        pipelineId={pipelineId}
+        stageId={stage._id}
+      />
     </>
   );
 }
