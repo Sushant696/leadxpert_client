@@ -1,10 +1,10 @@
 import {
-  DollarSign,
   Flag,
   Calendar,
   MessageSquare,
   CheckSquare,
 } from "lucide-react";
+import { useDraggable } from "@dnd-kit/react";
 import { Lead } from "../types/lead-types";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -22,12 +22,24 @@ const priorityConfig = {
 };
 
 export function LeadCard({ lead, onClick }: LeadCardProps) {
+  const { ref, isDragging } = useDraggable({
+    id: lead._id,
+    data: {
+      type: "Lead",
+      lead,
+    },
+  });
+
   const priority = priorityConfig[lead.priority];
 
   return (
     <div
+      ref={ref}
       onClick={onClick}
-      className="group bg-card border border-border rounded-lg p-3 hover:shadow-md hover:border-primary/50 transition-all cursor-pointer space-y-2"
+      className={cn(
+        "group bg-card border border-border rounded-lg p-3 hover:shadow-md hover:border-primary/50 transition-all cursor-move space-y-2",
+        isDragging && "opacity-50 shadow-lg border-primary"
+      )}
     >
       <div className="flex items-start justify-between gap-2">
         <h4 className="text-sm font-semibold text-foreground line-clamp-2 flex-1">

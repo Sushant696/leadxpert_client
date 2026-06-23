@@ -20,9 +20,13 @@ export function SortableStageColumn({
   leads,
   isLoadingLeads,
 }: SortableStageColumnProps) {
-  const { ref, isDragging } = useSortable({
+  const { ref, isDragging, isDropTarget } = useSortable({
     id: stage._id,
     index,
+    data: {
+      type: "Stage",
+      stage,
+    },
   });
   const stageLeads = leads.filter((lead) => lead.stageId._id === stage._id);
   return (
@@ -36,6 +40,7 @@ export function SortableStageColumn({
         pipelineId={pipelineId}
         leads={stageLeads}
         isLoadingLeads={isLoadingLeads}
+        isDropTarget={isDropTarget}
       />
     </div>
   );

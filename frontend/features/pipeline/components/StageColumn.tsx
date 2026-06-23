@@ -31,6 +31,7 @@ interface StageColumnProps {
   pipelineId: string;
   leads: Lead[];
   isLoadingLeads: boolean;
+  isDropTarget?: boolean;
 }
 
 export function StageColumn({
@@ -39,6 +40,7 @@ export function StageColumn({
   pipelineId,
   leads,
   isLoadingLeads,
+  isDropTarget = false,
 }: StageColumnProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [stageName, setStageName] = useState(stage.name);
@@ -215,7 +217,13 @@ export function StageColumn({
         </div>
 
         {/* Leads Container */}
-        <div className="flex-1 min-h-100 rounded-xl flex flex-col gap-2 overflow-y-auto">
+        <div
+          className={`flex-1 min-h-100 rounded-xl flex flex-col gap-2 overflow-y-auto transition-colors ${
+            isDropTarget
+              ? "bg-primary/5 border-2 border-primary"
+              : "border-0"
+          }`}
+        >
           {isLoadingLeads ? (
             <div className="flex items-center justify-center h-40">
               <Loader2 size={20} className="animate-spin text-muted-foreground" />
