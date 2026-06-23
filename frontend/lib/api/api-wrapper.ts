@@ -27,8 +27,7 @@ async function makeAuthenticatedRequest<T>(config: RequestConfig): Promise<T> {
   try {
     const response = await axiosInstance.request({
       url: config.url,
-      method: config.method,
-      data: config.data,
+      method: config.method, data: config.data,
       params: config.params,
       headers: {
         ...config.headers,
