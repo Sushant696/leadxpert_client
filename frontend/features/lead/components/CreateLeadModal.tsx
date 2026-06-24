@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Plus, Loader2, UserPlus, X } from "lucide-react";
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import {
   Dialog,
@@ -32,9 +31,12 @@ import {
   LeadPriority,
   LeadSource,
 } from "../types/lead-types";
-import { useQuery } from "@tanstack/react-query";
-import { contactApi } from "@/features/workspace/api/contact-api";
 import { Contact } from "@/features/workspace/types/contact-types";
+import useGetLeadContacts from "../hooks/useGetLeadContacts";
+import useCreateLeadContact from "../hooks/useCreateLeadContact";
+
+const NONE_CONTACT_VALUE = "__none_contact__";
+const NONE_SOURCE_VALUE = "__none_source__";
 
 const createLeadSchema = z.object({
   contactId: z.string().optional().nullable(),
@@ -83,7 +85,6 @@ export function CreateLeadModal({
   stageId,
 }: CreateLeadModalProps) {
   const [showQuickContact, setShowQuickContact] = useState(false);
-  const queryClient = useQueryClient();
 
   const { register, handleSubmit, control, reset, setValue } =
     useForm<CreateLeadFormData>({
@@ -104,47 +105,38 @@ export function CreateLeadModal({
   });
 
   const createLeadMutation = useCreateLead(workspaceId, pipelineId);
-
-  // Fetch contacts
-  const { data: contactsData = [] } = useQuery<Contact[]>({
-    queryKey: ["contacts", workspaceId],
-    queryFn: async () => {
-      const response = await contactApi.getAllContacts(workspaceId);
-      return response.data?.contacts || [];
-    },
-    enabled: !!workspaceId,
-  });
-
-  // Create contact mutation
-  const createContactMutation = useMutation({
-    mutationFn: async (contactData: QuickContactFormData) => {
-      const response = await contactApi.createContact(workspaceId, {
-        name: contactData.name,
-        email: contactData.email || null,
-        phone: contactData.phone || null,
-      });
-      return response.data?.contact;
-    },
-    onSuccess: (newContact) => {
-      queryClient.invalidateQueries({ queryKey: ["contacts", workspaceId] });
-      setValue("contactId", newContact._id);
-      showToast.success("Contact created successfully");
-      setShowQuickContact(false);
-      resetContact();
-    },
-    onError: (error: any) => {
-      showToast.error(error.message || "Failed to create contact");
-    },
-  });
+  const { data: contactsData = [] } = useGetLeadContacts(workspaceId);
+  const createContactMutation = useCreateLeadContact(workspaceId);
 
   const onSubmitQuickContact = (data: QuickContactFormData) => {
-    createContactMutation.mutate(data);
+    createContactMutation.mutate(
+      {
+        name: data.name,
+        email: data.email || null,
+        phone: data.phone || null,
+      },
+      {
+        onSuccess: (newContact) => {
+          if (newContact?._id) {
+            setValue("contactId", newContact._id);
+          }
+          showToast.success("Contact created successfully");
+          setShowQuickContact(false);
+          resetContact();
+        },
+        onError: (error: Error) => {
+          showToast.error(error.message || "Failed to create contact");
+        },
+      },
+    );
   };
 
   const onSubmit = async (data: CreateLeadFormData) => {
     const payload: CreateLeadPayload = {
       contactId:
-        data.contactId && data.contactId !== "" ? data.contactId : undefined,
+        data.contactId && data.contactId !== NONE_CONTACT_VALUE
+          ? data.contactId
+          : undefined,
       stageId: stageId,
       title: data.title,
       value: data.value,
@@ -289,31 +281,34 @@ export function CreateLeadModal({
                 </div>
               </div>
             ) : (
-              contactsData.length > 0 && (
-                <Controller
-                  name="contactId"
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      value={field.value || ""}
-                      onValueChange={field.onChange}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a contact (optional)" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="">None (Skip contact)</SelectItem>
-                        {contactsData.map((contact: Contact) => (
-                          <SelectItem key={contact._id} value={contact._id}>
-                            {contact.name}{" "}
-                            {contact.email && `(${contact.email})`}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-              )
+              <Controller
+                name="contactId"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    value={field.value || NONE_CONTACT_VALUE}
+                    onValueChange={(value) =>
+                      field.onChange(
+                        value === NONE_CONTACT_VALUE ? undefined : value,
+                      )
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a contact (optional)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value={NONE_CONTACT_VALUE}>
+                        None (Skip contact)
+                      </SelectItem>
+                      {contactsData.map((contact: Contact) => (
+                        <SelectItem key={contact._id} value={contact._id}>
+                          {contact.name} {contact.email && `(${contact.email})`}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             )}
           </div>
 
@@ -401,13 +396,18 @@ export function CreateLeadModal({
                 control={control}
                 render={({ field }) => (
                   <Select
-                    value={field.value || ""}
-                    onValueChange={(val) => field.onChange(val || undefined)}
+                    value={field.value || NONE_SOURCE_VALUE}
+                    onValueChange={(value) =>
+                      field.onChange(
+                        value === NONE_SOURCE_VALUE ? undefined : value,
+                      )
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select source" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value={NONE_SOURCE_VALUE}>None</SelectItem>
                       <SelectItem value="WEBSITE">Website</SelectItem>
                       <SelectItem value="REFERRAL">Referral</SelectItem>
                       <SelectItem value="COLD_CALL">Cold Call</SelectItem>
