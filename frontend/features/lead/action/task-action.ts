@@ -23,7 +23,6 @@ export async function getAllTasksAction(
   filters?: GetAllTasksFilters,
 ) {
   const response = await taskApi.getAllTasks(workspaceId, filters);
-  console.log(response, "donedonedone")
   if (!response.success) {
     throw new Error(response.message || "Failed to fetch tasks");
   }
@@ -58,10 +57,7 @@ export async function updateTaskAction(
   return response.data.task;
 }
 
-export async function completeTaskAction(
-  workspaceId: string,
-  taskId: string,
-) {
+export async function completeTaskAction(workspaceId: string, taskId: string) {
   const response = await taskApi.completeTask(workspaceId, taskId);
   if (!response.success) {
     throw new Error(response.message || "Failed to complete task");
@@ -69,10 +65,7 @@ export async function completeTaskAction(
   return response.data.task;
 }
 
-export async function deleteTaskAction(
-  workspaceId: string,
-  taskId: string,
-) {
+export async function deleteTaskAction(workspaceId: string, taskId: string) {
   const response = await taskApi.deleteTask(workspaceId, taskId);
   if (!response.success) {
     throw new Error(response.message || "Failed to delete task");

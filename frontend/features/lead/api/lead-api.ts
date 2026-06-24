@@ -19,6 +19,16 @@ import {
 } from "../types/lead-types";
 
 const leadApi = {
+  getAllLeads: async (
+    workspaceId: string,
+    options?: GetLeadsOptions,
+  ): Promise<GetLeadsResponse> => {
+    return await apiWrapper.get(
+      apiURLs.LEAD.getAllByWorkspace(workspaceId),
+      options,
+    );
+  },
+
   createLead: async (
     workspaceId: string,
     pipelineId: string,

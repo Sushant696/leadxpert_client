@@ -28,6 +28,8 @@ import {
 } from "lucide-react";
 import { Lead } from "../types/lead-types";
 import { cn } from "@/lib/utils";
+import { ConvertToDealModal } from "@/features/deal/components/ConvertToDealModal";
+import { useState } from "react";
 
 interface LeadDetailsModalProps {
   isOpen: boolean;
@@ -65,9 +67,11 @@ export function LeadDetailsModal({
   isOpen,
   onClose,
   lead,
-  workspaceId: _workspaceId,
-  pipelineId: _pipelineId,
+  workspaceId,
+  pipelineId,
 }: LeadDetailsModalProps) {
+  const [isConvertModalOpen, setIsConvertModalOpen] = useState(false);
+
   if (!lead) return null;
 
   const priority = priorityConfig[lead.priority];
@@ -383,8 +387,22 @@ export function LeadDetailsModal({
             Close
           </Button>
           <Button variant="default">Edit Lead</Button>
-          <Button variant="default">Convert to Deal</Button>
+          <Button
+            variant="default"
+            onClick={() => setIsConvertModalOpen(true)}
+          >
+            Convert to Deal
+          </Button>
         </DialogFooter>
+
+        <ConvertToDealModal
+          isOpen={isConvertModalOpen}
+          onClose={() => setIsConvertModalOpen(false)}
+          lead={lead}
+          workspaceId={workspaceId}
+          pipelineId={pipelineId}
+          onSuccess={onClose}
+        />
       </DialogContent>
     </Dialog>
   );

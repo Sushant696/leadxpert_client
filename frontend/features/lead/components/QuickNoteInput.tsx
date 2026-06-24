@@ -28,7 +28,6 @@ export function QuickNoteInput({
 
   const createNoteMutation = useCreateNote(workspaceId, pipelineId);
 
-  // Fetch the latest note for preview (only when not expanded and we have notes)
   const { data: notes } = useGetNotes(
     workspaceId,
     "LEAD",
@@ -75,7 +74,6 @@ export function QuickNoteInput({
   };
 
   const handleBlur = () => {
-    // If there's no text, just collapse
     if (!noteText.trim()) {
       setIsExpanded(false);
     }

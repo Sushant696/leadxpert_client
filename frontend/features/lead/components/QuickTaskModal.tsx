@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2, Plus, CalendarIcon } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -50,7 +49,9 @@ export function QuickTaskModal({
 }: QuickTaskModalProps) {
   const createTaskMutation = useCreateTask(workspaceId, pipelineId);
   const { data: membersData } = useGetAllMembers(workspaceId);
-  const members = Array.isArray(membersData) ? membersData : membersData?.members || [];
+  const members = Array.isArray(membersData)
+    ? membersData
+    : membersData?.members || [];
 
   const {
     register,

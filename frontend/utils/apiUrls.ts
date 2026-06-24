@@ -87,6 +87,7 @@ export const apiURLs = {
       `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads`,
     getAll: (workspaceId: string, pipelineId: string) =>
       `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads`,
+    getAllByWorkspace: (workspaceId: string) => `/api/leads/${workspaceId}/all`,
     getById: (workspaceId: string, pipelineId: string, leadId: string) =>
       `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads/${leadId}`,
     update: (workspaceId: string, pipelineId: string, leadId: string) =>
@@ -115,8 +116,7 @@ export const apiURLs = {
   },
 
   NOTE: {
-    create: (workspaceId: string) =>
-      `/api/notes/${workspaceId}/notes`,
+    create: (workspaceId: string) => `/api/notes/${workspaceId}/notes`,
     getByEntity: (workspaceId: string, entityType: string, entityId: string) =>
       `/api/notes/${workspaceId}/notes/${entityType}/${entityId}`,
     update: (workspaceId: string, noteId: string) =>
@@ -137,10 +137,8 @@ export const apiURLs = {
   },
 
   TASK: {
-    create: (workspaceId: string) =>
-      `/api/tasks/${workspaceId}/tasks`,
-    getAll: (workspaceId: string) =>
-      `/api/tasks/${workspaceId}/tasks`,
+    create: (workspaceId: string) => `/api/tasks/${workspaceId}/tasks`,
+    getAll: (workspaceId: string) => `/api/tasks/${workspaceId}/tasks`,
     update: (workspaceId: string, taskId: string) =>
       `/api/tasks/${workspaceId}/tasks/${taskId}`,
     complete: (workspaceId: string, taskId: string) =>
