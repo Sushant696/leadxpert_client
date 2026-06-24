@@ -56,9 +56,6 @@ export function StageColumn({
   );
   const deleteStageMutation = useDeletePipelineStage(workspaceId, pipelineId);
 
-  // Filter leads for this stage
-  const stageLeads = leads.filter((lead) => lead.stageId._id === stage._id);
-
   const handleLeadClick = (lead: Lead) => {
     setSelectedLead(lead);
     setIsLeadModalOpen(true);
@@ -140,7 +137,7 @@ export function StageColumn({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      <div className="shrink-0 w-72 flex flex-col gap-2">
+      <div className="shrink-0 w-80 h-full min-h-0 flex flex-col gap-2">
         <div className="flex items-center justify-between px-3 py-2.5 bg-card border border-border rounded-xl">
           <div className="flex items-center gap-2 min-w-0 flex-1">
             <div
@@ -218,17 +215,18 @@ export function StageColumn({
 
         {/* Leads Container */}
         <div
-          className={`flex-1 min-h-100 rounded-xl flex flex-col gap-2 overflow-y-auto transition-colors ${
-            isDropTarget
-              ? "bg-primary/5 border-2 border-primary"
-              : "border-0"
+          className={`flex-1 min-h-0 rounded-xl flex flex-col gap-2 overflow-y-auto pr-1 transition-colors scrollbar-hide ${
+            isDropTarget ? "bg-success/5 border-2 border-success" : "border-0"
           }`}
         >
           {isLoadingLeads ? (
             <div className="flex items-center justify-center h-40">
-              <Loader2 size={20} className="animate-spin text-muted-foreground" />
+              <Loader2
+                size={20}
+                className="animate-spin text-muted-foreground"
+              />
             </div>
-          ) : stageLeads.length === 0 ? (
+          ) : leads.length === 0 ? (
             <div className="border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center gap-2 bg-card/50 h-40">
               <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
                 <Users size={14} className="text-muted-foreground" />
@@ -242,11 +240,13 @@ export function StageColumn({
             </div>
           ) : (
             <>
-              {stageLeads.map((lead) => (
+              {leads.map((lead) => (
                 <LeadCard
                   key={lead._id}
                   lead={lead}
                   onClick={() => handleLeadClick(lead)}
+                  workspaceId={workspaceId}
+                  pipelineId={pipelineId}
                 />
               ))}
             </>
