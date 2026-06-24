@@ -113,4 +113,39 @@ export const apiURLs = {
     delete: (workspaceId: string, contactId: string) =>
       `/api/contact/${workspaceId}/contacts/${contactId}`,
   },
+
+  NOTE: {
+    create: (workspaceId: string) =>
+      `/api/notes/${workspaceId}/notes`,
+    getByEntity: (workspaceId: string, entityType: string, entityId: string) =>
+      `/api/notes/${workspaceId}/notes/${entityType}/${entityId}`,
+    update: (workspaceId: string, noteId: string) =>
+      `/api/notes/${workspaceId}/notes/${noteId}`,
+    delete: (workspaceId: string, noteId: string) =>
+      `/api/notes/${workspaceId}/notes/${noteId}`,
+  },
+
+  DEAL: {
+    create: (workspaceId: string) => `/api/deals/${workspaceId}/deals`,
+    getAll: (workspaceId: string) => `/api/deals/${workspaceId}/deals`,
+    getById: (workspaceId: string, dealId: string) =>
+      `/api/deals/${workspaceId}/deals/${dealId}`,
+    update: (workspaceId: string, dealId: string) =>
+      `/api/deals/${workspaceId}/deals/${dealId}`,
+    delete: (workspaceId: string, dealId: string) =>
+      `/api/deals/${workspaceId}/deals/${dealId}`,
+  },
+
+  TASK: {
+    create: (workspaceId: string) =>
+      `/api/tasks/${workspaceId}/tasks`,
+    getAll: (workspaceId: string) =>
+      `/api/tasks/${workspaceId}/tasks`,
+    update: (workspaceId: string, taskId: string) =>
+      `/api/tasks/${workspaceId}/tasks/${taskId}`,
+    complete: (workspaceId: string, taskId: string) =>
+      `/api/tasks/${workspaceId}/tasks/${taskId}/complete`,
+    delete: (workspaceId: string, taskId: string) =>
+      `/api/tasks/${workspaceId}/tasks/${taskId}`,
+  },
 };
