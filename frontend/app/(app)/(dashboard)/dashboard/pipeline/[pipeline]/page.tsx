@@ -59,9 +59,10 @@ function PipelineDashboard() {
   const queryClient = useQueryClient();
   const moveLeadMutation = useMutation({
     mutationFn: ({ leadId, stageId }: { leadId: string; stageId: string }) =>
-      moveLeadToStageAction(workspace?.id ?? "", pipelineId, leadId, { stageId }),
+      moveLeadToStageAction(workspace?.id ?? "", pipelineId, leadId, {
+        stageId,
+      }),
     onMutate: ({ leadId, stageId }) => {
-      // Optimistic update: move lead immediately in UI
       const previousLeads = queryClient.getQueryData([
         "leads",
         workspace?.id,
@@ -70,7 +71,9 @@ function PipelineDashboard() {
 
       if (previousLeads) {
         const updatedLeads = previousLeads.map((lead) =>
-          lead._id === leadId ? { ...lead, stageId: { ...lead.stageId, _id: stageId } } : lead,
+          lead._id === leadId
+            ? { ...lead, stageId: { ...lead.stageId, _id: stageId } }
+            : lead,
         );
         queryClient.setQueryData(
           ["leads", workspace?.id, pipelineId],
@@ -82,13 +85,15 @@ function PipelineDashboard() {
     },
     onSuccess: () => {
       showToast.success("Lead moved successfully");
-      // Revalidate the leads query to ensure cache is in sync with server
       queryClient.invalidateQueries({
         queryKey: ["leads", workspace?.id, pipelineId],
       });
     },
-    onError: (error: Error, _variables, context: any) => {
-      // Revert to previous state on error
+    onError: (
+      error: Error,
+      _variables,
+      context: { previousLeads?: typeof allLeads } | undefined,
+    ) => {
       if (context?.previousLeads) {
         queryClient.setQueryData(
           ["leads", workspace?.id, pipelineId],
@@ -236,7 +241,9 @@ function PipelineDashboard() {
               return;
             }
 
-            // Handle stage reordering 
+            // Handle stage reordering using move() which reads internal sortable indices
+            if (active.data?.type !== "Stage") return;
+
             const stages = optimisticStages ?? pipeline.stages;
             const stageIds = stages.map((s) => s._id);
             const reorderedIds = move(stageIds, event) as string[];
@@ -246,9 +253,9 @@ function PipelineDashboard() {
             );
 
             if (orderChanged) {
-              const stageMap = new Map(stages.map((s) => [s._id, s]));
-              const reordered = reorderedIds.map((id) => stageMap.get(id)!);
-
+              const reordered = reorderedIds.map(
+                (id) => stages.find((s) => s._id === id)!,
+              );
               setOptimisticStages(reordered);
               reorderMutation.mutate(
                 { stageIds: reorderedIds },

@@ -23,7 +23,6 @@ export async function getDealsByWorkspaceAction(
   filters?: GetDealsFilters,
 ) {
   const response = await dealApi.getDealsByWorkspaceId(workspaceId, filters);
-  console.log(response);
   if (!response.success) {
     throw new Error(response.message || "Failed to fetch deals");
   }

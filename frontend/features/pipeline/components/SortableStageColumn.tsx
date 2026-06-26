@@ -31,23 +31,19 @@ export function SortableStageColumn({
   const stageLeads = leads.filter((lead) => lead.stageId._id === stage._id);
   return (
     <div
+      ref={ref}
       className={`shrink-0 w-80 h-full min-h-0 flex flex-col gap-2 transition-opacity ${
         isDragging ? "opacity-50" : ""
       }`}
     >
-      <div
-        ref={ref}
-        className={`h-full min-h-0 transition-opacity ${isDragging ? "opacity-50" : ""}`}
-      >
-        <StageColumn
-          stage={stage}
-          workspaceId={workspaceId}
-          pipelineId={pipelineId}
-          leads={stageLeads}
-          isLoadingLeads={isLoadingLeads}
-          isDropTarget={isDropTarget}
-        />
-      </div>
+      <StageColumn
+        stage={stage}
+        workspaceId={workspaceId}
+        pipelineId={pipelineId}
+        leads={stageLeads}
+        isLoadingLeads={isLoadingLeads}
+        isDropTarget={isDropTarget}
+      />
     </div>
   );
 }

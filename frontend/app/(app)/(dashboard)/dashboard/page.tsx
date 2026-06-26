@@ -64,7 +64,6 @@ function Dashboard() {
     setJoinWorkspaceModal(false),
   );
 
-  // Fetch dashboard stats
   const { data: dashboardStats, isLoading } = useGetDashboardStats(
     currentWorkspace?.id ?? "",
   );
@@ -73,7 +72,6 @@ function Dashboard() {
     undefined,
   );
 
-  // Calculate stats from the aggregated data
   const totalLeads = dashboardStats?.leads.total || 0;
   const activeDealCount = dashboardStats?.deals.byStatus.ACTIVE || 0;
   const dueTodayCount = dashboardStats?.tasks.dueToday || 0;
