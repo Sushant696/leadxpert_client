@@ -82,12 +82,12 @@ export default function TopBar() {
             </>
           )}
 
-          <Button className='bg-gradient-to-r from-primary to-secondary text-white hover:from-primary/90 hover:to-secondary/90  rounded-xl'>
+          {/* <Button className='bg-gradient-to-r from-primary to-secondary text-white hover:from-primary/90 hover:to-secondary/90  rounded-xl'>
             <MagicStar size={18} className='' variant='Bulk' />
             Assistant
-          </Button>
+          </Button> */}
 
-          <div className="h-8 w-px bg-border mx-2"></div>
+          {/* <div className="h-8 w-px bg-border mx-2"></div> */}
           {/* Notification Bell */}
           <button className="p-2 text-muted-foreground hover:bg-muted rounded-lg relative transition-colors">
             <Bell size={20} />
