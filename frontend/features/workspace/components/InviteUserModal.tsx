@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { showToast } from "@/components/showToast";
 import { useGetInvitationLink } from "../hooks/useGetInvitationLink";
+import { useSendInviteByEmail } from "../hooks/useSendInviteByEmail";
 
 interface InviteMemberModalProps {
   workspaceId: string;
@@ -23,6 +24,7 @@ export default function InviteMemberModal({ workspaceId }: InviteMemberModalProp
   const [email, setEmail] = useState("");
   const [copied, setCopied] = useState(false);
   const invitationMutation = useGetInvitationLink();
+  const emailInviteMutation = useSendInviteByEmail();
   const [inviteLink, setInviteLink] = useState<string>("");
 
   const resolveInviteLink = (data: unknown) => {
@@ -48,8 +50,12 @@ export default function InviteMemberModal({ workspaceId }: InviteMemberModalProp
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleSendInvite = () => {
-    showToast.success(`Invite sent to ${email}`);
+  const handleSendInvite = async () => {
+    if (!email.trim()) return;
+    await emailInviteMutation.mutateAsync({
+      workspaceId,
+      email: email.trim(),
+    });
     setEmail("");
   };
 
@@ -84,7 +90,10 @@ export default function InviteMemberModal({ workspaceId }: InviteMemberModalProp
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <Button onClick={handleSendInvite} disabled={!email}>
+            <Button
+              onClick={handleSendInvite}
+              disabled={!email.trim() || emailInviteMutation.isPending}
+            >
               <Mail className="h-4 w-4" />
             </Button>
           </div>
