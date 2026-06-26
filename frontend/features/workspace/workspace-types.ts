@@ -61,3 +61,37 @@ export interface updateWorkspacePayload {
   teamSize?: number;
 }
 
+export interface DashboardStats {
+  leads: {
+    total: number;
+    byStatus: Record<string, number>;
+    byPriority: Record<string, number>;
+  };
+  deals: {
+    total: number;
+    byStatus: Record<string, number>;
+    totalValue: number;
+  };
+  tasks: {
+    total: number;
+    byStatus: Record<string, number>;
+    byPriority: Record<string, number>;
+    dueToday: number;
+    overdue: number;
+  };
+  recentActivities: Array<{
+    _id: string;
+    type: string;
+    description?: string;
+    entityType: "LEAD" | "DEAL";
+    entityId: string;
+    createdAt: string;
+    performedBy: {
+      _id: string;
+      name: string;
+      email: string;
+      profilePicture?: string;
+    };
+  }>;
+  conversionRate: number;
+}

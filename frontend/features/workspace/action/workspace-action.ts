@@ -44,3 +44,12 @@ export async function updateWorkspaceAction(workspaceId: string, formData: updat
   };
 }
 
+export async function getDashboardStatsAction(workspaceId: string) {
+  const response = await workspaceApi.getDashboardStats(workspaceId);
+  if (!response.success) {
+    throw new Error(response.message || "Failed to fetch dashboard stats");
+  }
+  return response.data;
+}
+
+

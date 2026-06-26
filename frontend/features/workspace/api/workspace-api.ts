@@ -15,6 +15,9 @@ const workspaceApi = {
   deleteById: async (workspaceId: string) => {
     return await apiWrapper.delete(apiURLs.WORKSPACE.deleteById(`${workspaceId}`));
   },
+  getDashboardStats: async (workspaceId: string) => {
+    return await apiWrapper.get(apiURLs.WORKSPACE.dashboardStats(workspaceId));
+  },
 };
 
 export { workspaceApi };

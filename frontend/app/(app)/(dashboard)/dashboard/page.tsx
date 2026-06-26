@@ -36,23 +36,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useGetAllDeals } from "@/features/deal/hooks/useGetAllDeals";
-import useGetAllTasks from "@/features/lead/hooks/useGetAllTasks";
-import { useGetAllLeads } from "@/features/lead/hooks/useGetAllLeads";
 import { cn } from "@/lib/utils";
+import useGetDashboardStats from "@/features/workspace/hooks/useGetDashboardStats";
+import useGetAllTasks from "@/features/lead/hooks/useGetAllTasks";
 
 function Dashboard() {
   type DashboardTask = {
     _id: string;
     title: string;
-    description?: string;
+    description?: string | null;
     priority: "LOW" | "MEDIUM" | "HIGH";
     status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
-    dueDate?: string;
-  };
-
-  type DashboardDeal = {
-    status: string;
+    dueDate?: string | null;
   };
 
   const { user, token } = useAuthStore();
@@ -70,28 +65,27 @@ function Dashboard() {
   );
 
   // Fetch dashboard stats
-  const { data: leads = [] } = useGetAllLeads(currentWorkspace?.id ?? "");
-  const { data: deals = [] } = useGetAllDeals(currentWorkspace?.id ?? "");
-  const { data: tasks = [] } = useGetAllTasks(
+  const { data: dashboardStats, isLoading } = useGetDashboardStats(
+    currentWorkspace?.id ?? "",
+  );
+  const { data: tasks = [], isLoading: isTasksLoading } = useGetAllTasks(
     currentWorkspace?.id ?? "",
     undefined,
   );
 
-  // Calculate stats
-  const totalLeads = leads.length;
-  const activeDealCount = (deals as DashboardDeal[]).filter(
-    (d) => d.status === "ACTIVE",
-  ).length;
-  const dueTodayCount = (tasks as DashboardTask[]).filter((t) => {
-    if (!t.dueDate) return false;
-    const dueDate = new Date(t.dueDate);
-    const today = new Date();
-    return dueDate.toDateString() === today.toDateString();
-  }).length;
-  const conversionRate =
-    totalLeads > 0 ? ((deals.length / totalLeads) * 100).toFixed(1) : "0";
-
-  const displayedTasks = tasks.slice(0, 5);
+  // Calculate stats from the aggregated data
+  const totalLeads = dashboardStats?.leads.total || 0;
+  const activeDealCount = dashboardStats?.deals.byStatus.ACTIVE || 0;
+  const dueTodayCount = dashboardStats?.tasks.dueToday || 0;
+  const conversionRate = dashboardStats?.conversionRate.toFixed(1) || "0";
+  const displayedTasks = [...(tasks as DashboardTask[])]
+    .sort((a, b) => {
+      if (!a.dueDate && !b.dueDate) return 0;
+      if (!a.dueDate) return 1;
+      if (!b.dueDate) return -1;
+      return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+    })
+    .slice(0, 5);
 
   const taskStatusConfig: Record<
     string,
@@ -125,7 +119,7 @@ function Dashboard() {
     LOW: "bg-blue-400",
   };
 
-  const formatDueDate = (dueDate?: string) => {
+  const formatDueDate = (dueDate?: string | null) => {
     if (!dueDate) return "No due date";
     try {
       return formatDistanceToNow(new Date(dueDate), { addSuffix: true });
@@ -209,7 +203,9 @@ function Dashboard() {
                   <p className="text-sm font-medium text-muted-foreground">
                     Total Leads
                   </p>
-                  <p className="text-2xl font-bold">{totalLeads}</p>
+                  <p className="text-2xl font-bold">
+                    {isLoading ? "..." : totalLeads}
+                  </p>
                 </div>
                 <div className="p-3 bg-primary/10 rounded-lg">
                   <Users className="h-5 w-5 text-primary" />
@@ -225,7 +221,9 @@ function Dashboard() {
                   <p className="text-sm font-medium text-muted-foreground">
                     Active Deals
                   </p>
-                  <p className="text-2xl font-bold">{activeDealCount}</p>
+                  <p className="text-2xl font-bold">
+                    {isLoading ? "..." : activeDealCount}
+                  </p>
                 </div>
                 <div className="p-3 bg-primary/10 rounded-lg">
                   <Briefcase className="h-5 w-5 text-primary" />
@@ -241,7 +239,9 @@ function Dashboard() {
                   <p className="text-sm font-medium text-muted-foreground">
                     Due Today
                   </p>
-                  <p className="text-2xl font-bold">{dueTodayCount}</p>
+                  <p className="text-2xl font-bold">
+                    {isLoading ? "..." : dueTodayCount}
+                  </p>
                 </div>
                 <div className="p-3 bg-primary/10 rounded-lg">
                   <Clock className="h-5 w-5 text-primary" />
@@ -257,7 +257,9 @@ function Dashboard() {
                   <p className="text-sm font-medium text-muted-foreground">
                     Conversion Rate
                   </p>
-                  <p className="text-2xl font-bold">{conversionRate}%</p>
+                  <p className="text-2xl font-bold">
+                    {isLoading ? "..." : `${conversionRate}%`}
+                  </p>
                 </div>
                 <div className="p-3 bg-primary/10 rounded-lg">
                   <TrendingUp className="h-5 w-5 text-primary" />
@@ -281,10 +283,14 @@ function Dashboard() {
           </div>
         </div>
 
-        {tasks && tasks.length > 0 ? (
+        {isTasksLoading ? (
+          <Card className="flex flex-col items-center justify-center p-12 text-center">
+            <p className="text-sm text-muted-foreground">Loading tasks...</p>
+          </Card>
+        ) : tasks.length > 0 ? (
           <Card className="overflow-hidden">
             <div className="divide-y divide-border">
-              {(displayedTasks as DashboardTask[]).map((task) => {
+              {displayedTasks.map((task) => {
                 const status = taskStatusConfig[task.status] ?? {
                   label: task.status,
                   icon: Circle,
@@ -296,8 +302,7 @@ function Dashboard() {
 
                 const dueDate = task.dueDate ? new Date(task.dueDate) : null;
                 const now = new Date();
-                const isOverdue =
-                  dueDate && dueDate < now && !isDone;
+                const isOverdue = dueDate && dueDate < now && !isDone;
                 const isDueToday =
                   dueDate &&
                   dueDate.toDateString() === now.toDateString() &&
@@ -311,7 +316,6 @@ function Dashboard() {
                       isDone && "opacity-50",
                     )}
                   >
-                    {/* Status icon */}
                     <div
                       className={cn(
                         "mt-0.5 shrink-0 flex items-center justify-center w-5 h-5 rounded-full border-2 transition-colors",
@@ -327,7 +331,6 @@ function Dashboard() {
                       <StatusIcon className="h-3 w-3" />
                     </div>
 
-                    {/* Content */}
                     <div className="flex-1 min-w-0 space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <p
@@ -338,11 +341,11 @@ function Dashboard() {
                         >
                           {task.title}
                         </p>
-                        {/* Priority dot */}
                         <span
                           className={cn(
                             "shrink-0 inline-block w-1.5 h-1.5 rounded-full",
-                            taskPriorityDot[task.priority] ?? "bg-muted-foreground",
+                            taskPriorityDot[task.priority] ??
+                              "bg-muted-foreground",
                           )}
                         />
                       </div>
@@ -353,7 +356,6 @@ function Dashboard() {
                       )}
                     </div>
 
-                    {/* Right side — due date */}
                     <div className="shrink-0 flex items-center gap-1.5">
                       {isOverdue ? (
                         <div className="flex items-center gap-1 text-xs font-medium text-red-500 bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded-full">
@@ -381,9 +383,6 @@ function Dashboard() {
                 <p className="text-xs text-muted-foreground">
                   Showing 5 of {tasks.length} tasks
                 </p>
-                <span className="text-xs text-primary font-medium cursor-pointer hover:underline">
-                  View all →
-                </span>
               </div>
             )}
           </Card>
