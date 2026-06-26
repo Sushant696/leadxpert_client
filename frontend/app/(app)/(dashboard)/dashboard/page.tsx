@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   ListTodo,
@@ -8,6 +8,7 @@ import {
   Users,
   TrendingUp,
   Clock,
+  Loader2,
 } from "lucide-react";
 import { Add } from "iconsax-reactjs";
 import { useEffect, useState } from "react";
@@ -19,55 +20,93 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useJoinWorkspace } from "@/features/auth/hooks/useJoinWorkspace";
 import WorkspaceJoinModal from "@/features/workspace/components/WorkspaceJoinModal";
 import WorkspaceCreateModal from "@/features/workspace/components/CreateWorkspaceModal";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useGetAllDeals } from "@/features/deal/hooks/useGetAllDeals";
+import useGetAllTasks from "@/features/lead/hooks/useGetAllTasks";
 
 function Dashboard() {
   const { user, token } = useAuthStore();
-  const { workspace } = useWorkspaceStore()
+  const { workspace } = useWorkspaceStore();
   const [isJoinWorkspaceOpen, setIsJoinWorkspaceOpen] = useState(false);
-  const [isCreateWorkspaceOpen, setIsCreateWorkspaceOpen] = useState<boolean>(false);
+  const [isCreateWorkspaceOpen, setIsCreateWorkspaceOpen] =
+    useState<boolean>(false);
   const currentWorkspace = workspace;
   const isInviteTokenPresent = token?.token ? true : false;
-  const [joinWorkspaceModal, setJoinWorkspaceModal] = useState(false)
+  const [joinWorkspaceModal, setJoinWorkspaceModal] = useState(false);
 
-  const joinWorkspaceMutation = useJoinWorkspace(
-    token?.token ?? "",
-    () => setJoinWorkspaceModal(false)
-  )
+  const joinWorkspaceMutation = useJoinWorkspace(token?.token ?? "", () =>
+    setJoinWorkspaceModal(false),
+  );
+
+  // Fetch dashboard stats
+  const { data: leads = [] } = useGetAllDeals(currentWorkspace?.id ?? "");
+  const { data: deals = [] } = useGetAllDeals(currentWorkspace?.id ?? "");
+  const { data: tasks = [] } = useGetAllTasks(
+    currentWorkspace?.id ?? "",
+    undefined,
+  );
+
+  // Calculate stats
+  const totalLeads = leads.length;
+  const activeDealCount = deals.filter(
+    (d: any) => d.status === "ACTIVE",
+  ).length;
+  const dueTodayCount = tasks.filter((t: any) => {
+    if (!t.dueDate) return false;
+    const dueDate = new Date(t.dueDate);
+    const today = new Date();
+    return dueDate.toDateString() === today.toDateString();
+  }).length;
+  const conversionRate =
+    totalLeads > 0 ? ((deals.length / totalLeads) * 100).toFixed(1) : "0";
 
   useEffect(() => {
     if (isInviteTokenPresent) {
       setJoinWorkspaceModal(true);
     }
-  }, [isInviteTokenPresent])
+  }, [isInviteTokenPresent]);
 
   const handleDialogChange = (open: boolean) => {
-    setJoinWorkspaceModal(open)
+    setJoinWorkspaceModal(open);
     if (!open && token?.token) {
-      useAuthStore.getState().setInviteToken({ token: "" })
+      useAuthStore.getState().setInviteToken({ token: "" });
     }
-  }
+  };
 
-  const currentDate = new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
+  const currentDate = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   });
 
   return (
     <div className="min-h-screen bg-background max-w-7xl mx-auto p-6 space-y-8">
       <header className="space-y-1">
-        <p className="text-sm  font-medium">
-          {currentDate}
-        </p>
+        <p className="text-sm  font-medium">{currentDate}</p>
         <h1 className="text-3xl font-bold tracking-tight capitalize">
           Welcome back, {user?.name.split(" ")[0]}
         </h1>
         {currentWorkspace && (
           <p className="text-muted-foreground">
-            You're viewing <span className="font-medium text-foreground">{currentWorkspace.name}</span> workspace
+            You're viewing{" "}
+            <span className="font-medium text-foreground">
+              {currentWorkspace.name}
+            </span>{" "}
+            workspace
           </p>
         )}
       </header>
@@ -81,7 +120,8 @@ function Dashboard() {
             <div className="flex-1">
               <CardTitle>Set up your Workspace</CardTitle>
               <CardDescription>
-                Create a new workspace to start managing leads, or join an existing team workspace with an invite link.
+                Create a new workspace to start managing leads, or join an
+                existing team workspace with an invite link.
               </CardDescription>
             </div>
           </CardHeader>
@@ -111,8 +151,10 @@ function Dashboard() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Total Leads</p>
-                  <p className="text-2xl font-bold">0</p>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Total Leads
+                  </p>
+                  <p className="text-2xl font-bold">{totalLeads}</p>
                 </div>
                 <div className="p-3 bg-primary/10 rounded-lg">
                   <Users className="h-5 w-5 text-primary" />
@@ -125,8 +167,10 @@ function Dashboard() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Active Deals</p>
-                  <p className="text-2xl font-bold">0</p>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Active Deals
+                  </p>
+                  <p className="text-2xl font-bold">{activeDealCount}</p>
                 </div>
                 <div className="p-3 bg-primary/10 rounded-lg">
                   <Briefcase className="h-5 w-5 text-primary" />
@@ -139,8 +183,10 @@ function Dashboard() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Due Today</p>
-                  <p className="text-2xl font-bold">0</p>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Due Today
+                  </p>
+                  <p className="text-2xl font-bold">{dueTodayCount}</p>
                 </div>
                 <div className="p-3 bg-primary/10 rounded-lg">
                   <Clock className="h-5 w-5 text-primary" />
@@ -153,8 +199,10 @@ function Dashboard() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Conversion Rate</p>
-                  <p className="text-2xl font-bold">0%</p>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Conversion Rate
+                  </p>
+                  <p className="text-2xl font-bold">{conversionRate}%</p>
                 </div>
                 <div className="p-3 bg-primary/10 rounded-lg">
                   <TrendingUp className="h-5 w-5 text-primary" />
@@ -164,8 +212,6 @@ function Dashboard() {
           </Card>
         </div>
       )}
-
-
 
       <section className="space-y-4">
         <div className="flex justify-between items-center">
@@ -180,11 +226,17 @@ function Dashboard() {
             </Button>
             <Tabs defaultValue="open">
               <TabsList className="bg-muted">
-                <TabsTrigger value="open" className="data-[state=active]:bg-background">
+                <TabsTrigger
+                  value="open"
+                  className="data-[state=active]:bg-background"
+                >
                   <ListTodo className="h-4 w-4 mr-2" />
                   Open
                 </TabsTrigger>
-                <TabsTrigger value="completed" className="data-[state=active]:bg-background">
+                <TabsTrigger
+                  value="completed"
+                  className="data-[state=active]:bg-background"
+                >
                   <CheckCircle2 className="h-4 w-4 mr-2" />
                   Completed
                 </TabsTrigger>
@@ -199,7 +251,8 @@ function Dashboard() {
           </div>
           <h3 className="font-medium text-lg">No tasks scheduled</h3>
           <p className="text-sm text-muted-foreground mb-4 max-w-md">
-            Once you add leads and deals, your follow-ups and tasks will appear here.
+            Once you add leads and deals, your follow-ups and tasks will appear
+            here.
           </p>
           <Button variant="outline" size="sm" className="gap-2">
             <Add size={16} />
@@ -208,13 +261,13 @@ function Dashboard() {
         </Card>
       </section>
 
-
       <Dialog open={joinWorkspaceModal} onOpenChange={handleDialogChange}>
         <DialogContent className="max-w-lg sm:max-w-md m-2">
           <DialogHeader>
             <DialogTitle className="text-2xl">Join a Workspace</DialogTitle>
             <DialogDescription>
-              You've been invited to join a workspace. Click below to accept the invitation.
+              You&apos;ve been invited to join a workspace. Click below to accept the
+              invitation.
             </DialogDescription>
           </DialogHeader>
           <div>
@@ -224,19 +277,26 @@ function Dashboard() {
               onClick={() => joinWorkspaceMutation.mutate()}
               disabled={joinWorkspaceMutation.isPending}
             >
-              {joinWorkspaceMutation.isPending ? "Joining..." : "Join Workspace"}
+              {joinWorkspaceMutation.isPending
+                ? "Joining..."
+                : "Join Workspace"}
             </Button>
           </div>
         </DialogContent>
       </Dialog>
-      <Dialog open={isCreateWorkspaceOpen} onOpenChange={setIsCreateWorkspaceOpen}>
-        <WorkspaceCreateModal setIsCreateWorkspaceOpen={setIsCreateWorkspaceOpen} />
+      <Dialog
+        open={isCreateWorkspaceOpen}
+        onOpenChange={setIsCreateWorkspaceOpen}
+      >
+        <WorkspaceCreateModal
+          setIsCreateWorkspaceOpen={setIsCreateWorkspaceOpen}
+        />
       </Dialog>
 
       <Dialog open={isJoinWorkspaceOpen} onOpenChange={setIsJoinWorkspaceOpen}>
         <WorkspaceJoinModal setIsJoinWorkspaceOpen={setIsJoinWorkspaceOpen} />
       </Dialog>
-    </div >
+    </div>
   );
 }
 

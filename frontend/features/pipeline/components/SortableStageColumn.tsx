@@ -1,14 +1,15 @@
-"use client";
-
 import { useSortable } from "@dnd-kit/react/sortable";
 import { PipelineStageRef } from "../types/pipeline-types";
 import { StageColumn } from "./StageColumn";
+import { Lead } from "@/features/lead/types/lead-types";
 
 interface SortableStageColumnProps {
   stage: PipelineStageRef;
   workspaceId: string;
   pipelineId: string;
   index: number;
+  leads: Lead[];
+  isLoadingLeads: boolean;
 }
 
 export function SortableStageColumn({
@@ -16,22 +17,37 @@ export function SortableStageColumn({
   workspaceId,
   pipelineId,
   index,
+  leads,
+  isLoadingLeads,
 }: SortableStageColumnProps) {
-  const { ref, isDragging } = useSortable({
+  const { ref, isDragging, isDropTarget } = useSortable({
     id: stage._id,
     index,
+    data: {
+      type: "Stage",
+      stage,
+    },
   });
-
+  const stageLeads = leads.filter((lead) => lead.stageId._id === stage._id);
   return (
     <div
-      ref={ref}
-      className={`shrink-0 transition-opacity ${isDragging ? "opacity-50" : ""}`}
+      className={`shrink-0 w-80 h-full min-h-0 flex flex-col gap-2 transition-opacity ${
+        isDragging ? "opacity-50" : ""
+      }`}
     >
-      <StageColumn
-        stage={stage}
-        workspaceId={workspaceId}
-        pipelineId={pipelineId}
-      />
+      <div
+        ref={ref}
+        className={`h-full min-h-0 transition-opacity ${isDragging ? "opacity-50" : ""}`}
+      >
+        <StageColumn
+          stage={stage}
+          workspaceId={workspaceId}
+          pipelineId={pipelineId}
+          leads={stageLeads}
+          isLoadingLeads={isLoadingLeads}
+          isDropTarget={isDropTarget}
+        />
+      </div>
     </div>
   );
 }

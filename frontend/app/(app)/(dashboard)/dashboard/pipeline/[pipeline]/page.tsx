@@ -21,12 +21,18 @@ import useReorderPipelineStages from "@/features/pipeline/hooks/useReorderPipeli
 import { DragDropProvider } from "@dnd-kit/react";
 import { move } from "@dnd-kit/helpers";
 import { PipelineStageRef } from "@/features/pipeline/types/pipeline-types";
+import useGetLeads from "@/features/lead/hooks/useGetLeads";
+import { CreateLeadModal } from "@/features/lead/components/CreateLeadModal";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { moveLeadToStageAction } from "@/features/lead/action/lead-action";
+import { showToast } from "@/components/showToast";
 
 function PipelineDashboard() {
   const { pipeline: pipelineId } = useParams<{ pipeline: string }>();
   const { workspace } = useWorkspaceStore();
   const [isPipelineSettingsOpen, setPipelineSettingsOpen] = useState(false);
   const [isCreateStageOpen, setIsCreateStageOpen] = useState(false);
+  const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(false);
   const [isApplyingTemplate, setIsApplyingTemplate] = useState(false);
   const bulkCreateStageMutation = useBulkCreatePipelineStage(
     workspace?.id ?? "",
@@ -36,12 +42,38 @@ function PipelineDashboard() {
     workspace?.id ?? "",
     pipelineId,
   );
-  const [optimisticStages, setOptimisticStages] = useState<PipelineStageRef[] | null>(null);
+  const [optimisticStages, setOptimisticStages] = useState<
+    PipelineStageRef[] | null
+  >(null);
 
   const { data: pipeline, isLoading } = useGetSinglePipeline(
     workspace?.id ?? "",
     pipelineId,
   );
+
+  const { data: allLeads = [], isLoading: isLoadingLeads } = useGetLeads(
+    workspace?.id ?? "",
+    pipelineId,
+  );
+
+  const queryClient = useQueryClient();
+  const moveLeadMutation = useMutation({
+    mutationFn: ({ leadId, stageId }: { leadId: string; stageId: string }) =>
+      moveLeadToStageAction(workspace?.id ?? "", pipelineId, leadId, { stageId }),
+    onSuccess: () => {
+      showToast.success("Lead moved successfully");
+      queryClient.invalidateQueries({
+        queryKey: ["leads", workspace?.id, pipelineId],
+      });
+    },
+    onError: (error: Error) => {
+      showToast.error(error.message);
+    },
+  });
+
+  // Create a map of all leads by ID for quick lookup during drag
+  const leadsById = new Map(allLeads.map((lead) => [lead._id, lead]));
+
   if (isLoading) return <PipelineSkeleton />;
 
   if (!pipeline) {
@@ -130,7 +162,11 @@ function PipelineDashboard() {
             >
               <Settings2 size={13} /> Settings
             </Button>
-            <Button size="sm" className="text-xs gap-1.5">
+            <Button
+              onClick={() => setIsCreateLeadOpen(true)}
+              size="sm"
+              className="text-xs gap-1.5"
+            >
               <Plus size={13} /> Add Lead
             </Button>
           </div>
@@ -147,15 +183,39 @@ function PipelineDashboard() {
         </div>
       )}
 
-      {/* Main Content Area */}
       {hasStages ? (
         <DragDropProvider
           onDragEnd={(event) => {
+            const { operation, canceled } = event;
+            if (canceled) return;
+
+            const active = operation.source;
+            const over = operation.target;
+
+            if (!active) return;
+
+            // Handle lead moving between stages
+            if (active.data?.type === "Lead") {
+              if (over?.data?.type === "Stage") {
+                const leadId = active.id as string;
+                const lead = leadsById.get(leadId);
+                const newStageId = over.id as string;
+
+                if (lead && lead.stageId._id !== newStageId) {
+                  moveLeadMutation.mutate({ leadId, stageId: newStageId });
+                }
+              }
+              return;
+            }
+
+            // Handle stage reordering 
             const stages = optimisticStages ?? pipeline.stages;
             const stageIds = stages.map((s) => s._id);
             const reorderedIds = move(stageIds, event) as string[];
 
-            const orderChanged = stageIds.some((id, i) => id !== reorderedIds[i]);
+            const orderChanged = stageIds.some(
+              (id, i) => id !== reorderedIds[i],
+            );
 
             if (orderChanged) {
               const stageMap = new Map(stages.map((s) => [s._id, s]));
@@ -165,6 +225,7 @@ function PipelineDashboard() {
               reorderMutation.mutate(
                 { stageIds: reorderedIds },
                 {
+                  onError: () => setOptimisticStages(null),
                   onSettled: () => setOptimisticStages(null),
                 },
               );
@@ -180,6 +241,8 @@ function PipelineDashboard() {
                   workspaceId={workspace?.id ?? ""}
                   pipelineId={pipelineId}
                   index={index}
+                  leads={allLeads}
+                  isLoadingLeads={isLoadingLeads}
                 />
               ))}
 
@@ -214,6 +277,12 @@ function PipelineDashboard() {
       <CreatePipelineStageModal
         isOpen={isCreateStageOpen}
         setIsOpen={setIsCreateStageOpen}
+        workspaceId={workspace?.id ?? ""}
+        pipelineId={pipelineId}
+      />
+      <CreateLeadModal
+        isOpen={isCreateLeadOpen}
+        onClose={() => setIsCreateLeadOpen(false)}
         workspaceId={workspace?.id ?? ""}
         pipelineId={pipelineId}
       />

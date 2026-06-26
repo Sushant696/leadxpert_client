@@ -7,14 +7,13 @@ import { useRouter } from "next/navigation";
 const useCreatePipeline = (workspaceId: string) => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationKey: ["create-pipeline", workspaceId],
     mutationFn: (data: CreatePipelinePayload) =>
       createPipelineAction(workspaceId, data),
     onSuccess: (response) => {
       router.push(`/dashboard/pipeline/${response.pipeline._id}`);
-      console.log("Pipeline created:", response.pipeline._id);
       showToast.success("Pipeline created successfully");
       queryClient.invalidateQueries({ queryKey: ["pipelines", workspaceId] });
     },

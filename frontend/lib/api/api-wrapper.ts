@@ -1,16 +1,21 @@
 import axiosInstance from "./axios";
 import { apiURLs } from "@/utils/apiUrls";
 import SessionExpiredError from "../auth/session-error-handler";
-import { clearAuthCookies, getAccessToken, getRefreshToken, setAuthCookies } from "../auth/cookies";
+import {
+  clearAuthCookies,
+  getAccessToken,
+  getRefreshToken,
+  setAuthCookies,
+} from "../auth/cookies";
 
-type HttpMethod = "GET" | "POST" | 'PUT' | 'DELETE' | 'PATCH';
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
 interface RequestConfig {
-  url: string,
-  method: HttpMethod,
-  data?: any,
-  params?: any,
-  headers?: Record<string, string>
+  url: string;
+  method: HttpMethod;
+  data?: any;
+  params?: any;
+  headers?: Record<string, string>;
 }
 
 async function makeAuthenticatedRequest<T>(config: RequestConfig): Promise<T> {
@@ -20,7 +25,7 @@ async function makeAuthenticatedRequest<T>(config: RequestConfig): Promise<T> {
     try {
       accessToken = await refreshAccessToken();
     } catch (refreshError: any) {
-      throw new SessionExpiredError('No access token available');
+      throw new SessionExpiredError("No access token available");
     }
   }
 
@@ -36,9 +41,35 @@ async function makeAuthenticatedRequest<T>(config: RequestConfig): Promise<T> {
       },
     });
 
-    return response.data;
+    // axios validateStatus accepts all 2xx-5xx codes, so 401 won't throw
+    // so check the status explicitly here.
+    if (response.status === 401) {
+      const newAccessToken = await refreshAccessToken();
+      // than retry original request with new token
+      const retryResponse = await axiosInstance.request({
+        url: config.url,
+        method: config.method,
+        data: config.data,
+        params: config.params,
+        headers: {
+          ...config.headers,
+          Authorization: `Bearer ${newAccessToken}`,
+        },
+      });
 
+      if (retryResponse.status === 401) {
+        throw new SessionExpiredError(
+          "Your session has expired. Please login again.",
+        );
+      }
+
+      return retryResponse.data;
+    }
+
+    return response.data;
   } catch (error: any) {
+    if (error instanceof SessionExpiredError) throw error;
+
     if (error.response?.status === 401) {
       try {
         const newAccessToken = await refreshAccessToken();
@@ -55,10 +86,11 @@ async function makeAuthenticatedRequest<T>(config: RequestConfig): Promise<T> {
         });
 
         return retryResponse.data;
-
       } catch (refreshError: any) {
         // Refresh failed - session is completely expired
-        throw new SessionExpiredError('Your session has expired. Please login again.');
+        throw new SessionExpiredError(
+          "Your session has expired. Please login again.",
+        );
       }
     }
     // If it's not a 401, just throw the original error
@@ -67,14 +99,14 @@ async function makeAuthenticatedRequest<T>(config: RequestConfig): Promise<T> {
 }
 
 /*
- * Refreshes access token using the refresh token 
+ * Refreshes access token using the refresh token
  * gets called automatically when 401 error is detected if api-Wrapper methods are used
-*/
+ */
 
 async function refreshAccessToken(): Promise<string> {
-  const refreshToken = await getRefreshToken()
+  const refreshToken = await getRefreshToken();
   if (!refreshToken) {
-    throw new Error('No refresh token available');
+    throw new Error("No refresh token available");
   }
 
   try {
@@ -85,20 +117,24 @@ async function refreshAccessToken(): Promise<string> {
         headers: {
           Authorization: `Bearer ${refreshToken}`,
         },
-      }
-    )
+      },
+    );
 
     if (!response.data.success) {
-      throw new Error('Refresh token invalid or expired');
+      throw new Error("Refresh token invalid or expired");
     }
 
-    const { accessToken: newAccessToken, refreshToken: newRefreshToken, user } = response.data.data;
+    const {
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+      user,
+    } = response.data.data;
     await setAuthCookies(newAccessToken, newRefreshToken, user?.role);
     return newAccessToken;
   } catch (error: Error | any) {
-    console.error('❌ Refresh failed:', error.message);
+    console.error("❌ Refresh failed:", error.message);
     await clearAuthCookies();
-    throw new SessionExpiredError('Session refresh failed');
+    throw new SessionExpiredError("Session refresh failed");
   }
 }
 
@@ -106,17 +142,20 @@ async function refreshAccessToken(): Promise<string> {
 
 export const apiWrapper = {
   get: <T = any>(url: string, params?: any, headers?: Record<string, string>) =>
-    makeAuthenticatedRequest<T>({ url, method: 'GET', params, headers }),
+    makeAuthenticatedRequest<T>({ url, method: "GET", params, headers }),
 
   post: <T = any>(url: string, data?: any, headers?: Record<string, string>) =>
-    makeAuthenticatedRequest<T>({ url, method: 'POST', data, headers }),
+    makeAuthenticatedRequest<T>({ url, method: "POST", data, headers }),
 
   put: <T = any>(url: string, data?: any, headers?: Record<string, string>) =>
-    makeAuthenticatedRequest<T>({ url, method: 'PUT', data, headers }),
+    makeAuthenticatedRequest<T>({ url, method: "PUT", data, headers }),
 
   patch: <T = any>(url: string, data?: any, headers?: Record<string, string>) =>
-    makeAuthenticatedRequest<T>({ url, method: 'PATCH', data, headers }),
+    makeAuthenticatedRequest<T>({ url, method: "PATCH", data, headers }),
 
-  delete: <T = any>(url: string, data?: any, headers?: Record<string, string>) =>
-    makeAuthenticatedRequest<T>({ url, method: 'DELETE', data, headers }),
+  delete: <T = any>(
+    url: string,
+    data?: any,
+    headers?: Record<string, string>,
+  ) => makeAuthenticatedRequest<T>({ url, method: "DELETE", data, headers }),
 };

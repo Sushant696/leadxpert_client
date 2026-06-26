@@ -304,6 +304,15 @@
 }
 
 @layer utilities {
+  /* Hide scrollbar while maintaining scroll functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 
   /* Custom text utilities */
   .text-balance {
@@ -330,6 +339,6 @@
 
   /* Special text styles */
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent;
+    @apply bg-clip-text text-transparent bg-linear-to-r from-primary to-accent;
   }
 }

@@ -81,4 +81,69 @@ export const apiURLs = {
     reorder: (workspaceId: string, pipelineId: string) =>
       `/api/pipeline-stage/${workspaceId}/pipelines/${pipelineId}/stages/reorder`,
   },
+
+  LEAD: {
+    create: (workspaceId: string, pipelineId: string) =>
+      `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads`,
+    getAll: (workspaceId: string, pipelineId: string) =>
+      `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads`,
+    getAllByWorkspace: (workspaceId: string) => `/api/leads/${workspaceId}/all`,
+    getById: (workspaceId: string, pipelineId: string, leadId: string) =>
+      `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads/${leadId}`,
+    update: (workspaceId: string, pipelineId: string, leadId: string) =>
+      `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads/${leadId}`,
+    moveToStage: (workspaceId: string, pipelineId: string, leadId: string) =>
+      `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads/${leadId}/stage`,
+    assign: (workspaceId: string, pipelineId: string, leadId: string) =>
+      `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads/${leadId}/assign`,
+    convert: (workspaceId: string, pipelineId: string, leadId: string) =>
+      `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads/${leadId}/convert`,
+    markLost: (workspaceId: string, pipelineId: string, leadId: string) =>
+      `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads/${leadId}/lost`,
+    archive: (workspaceId: string, pipelineId: string, leadId: string) =>
+      `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads/${leadId}`,
+  },
+
+  CONTACT: {
+    getAll: (workspaceId: string) => `/api/contact/${workspaceId}/contacts`,
+    getById: (workspaceId: string, contactId: string) =>
+      `/api/contact/${workspaceId}/contacts/${contactId}`,
+    create: (workspaceId: string) => `/api/contact/${workspaceId}/contacts`,
+    update: (workspaceId: string, contactId: string) =>
+      `/api/contact/${workspaceId}/contacts/${contactId}`,
+    delete: (workspaceId: string, contactId: string) =>
+      `/api/contact/${workspaceId}/contacts/${contactId}`,
+  },
+
+  NOTE: {
+    create: (workspaceId: string) => `/api/notes/${workspaceId}/notes`,
+    getByEntity: (workspaceId: string, entityType: string, entityId: string) =>
+      `/api/notes/${workspaceId}/notes/${entityType}/${entityId}`,
+    update: (workspaceId: string, noteId: string) =>
+      `/api/notes/${workspaceId}/notes/${noteId}`,
+    delete: (workspaceId: string, noteId: string) =>
+      `/api/notes/${workspaceId}/notes/${noteId}`,
+  },
+
+  DEAL: {
+    create: (workspaceId: string) => `/api/deals/${workspaceId}/deals`,
+    getAll: (workspaceId: string) => `/api/deals/${workspaceId}/deals`,
+    getById: (workspaceId: string, dealId: string) =>
+      `/api/deals/${workspaceId}/deals/${dealId}`,
+    update: (workspaceId: string, dealId: string) =>
+      `/api/deals/${workspaceId}/deals/${dealId}`,
+    delete: (workspaceId: string, dealId: string) =>
+      `/api/deals/${workspaceId}/deals/${dealId}`,
+  },
+
+  TASK: {
+    create: (workspaceId: string) => `/api/tasks/${workspaceId}/tasks`,
+    getAll: (workspaceId: string) => `/api/tasks/${workspaceId}/tasks`,
+    update: (workspaceId: string, taskId: string) =>
+      `/api/tasks/${workspaceId}/tasks/${taskId}`,
+    complete: (workspaceId: string, taskId: string) =>
+      `/api/tasks/${workspaceId}/tasks/${taskId}/complete`,
+    delete: (workspaceId: string, taskId: string) =>
+      `/api/tasks/${workspaceId}/tasks/${taskId}`,
+  },
 };
