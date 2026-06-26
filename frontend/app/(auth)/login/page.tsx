@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Google, Lock1 } from "iconsax-reactjs";
+import { Lock1 } from "iconsax-reactjs";
 import { Shield, Users, Zap } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -17,8 +17,6 @@ async function Login() {
             </h3>
             <p className="text-sm text-muted-foreground">
               Next time we'll remember how you'd like to sign in so you can skip entering an email.
-              You can always go back to{" "}
-              <Link href="/login" className="text-primary hover:text-primary-dark">classic login</Link>.
             </p>
           </div>
 
@@ -34,14 +32,6 @@ async function Login() {
             <div className="space-y-6">
               <div className="bg-card border border-border rounded-lg p-6">
                 <div className="space-y-3">
-                  <Button
-                    variant="outline"
-                    className="w-full h-14 justify-center text-base font-medium hover:bg-primary/80 hover:text-white"
-                  >
-                    <Google variant="Bulk" className="text-primary hover:text-primary/70" />
-                    Sign in with Google
-                  </Button>
-
                   <Button
                     disabled={true}
                     variant="outline"
@@ -98,7 +88,7 @@ async function Login() {
 
           <div className="mt-8 text-center">
             <p className="text-xs text-muted-foreground">
-              ©2025 LeadXpert, Inc. All Rights Reserved.{" "}
+              ©2026 LeadXpert, Inc. All Rights Reserved.{" "}
               <Link href="/" className="text-primary hover:text-primary-dark">Privacy Policy</Link>
               {" & "}
               <Link href="/" className="text-primary hover:text-primary-dark">Manage Cookies</Link>

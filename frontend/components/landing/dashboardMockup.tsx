@@ -1,99 +1,282 @@
-'use client'
+"use client";
 
-import { motion } from "motion/react"
+import { useState } from "react";
+import { motion } from "motion/react";
+import {
+  Users,
+  Briefcase,
+  Clock,
+  TrendingUp,
+  ListTodo,
+  CheckCircle2,
+  Circle,
+  XCircle,
+  AlertCircle,
+} from "lucide-react";
+
+type TaskStatus = "PENDING" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
+type TaskPriority = "HIGH" | "MEDIUM" | "LOW";
 
 function DashboardCard() {
-  return (
-    <div className="relative bg-white/60 backdrop-blur-xl rounded-3xl p-5 shadow-[0_25px_80px_-15px_rgba(0,0,0,0.3)] border border-white/70">
-      <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-white">
-        <div className="p-10 space-y-7">
-          {/* Header */}
-          <div className="flex items-center justify-between pb-5 border-b border-gray-200">
-            <div className="flex items-center gap-5">
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-600 to-blue-500 flex items-center justify-center shadow-lg">
-                <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold text-gray-900">Sales Pipeline</h3>
-                <p className="text-sm text-gray-500 mt-1">42 active deals • NPR 2.4M in progress</p>
-              </div>
-            </div>
-            <motion.div
-              className="flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 border border-green-200"
-              animate={{ scale: [1, 1.05, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
-              <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse" />
-              <span className="text-sm font-semibold text-green-700">Live Updates</span>
-            </motion.div>
-          </div>
+  const [now] = useState(() => Date.now());
 
-          {/* Pipeline Stages */}
-          <div className="grid grid-cols-4 gap-4">
+  const currentDate = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  const tasks = [
+    {
+      id: 1,
+      title: "Follow up with Tech Solutions Ltd",
+      description: "Send proposal for enterprise package",
+      priority: "HIGH" as TaskPriority,
+      status: "IN_PROGRESS" as TaskStatus,
+      dueDate: new Date(),
+      isOverdue: false,
+      isDueToday: true,
+    },
+    {
+      id: 2,
+      title: "Schedule demo for Himalayan Corp",
+      description: "Product demo requested via email",
+      priority: "MEDIUM" as TaskPriority,
+      status: "PENDING" as TaskStatus,
+      dueDate: new Date(now + 86400000),
+      isOverdue: false,
+      isDueToday: false,
+    },
+    {
+      id: 3,
+      title: "Update pipeline stages for Q1",
+      description: null,
+      priority: "LOW" as TaskPriority,
+      status: "COMPLETED" as TaskStatus,
+      dueDate: new Date(now + 86400000),
+      isOverdue: false,
+      isDueToday: false,
+    },
+    {
+      id: 4,
+      title: "Review contract terms with legal",
+      description: "Final review before sending to Kathmandu Enterprises",
+      priority: "HIGH",
+      status: "PENDING" as TaskStatus,
+      dueDate: new Date(now - 172800000),
+      isOverdue: true,
+      isDueToday: false,
+    },
+  ];
+
+  const taskStatusConfig = {
+    PENDING: {
+      icon: Circle,
+      className: "text-gray-400 border-gray-300",
+      bgClass: "border-gray-300",
+    },
+    IN_PROGRESS: {
+      icon: Clock,
+      className: "text-blue-500 border-blue-500",
+      bgClass: "border-blue-500 bg-blue-500/10",
+    },
+    COMPLETED: {
+      icon: CheckCircle2,
+      className: "text-green-500 border-green-500",
+      bgClass: "border-green-500 bg-green-500",
+    },
+    CANCELLED: {
+      icon: XCircle,
+      className: "text-red-400 border-red-400",
+      bgClass: "border-red-400 bg-red-400/10",
+    },
+  };
+
+  const taskPriorityDot = {
+    HIGH: "bg-red-500",
+    MEDIUM: "bg-yellow-500",
+    LOW: "bg-blue-400",
+  };
+
+  return (
+    <div className="relative bg-white/40 backdrop-blur-xl rounded-3xl p-5 shadow-[0_25px_80px_-15px_rgba(0,0,0,0.3)] border border-white/70">
+      <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-white">
+        <div className="p-8 space-y-6">
+          {/* Header */}
+          <motion.header
+            className="space-y-1"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <p className="text-sm font-medium text-gray-600">{currentDate}</p>
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+              Welcome back, User
+            </h1>
+            <p className="text-gray-600">
+              You&apos;re viewing{" "}
+              <span className="font-medium text-gray-900">Sales Team</span>{" "}
+              workspace
+            </p>
+          </motion.header>
+
+          {/* Stats Grid */}
+          <div className="grid gap-4 md:grid-cols-4">
             {[
-              { label: 'New Leads', count: 12, value: 'NPR 480K', color: 'from-purple-500 to-purple-600', bg: 'bg-purple-50', icon: '🎯' },
-              { label: 'Contacted', count: 8, value: 'NPR 720K', color: 'from-blue-500 to-blue-600', bg: 'bg-blue-50', icon: '📞' },
-              { label: 'Proposal', count: 5, value: 'NPR 560K', color: 'from-cyan-500 to-cyan-600', bg: 'bg-cyan-50', icon: '📄' },
-              { label: 'Closed Won', count: 3, value: 'NPR 640K', color: 'from-green-500 to-green-600', bg: 'bg-green-50', icon: '✅' }
-            ].map((stage, idx) => (
+              {
+                label: "Total Leads",
+                value: "156",
+                icon: Users,
+                delay: 0.1,
+              },
+              {
+                label: "Active Deals",
+                value: "23",
+                icon: Briefcase,
+                delay: 0.2,
+              },
+              {
+                label: "Due Today",
+                value: "5",
+                icon: Clock,
+                delay: 0.3,
+              },
+              {
+                label: "Conversion Rate",
+                value: "34.2%",
+                icon: TrendingUp,
+                delay: 0.4,
+              },
+            ].map((stat, idx) => (
               <motion.div
                 key={idx}
-                className={`p-5 rounded-xl ${stage.bg} border border-gray-200 hover:shadow-lg transition-all cursor-pointer`}
+                className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1 + idx * 0.1 }}
-                whileHover={{ y: -3, scale: 1.02 }}
+                transition={{ delay: stat.delay }}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <div className={`w-4 h-4 rounded-full bg-gradient-to-r ${stage.color}`} />
-                  <span className="text-lg">{stage.icon}</span>
-                </div>
-                <p className="text-xs text-gray-600 mb-2 font-semibold uppercase tracking-wide">{stage.label}</p>
-                <p className="text-3xl font-bold text-gray-900 mb-1">{stage.count}</p>
-                <p className="text-xs text-gray-500 font-medium">{stage.value}</p>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Recent Activity */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h4 className="text-sm font-bold text-gray-700 uppercase tracking-wide">Recent Activity</h4>
-              <button className="text-xs text-blue-600 font-semibold hover:underline">View All</button>
-            </div>
-            {[
-              { name: 'Rajesh Kumar', action: 'moved to Proposal stage', time: '2m ago', avatar: 'bg-blue-500', amount: 'NPR 85K' },
-              { name: 'Sita Sharma', action: 'added new lead from website', time: '15m ago', avatar: 'bg-green-500', amount: 'NPR 120K' },
-              { name: 'Anil Thapa', action: 'closed deal successfully', time: '1h ago', avatar: 'bg-purple-500', amount: 'NPR 220K' }
-            ].map((activity, i) => (
-              <motion.div
-                key={i}
-                className="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors border border-gray-100"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 1.4 + i * 0.1 }}
-              >
-                <div className={`w-12 h-12 rounded-full ${activity.avatar} flex items-center justify-center text-white font-bold text-lg shadow-md`}>
-                  {activity.name.charAt(0)}
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm text-gray-900">
-                    <span className="font-bold">{activity.name}</span> {activity.action}
-                  </p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <p className="text-xs text-gray-500">{activity.time}</p>
-                    <span className="text-gray-300">•</span>
-                    <p className="text-xs font-semibold text-blue-600">{activity.amount}</p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">
+                      {stat.label}
+                    </p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">
+                      {stat.value}
+                    </p>
+                  </div>
+                  <div className="p-3 bg-blue-50 rounded-lg">
+                    <stat.icon className="h-5 w-5 text-blue-600" />
                   </div>
                 </div>
               </motion.div>
             ))}
           </div>
+
+          {/* Today's Tasks */}
+          <section className="space-y-3">
+            <motion.div
+              className="flex items-center gap-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              <ListTodo className="h-5 w-5 text-gray-600" />
+              <h2 className="text-lg font-semibold text-gray-900">
+                Today&apos;s Tasks
+              </h2>
+              <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-blue-600 text-white text-xs font-semibold">
+                {tasks.length}
+              </span>
+            </motion.div>
+
+            <motion.div
+              className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+            >
+              <div className="divide-y divide-gray-200">
+                {tasks.map((task, idx) => {
+                  const status = taskStatusConfig[task.status];
+                  const StatusIcon = status.icon;
+                  const isDone =
+                    task.status === "COMPLETED" || task.status === "CANCELLED";
+
+                  return (
+                    <motion.div
+                      key={task.id}
+                      className={`flex items-start gap-3 px-4 py-3.5 hover:bg-gray-50 transition-colors ${isDone ? "opacity-50" : ""}`}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.7 + idx * 0.1 }}
+                    >
+                      <div
+                        className={`mt-0.5 shrink-0 flex items-center justify-center w-5 h-5 rounded-full border-2 transition-colors ${status.bgClass}`}
+                      >
+                        <StatusIcon className="h-3 w-3" />
+                      </div>
+
+                      <div className="flex-1 min-w-0 space-y-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p
+                            className={`text-sm font-medium leading-none truncate ${isDone ? "line-through text-gray-500" : "text-gray-900"}`}
+                          >
+                            {task.title}
+                          </p>
+                          <span
+                            className={`shrink-0 inline-block w-1.5 h-1.5 rounded-full ${taskPriorityDot[task.priority]}`}
+                          />
+                        </div>
+                        {task.description && (
+                          <p className="text-xs text-gray-500 truncate">
+                            {task.description}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="shrink-0 flex items-center gap-1.5">
+                        {task.isOverdue ? (
+                          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-red-50 text-xs font-medium text-red-700">
+                            <AlertCircle className="h-3 w-3" />
+                            Overdue
+                          </span>
+                        ) : task.isDueToday ? (
+                          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-amber-50 text-xs font-medium text-amber-700">
+                            <Clock className="h-3 w-3" />
+                            Due today
+                          </span>
+                        ) : (
+                          <span className="text-xs text-gray-500">
+                            {task.dueDate
+                              ? new Date(task.dueDate).toLocaleDateString(
+                                  "en-US",
+                                  { month: "short", day: "numeric" },
+                                )
+                              : "No due date"}
+                          </span>
+                        )}
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+
+              <motion.div
+                className="px-4 py-2.5 border-t bg-gray-50 flex items-center justify-between"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.2 }}
+              >
+                <p className="text-xs text-gray-600">
+                  Showing {tasks.length} of {tasks.length} tasks
+                </p>
+              </motion.div>
+            </motion.div>
+          </section>
         </div>
       </div>
     </div>
-  )
+  );
 }
-export default DashboardCard
+export default DashboardCard;
