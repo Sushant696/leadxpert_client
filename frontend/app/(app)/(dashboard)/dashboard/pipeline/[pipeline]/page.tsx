@@ -60,18 +60,46 @@ function PipelineDashboard() {
   const moveLeadMutation = useMutation({
     mutationFn: ({ leadId, stageId }: { leadId: string; stageId: string }) =>
       moveLeadToStageAction(workspace?.id ?? "", pipelineId, leadId, { stageId }),
+    onMutate: ({ leadId, stageId }) => {
+      // Optimistic update: move lead immediately in UI
+      const previousLeads = queryClient.getQueryData([
+        "leads",
+        workspace?.id,
+        pipelineId,
+      ]) as typeof allLeads | undefined;
+
+      if (previousLeads) {
+        const updatedLeads = previousLeads.map((lead) =>
+          lead._id === leadId ? { ...lead, stageId: { ...lead.stageId, _id: stageId } } : lead,
+        );
+        queryClient.setQueryData(
+          ["leads", workspace?.id, pipelineId],
+          updatedLeads,
+        );
+      }
+
+      return { previousLeads };
+    },
     onSuccess: () => {
       showToast.success("Lead moved successfully");
+      // Revalidate the leads query to ensure cache is in sync with server
       queryClient.invalidateQueries({
         queryKey: ["leads", workspace?.id, pipelineId],
       });
     },
-    onError: (error: Error) => {
+    onError: (error: Error, _variables, context: any) => {
+      // Revert to previous state on error
+      if (context?.previousLeads) {
+        queryClient.setQueryData(
+          ["leads", workspace?.id, pipelineId],
+          context.previousLeads,
+        );
+      }
       showToast.error(error.message);
     },
   });
 
-  // Create a map of all leads by ID for quick lookup during drag
+  // map of leads of for quick lookup during drag
   const leadsById = new Map(allLeads.map((lead) => [lead._id, lead]));
 
   if (isLoading) return <PipelineSkeleton />;
@@ -246,7 +274,7 @@ function PipelineDashboard() {
                 />
               ))}
 
-              <div className="shrink-0 w-72 pt-0.5">
+              <div className="shrink-0 w-80 pt-0.5">
                 <button
                   onClick={() => setIsCreateStageOpen(true)}
                   className="w-full h-11 border-2 border-dashed border-border rounded-xl flex items-center justify-center gap-2 text-muted-foreground text-sm font-medium hover:border-primary hover:text-primary transition-colors"
