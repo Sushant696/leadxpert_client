@@ -15,6 +15,9 @@ const useCreateLead = (workspaceId: string, pipelineId: string) => {
       queryClient.invalidateQueries({
         queryKey: ["leads", workspaceId, pipelineId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["pipeline", workspaceId, pipelineId],
+      });
     },
     onError: (error: Error) => {
       showToast.error(error.message);
