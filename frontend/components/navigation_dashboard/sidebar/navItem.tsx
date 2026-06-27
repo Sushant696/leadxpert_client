@@ -6,12 +6,14 @@ interface NavItemProps {
   href: string;
   active?: boolean;
   isAi?: boolean;
+  onClick?: () => void;
 }
 
-const NavItem = ({ icon, label, href, active, isAi }: NavItemProps) => {
+const NavItem = ({ icon, label, href, active, isAi, onClick }: NavItemProps) => {
   return (
     <Link
       href={href}
+      onClick={onClick}
       className={`
         flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 group
         ${active

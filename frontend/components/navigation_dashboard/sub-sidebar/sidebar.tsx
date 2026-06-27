@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { NavItem } from './items';
-import useWorkspaceStore from '@/store/workspace-store';
-import { canAccessRoute } from '@/constants/permissionRoutes';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { NavItem } from "./items";
+import useWorkspaceStore from "@/store/workspace-store";
+import { canAccessRoute } from "@/constants/permissionRoutes";
 
 interface SubSidebarProps {
   navItems: NavItem[];
@@ -14,8 +14,8 @@ export default function SubSidebar({ navItems }: SubSidebarProps) {
   const pathname = usePathname();
   const { workspace } = useWorkspaceStore();
 
-  const accessibleNavItems = navItems.filter(item =>
-    canAccessRoute(item.href, workspace?.role)
+  const accessibleNavItems = navItems.filter((item) =>
+    canAccessRoute(item.href, workspace?.role),
   );
 
   if (accessibleNavItems.length === 0) {
@@ -34,15 +34,21 @@ export default function SubSidebar({ navItems }: SubSidebarProps) {
             href={item.href}
             className={`
               flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 group
-              ${pathname === item.href
-                ? 'bg-primary/10 text-primary'
-                : 'text-muted-foreground hover:bg-muted hover:text-primary'}
+              ${
+                pathname === item.href
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted hover:text-primary"
+              }
             `}
           >
-            <span className={`${pathname === item.href ? 'text-primary' : 'group-hover:text-primary'} transition-colors`}>
+            <span
+              className={`${pathname === item.href ? "text-primary" : "group-hover:text-primary"} transition-colors`}
+            >
               {<item.icon size={18} />}
             </span>
-            <span className={`text-sm ${pathname === item.href ? 'font-bold' : 'font-medium'}`}>
+            <span
+              className={`text-sm ${pathname === item.href ? "font-bold" : "font-medium"}`}
+            >
               {item.name}
             </span>
           </Link>

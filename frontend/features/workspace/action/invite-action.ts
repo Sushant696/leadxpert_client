@@ -24,3 +24,28 @@ export async function sendInviteByEmailAction(
   }
   return response.data;
 }
+
+export async function getActiveInvitesAction(workspaceId: string) {
+  const response = await inviteApi.getActiveInvites(workspaceId);
+  if (!response.success) {
+    throw new Error(
+      response?.message ||
+      "Failed to fetch invites, please try again later",
+    );
+  }
+  return response.data;
+}
+
+export async function revokeInviteAction(
+  workspaceId: string,
+  inviteId: string,
+) {
+  const response = await inviteApi.revokeInvite(workspaceId, inviteId);
+  if (!response.success) {
+    throw new Error(
+      response?.message ||
+      "Failed to revoke invite, please try again later",
+    );
+  }
+  return response.data;
+}

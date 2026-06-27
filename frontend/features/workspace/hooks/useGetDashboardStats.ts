@@ -6,6 +6,7 @@ const useGetDashboardStats = (workspaceId: string) => {
     queryKey: ["dashboard-stats", workspaceId],
     queryFn: () => getDashboardStatsAction(workspaceId),
     enabled: !!workspaceId,
+    retry: 1,
   });
 };
 

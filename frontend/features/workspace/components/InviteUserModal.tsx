@@ -35,12 +35,12 @@ export default function InviteMemberModal({ workspaceId }: InviteMemberModalProp
     const payload = data as Record<string, unknown>;
     const directLink =
       payload.inviteLink ||
-      payload.link ;
+      payload.link;
 
     if (typeof directLink === "string" && directLink.length > 0) {
-      return directLink;  
+      return directLink;
     }
-    return "";  
+    return "";
   };
 
   const handleCopyLink = () => {
@@ -109,11 +109,6 @@ export default function InviteMemberModal({ workspaceId }: InviteMemberModalProp
           </div>
         </div>
 
-        <Button
-          onClick={handleGenerateLink}
-        >
-          Generate Invite Link
-        </Button>
 
         {/* Copy Link */}
         <div className="space-y-2">
@@ -136,6 +131,13 @@ export default function InviteMemberModal({ workspaceId }: InviteMemberModalProp
           <p className="text-xs text-muted-foreground">
             Anyone with this link can join the workspace
           </p>
+        </div>
+        <div className="flex justify-end">
+          <Button
+            onClick={handleGenerateLink}
+          >
+            Generate Invite Link
+          </Button>
         </div>
       </div>
     </DialogContent>
