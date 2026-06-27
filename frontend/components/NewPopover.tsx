@@ -6,16 +6,18 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Plus, UserPlus, Briefcase, GitBranch, Link } from "lucide-react";
+import { Plus, Briefcase, GitBranch, Link } from "lucide-react";
 import { Dialog } from "@/components/ui/dialog";
 import WorkspaceCreateModal from "@/features/workspace/components/CreateWorkspaceModal";
 import WorkspaceJoinModal from "@/features/workspace/components/WorkspaceJoinModal";
+import CreatePipelineModal from "@/features/pipeline/components/createPipelineModal";
+import useWorkspaceStore from "@/store/workspace-store";
 
 function NewPopover() {
+  const { workspace } = useWorkspaceStore()
   const [isCreateWorkspaceOpen, setIsCreateWorkspaceOpen] = useState(false);
   const [isJoinWorkspaceOpen, setIsJoinWorkspaceOpen] = useState(false);
-  // const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(false);
-  // const [isCreatePipelineOpen, setIsCreatePipelineOpen] = useState(false);
+  const [isCreatePipelineOpen, setIsCreatePipelineOpen] = useState(false);
   const [popoverOpen, setPopoverOpen] = useState(false);
 
   const handleAction = (action: () => void) => {
@@ -24,21 +26,19 @@ function NewPopover() {
   };
 
   const menuItems = [
-    {
-      label: "New Lead",
-      icon: UserPlus,
-      color: "primary",
-      //   action: () => setIsCreateLeadOpen(true),
-    },
-    {
-      label: "New Pipeline",
-      icon: GitBranch,
-      color: "accent",
-      // action: () => setIsCreatePipelineOpen(true),
-    },
-    {
-      type: "separator" as const,
-    },
+    ...(workspace?.id
+      ? [
+          {
+            label: "New Pipeline",
+            icon: GitBranch,
+            color: "accent" as const,
+            action: () => setIsCreatePipelineOpen(true),
+          },
+          {
+            type: "separator" as const,
+          },
+        ]
+      : []),
     {
       label: "Create Workspace",
       icon: Briefcase,
@@ -113,14 +113,11 @@ function NewPopover() {
         <WorkspaceJoinModal setIsJoinWorkspaceOpen={setIsJoinWorkspaceOpen} />
       </Dialog>
 
-      {/* TODO: */}
-      {/* <Dialog open={isCreateLeadOpen} onOpenChange={setIsCreateLeadOpen}>
-        <CreateLeadModal setIsCreateLeadOpen={setIsCreateLeadOpen} />
-      </Dialog>
-
-      <Dialog open={isCreatePipelineOpen} onOpenChange={setIsCreatePipelineOpen}>
-        <CreatePipelineModal setIsCreatePipelineOpen={setIsCreatePipelineOpen} />
-      </Dialog> */}
+      {workspace?.id && (
+        <Dialog open={isCreatePipelineOpen} onOpenChange={setIsCreatePipelineOpen}>
+          <CreatePipelineModal workspaceId={workspace.id} setIsCreatePipelineOpen={setIsCreatePipelineOpen} />
+        </Dialog>
+      )}
     </>
   );
 }

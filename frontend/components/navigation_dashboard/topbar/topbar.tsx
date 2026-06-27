@@ -2,6 +2,7 @@
 
 import {
   Search,
+  Menu,
   Bell,
   User,
   Settings,
@@ -24,12 +25,13 @@ import {
 import getInitials from '@/utils/getInitials';
 import useAuthStore from '@/store/auth-store';
 import { Button } from '@/components/ui/button';
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import NewPopover from '@/components/NewPopover';
 import { RESOURCE_BASED_ROLES } from '@/types/user';
 import useWorkspaceStore from '@/store/workspace-store';
 import { useLogout } from '@/features/auth/hooks/useLogout';
 import InviteMemberModal from '@/features/workspace/components/InviteUserModal';
+import Sidebar from '@/components/navigation_dashboard/sidebar/mainSidebar';
 
 export default function TopBar() {
   const { user } = useAuthStore();
@@ -37,6 +39,7 @@ export default function TopBar() {
   const router = useRouter();
   const { workspace, clearWorkspace } = useWorkspaceStore();
   const [isInviteOpen, setIsInviteOpen] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const currentWorkspace = workspace;
 
   const userRole = currentWorkspace?.role;
@@ -49,10 +52,20 @@ export default function TopBar() {
 
   return (
     <>
-      <header className="h-16 border-b border-border bg-background flex items-center justify-between px-8 sticky top-0 z-10">
+      <header className="h-16 border-b border-border bg-background flex items-center justify-between px-4 sm:px-6 lg:px-8 sticky top-0 z-10">
 
-        <div className='flex items-center gap-6'>
-          <div className="relative w-96">
+        <div className='flex items-center gap-2 sm:gap-4 lg:gap-6 min-w-0'>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden"
+            onClick={() => setIsMobileSidebarOpen(true)}
+            aria-label="Open menu"
+          >
+            <Menu size={20} />
+          </Button>
+
+          <div className="relative hidden md:block w-64 lg:w-96">
             <span className="absolute inset-y-0 left-3 flex items-center text-muted-foreground">
               <Search size={18} />
             </span>
@@ -62,10 +75,12 @@ export default function TopBar() {
               className="w-full bg-muted/30 border border-input rounded-xl py-2 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 transition-all"
             />
           </div>
-          <NewPopover />
+          <div className="hidden sm:block">
+            <NewPopover />
+          </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
 
           {canManage && currentWorkspace && (
             <>
@@ -78,16 +93,16 @@ export default function TopBar() {
                 <UserPlus size={18} className='text-primary' />
                 <span className="hidden lg:inline">Invite</span>
               </Button>
-              <div className="h-8 w-px bg-border mx-2"></div>
+              <div className="h-8 w-px bg-border mx-1 lg:mx-2"></div>
             </>
           )}
 
-          <Button className='bg-gradient-to-r from-primary to-secondary text-white hover:from-primary/90 hover:to-secondary/90  rounded-xl'>
+          {/* <Button className='bg-gradient-to-r from-primary to-secondary text-white hover:from-primary/90 hover:to-secondary/90  rounded-xl'>
             <MagicStar size={18} className='' variant='Bulk' />
             Assistant
-          </Button>
+          </Button> */}
 
-          <div className="h-8 w-px bg-border mx-2"></div>
+          {/* <div className="h-8 w-px bg-border mx-2"></div> */}
           {/* Notification Bell */}
           <button className="p-2 text-muted-foreground hover:bg-muted rounded-lg relative transition-colors">
             <Bell size={20} />
@@ -143,6 +158,15 @@ export default function TopBar() {
           </DropdownMenu>
         </div>
       </header>
+
+      <Dialog open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
+        <DialogContent
+          className="left-0 top-0 h-dvh w-[85vw] max-w-72 translate-x-0 translate-y-0 rounded-none border-r p-0"
+          showCloseButton={true}
+        >
+          <Sidebar mode="mobile" onNavigate={() => setIsMobileSidebarOpen(false)} />
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
         <InviteMemberModal

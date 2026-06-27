@@ -1,20 +1,21 @@
-'use client'
+"use client";
 
-import { useState } from "react"
-import { Google } from "iconsax-reactjs"
-import { useForm } from "react-hook-form"
-import { Eye, EyeOff } from "lucide-react"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { Eye, EyeOff } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-import { useRegister } from "../hooks/useRegister"
-import { registerSchema, TregisterForm } from "../auth-validators"
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { useRegister } from "../hooks/useRegister";
+import { registerSchema, TregisterForm } from "../auth-validators";
 
 function RegisterForm() {
   const registerMutation = useRegister();
-  const [showPassword, setShowPassword] = useState<boolean>(false)
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState<boolean>(false);
 
   const {
     register,
@@ -23,69 +24,86 @@ function RegisterForm() {
     reset,
   } = useForm<TregisterForm>({
     resolver: zodResolver(registerSchema),
-  })
+  });
 
   const onSubmit = async (data: TregisterForm) => {
     registerMutation.mutate(data);
-    if (isSubmitSuccessful) reset()
-  }
-
-  const handleGoogleSignUp = () => {
-    // TODO: Implement Google OAuth flow
-  }
+    if (isSubmitSuccessful) reset();
+  };
 
   return (
-    <div className="w-full rounded">
-      <div className="space-y-4 p-4 sm:p-6">
-        <Button
-          type="button"
-          onClick={handleGoogleSignUp}
-          variant="outline"
-          className="w-full h-11 border-1 border-input rounded-md hover:bg-secondary/50 text-foreground font-medium bg-transparent"
-        >
-          <Google variant="Bulk" className="h-5 w-5" />
-          Continue with Google
-        </Button>
-
-        {/* Divider */}
-        <div className="flex items-center gap-4">
-          <div className="flex-1 h-px bg-border/50" />
-          <span className="text-xs text-muted-foreground font-medium">or with email</span>
-          <div className="flex-1 h-px bg-border/50" />
-        </div>
-      </div>
-
+    <div className="w-full">
       {/* Email/Password Form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-2 sm:p-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="firstName" className="text-sm font-medium text-foreground">
+            <Label
+              htmlFor="firstName"
+              className="text-sm font-medium text-foreground"
+            >
               First Name*
             </Label>
-            <Input id="firstName" type="text" placeholder="Jane" className="h-10" {...register("firstName")} />
+            <Input
+              id="firstName"
+              type="text"
+              placeholder="Jane"
+              className="h-11 bg-background border-input focus:border-primary"
+              {...register("firstName")}
+            />
             {errors.firstName && (
-              <span className="text-xs text-destructive font-medium">{errors.firstName.message}</span>
+              <span className="text-xs text-destructive font-medium">
+                {errors.firstName.message}
+              </span>
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="lastname" className="text-sm font-medium text-foreground">
+            <Label
+              htmlFor="lastname"
+              className="text-sm font-medium text-foreground"
+            >
               Last Name*
             </Label>
-            <Input id="lastName" type="text" placeholder="Smith" className="h-10" {...register("lastName")} />
-            {errors.lastName && <span className="text-xs text-destructive font-medium">{errors.lastName.message}</span>}
+            <Input
+              id="lastName"
+              type="text"
+              placeholder="Smith"
+              className="h-11 bg-background border-input focus:border-primary"
+              {...register("lastName")}
+            />
+            {errors.lastName && (
+              <span className="text-xs text-destructive font-medium">
+                {errors.lastName.message}
+              </span>
+            )}
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-sm font-medium text-foreground">
+          <Label
+            htmlFor="email"
+            className="text-sm font-medium text-foreground"
+          >
             Email Address*
           </Label>
-          <Input id="email" type="email" placeholder="name@company.com" className="h-10" {...register("email")} />
-          {errors.email && <span className="text-xs text-destructive font-medium">{errors.email.message}</span>}
+          <Input
+            id="email"
+            type="email"
+            placeholder="name@company.com"
+            className="h-11 bg-background border-input focus:border-primary"
+            {...register("email")}
+          />
+          {errors.email && (
+            <span className="text-xs text-destructive font-medium">
+              {errors.email.message}
+            </span>
+          )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password" className="text-sm font-medium text-foreground">
+          <Label
+            htmlFor="password"
+            className="text-sm font-medium text-foreground"
+          >
             Password*
           </Label>
           <div className="relative">
@@ -94,7 +112,7 @@ function RegisterForm() {
               type={showPassword ? "text" : "password"}
               placeholder="Create a strong password"
               {...register("password")}
-              className="h-10 pr-10"
+              className="h-11 pr-10 bg-background border-input focus:border-primary"
             />
             <button
               type="button"
@@ -102,59 +120,98 @@ function RegisterForm() {
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
             </button>
           </div>
-          {errors.password && <span className="text-xs text-destructive font-medium">{errors.password.message}</span>}
+          {errors.password && (
+            <span className="text-xs text-destructive font-medium">
+              {errors.password.message}
+            </span>
+          )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="confirmPassword" className="text-sm font-medium text-foreground">
+          <Label
+            htmlFor="confirmPassword"
+            className="text-sm font-medium text-foreground"
+          >
             Confirm Password*
           </Label>
           <div className="relative">
             <Input
               id="confirmPassword"
-              type={showPassword ? "text" : "password"}
+              type={showConfirmPassword ? "text" : "password"}
               placeholder="Confirm your password"
               {...register("confirmPassword")}
-              className="h-10 pr-10"
+              className="h-11 pr-10 bg-background border-input focus:border-primary"
             />
             <button
               type="button"
-              onClick={() => setShowPassword(!showPassword)}
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-              aria-label={showPassword ? "Hide password" : "Show password"}
+              aria-label={
+                showConfirmPassword ? "Hide password" : "Show password"
+              }
             >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {showConfirmPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
             </button>
           </div>
           {errors.confirmPassword && (
-            <span className="text-xs text-destructive font-medium">{errors.confirmPassword.message}</span>
+            <span className="text-xs text-destructive font-medium">
+              {errors.confirmPassword.message}
+            </span>
           )}
         </div>
 
-        <div className="flex items-center gap-2 pt-2">
+        <div className="flex items-start gap-2 pt-2">
           <input
             id="terms"
             type="checkbox"
-            className="h-4 w-4 rounded border border-input bg-background checked:bg-primary checked:border-primary cursor-pointer"
+            className="h-4 w-4 mt-0.5 rounded border border-input bg-background checked:bg-primary checked:border-primary cursor-pointer"
           />
-          <label htmlFor="terms" className="text-xs text-muted-foreground cursor-pointer">
-            I agree to the <span className="text-primary font-medium hover:underline">Terms and Conditions</span>
+          <label
+            htmlFor="terms"
+            className="text-xs text-muted-foreground cursor-pointer leading-relaxed"
+          >
+            I agree to the{" "}
+            <span className="text-primary font-medium hover:underline">
+              Terms and Conditions
+            </span>{" "}
+            and{" "}
+            <span className="text-primary font-medium hover:underline">
+              Privacy Policy
+            </span>
           </label>
         </div>
 
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="w-full h-10 bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
+          className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-sm transition-all"
         >
-          {isSubmitting ? "Creating account..." : "Create Account"}
+          {isSubmitting ? "Creating your account..." : "Create Account"}
         </Button>
+
+        <p className="text-center text-sm text-muted-foreground">
+          Already have an account?{" "}
+          <a
+            href="/login"
+            className="text-primary hover:text-primary-dark font-medium transition-colors"
+          >
+            Sign in
+          </a>
+        </p>
       </form>
     </div>
-  )
+  );
 }
 
-export default RegisterForm
+export default RegisterForm;

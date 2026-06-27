@@ -94,14 +94,14 @@ function CreatePipelineModal({
   };
 
   return (
-    <DialogContent className="max-w-3xl! sm:max-w-xl max-h-[80vh] overflow-hidden flex flex-col">
+    <DialogContent className="max-w-3xl! sm:max-w-xl max-h-[80vh] overflow-hidden flex flex-col ">
       <div className="relative overflow-hidden">
-        <div className="relative flex items-start gap-4">
+        <div className="relative flex items-start gap-4 pb-2">
           <div>
             <DialogTitle className="text-xl font-bold  tracking-tight">
               Create Pipeline
             </DialogTitle>
-            <DialogDescription className="mt-0.5 text-sm">
+            <DialogDescription className=" text-sm">
               Define your lead journey — stages, team visibility & currency.
             </DialogDescription>
           </div>

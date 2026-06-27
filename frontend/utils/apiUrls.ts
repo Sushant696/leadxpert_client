@@ -32,6 +32,7 @@ export const apiURLs = {
     getById: (workspaceId: string) => `/api/workspace/${workspaceId}`,
     updateById: (workspaceId: string) => `/api/workspace/${workspaceId}`,
     deleteById: (workspaceId: string) => `/api/workspace/${workspaceId}`,
+    dashboardStats: (workspaceId: string) => `/api/workspace/${workspaceId}/dashboard/stats`,
 
     invite: {
       createLink: (workspaceId: string) =>

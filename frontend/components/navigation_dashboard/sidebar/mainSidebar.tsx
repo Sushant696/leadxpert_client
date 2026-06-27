@@ -22,7 +22,12 @@ import WorkspaceJoinModal from '@/features/workspace/components/WorkspaceJoinMod
 import WorkspaceCreateModal from '@/features/workspace/components/CreateWorkspaceModal';
 import CreatePipelineModal from '@/features/pipeline/components/createPipelineModal';
 
-const Sidebar = () => {
+type SidebarProps = {
+  mode?: 'desktop' | 'mobile'
+  onNavigate?: () => void
+}
+
+const Sidebar = ({ mode = 'desktop', onNavigate }: SidebarProps) => {
   const pathname = usePathname();
   const router = useRouter();
   const [isCreateWorkspaceOpen, setIsCreateWorkspaceOpen] = useState<boolean>(false);
@@ -39,7 +44,10 @@ const Sidebar = () => {
   );
 
   return (
-    <aside className="w-64 border-r bg-surface p-4 sticky top-0 shadow-sm h-screen flex flex-col">
+    <aside className={cn(
+      "w-64 border-r bg-surface p-4 shadow-sm h-screen flex flex-col",
+      mode === 'desktop' ? 'sticky top-0' : 'h-dvh'
+    )}>
       <div className="flex items-center gap-3 mb-6 px-2">
         <Image src="/logoiconblack.png" alt="leadXpert logo" width={40} height={40} className='w-10' />
         <div>
@@ -62,6 +70,7 @@ const Sidebar = () => {
             label={item.label}
             href={item.href}
             active={pathname === item.href}
+            onClick={onNavigate}
           />
         ))}
       </nav>
@@ -98,6 +107,7 @@ const Sidebar = () => {
                   <Link
                     key={pipeline._id}
                     href={`/dashboard/pipeline/${pipeline._id}`}
+                    onClick={onNavigate}
                     className={cn(
                       "w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 group",
                       isActive
@@ -140,6 +150,7 @@ const Sidebar = () => {
           <Separator className="my-3 opacity-50" />
           <button
             onClick={() => {
+              onNavigate?.()
               canManage ?
                 router.push('/dashboard/workspace/general')
                 :

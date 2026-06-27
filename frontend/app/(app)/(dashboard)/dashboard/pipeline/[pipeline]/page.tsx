@@ -59,19 +59,52 @@ function PipelineDashboard() {
   const queryClient = useQueryClient();
   const moveLeadMutation = useMutation({
     mutationFn: ({ leadId, stageId }: { leadId: string; stageId: string }) =>
-      moveLeadToStageAction(workspace?.id ?? "", pipelineId, leadId, { stageId }),
+      moveLeadToStageAction(workspace?.id ?? "", pipelineId, leadId, {
+        stageId,
+      }),
+    onMutate: ({ leadId, stageId }) => {
+      const previousLeads = queryClient.getQueryData([
+        "leads",
+        workspace?.id,
+        pipelineId,
+      ]) as typeof allLeads | undefined;
+
+      if (previousLeads) {
+        const updatedLeads = previousLeads.map((lead) =>
+          lead._id === leadId
+            ? { ...lead, stageId: { ...lead.stageId, _id: stageId } }
+            : lead,
+        );
+        queryClient.setQueryData(
+          ["leads", workspace?.id, pipelineId],
+          updatedLeads,
+        );
+      }
+
+      return { previousLeads };
+    },
     onSuccess: () => {
       showToast.success("Lead moved successfully");
       queryClient.invalidateQueries({
         queryKey: ["leads", workspace?.id, pipelineId],
       });
     },
-    onError: (error: Error) => {
+    onError: (
+      error: Error,
+      _variables,
+      context: { previousLeads?: typeof allLeads } | undefined,
+    ) => {
+      if (context?.previousLeads) {
+        queryClient.setQueryData(
+          ["leads", workspace?.id, pipelineId],
+          context.previousLeads,
+        );
+      }
       showToast.error(error.message);
     },
   });
 
-  // Create a map of all leads by ID for quick lookup during drag
+  // map of leads of for quick lookup during drag
   const leadsById = new Map(allLeads.map((lead) => [lead._id, lead]));
 
   if (isLoading) return <PipelineSkeleton />;
@@ -208,7 +241,9 @@ function PipelineDashboard() {
               return;
             }
 
-            // Handle stage reordering 
+            // Handle stage reordering using move() which reads internal sortable indices
+            if (active.data?.type !== "Stage") return;
+
             const stages = optimisticStages ?? pipeline.stages;
             const stageIds = stages.map((s) => s._id);
             const reorderedIds = move(stageIds, event) as string[];
@@ -218,9 +253,9 @@ function PipelineDashboard() {
             );
 
             if (orderChanged) {
-              const stageMap = new Map(stages.map((s) => [s._id, s]));
-              const reordered = reorderedIds.map((id) => stageMap.get(id)!);
-
+              const reordered = reorderedIds.map(
+                (id) => stages.find((s) => s._id === id)!,
+              );
               setOptimisticStages(reordered);
               reorderMutation.mutate(
                 { stageIds: reorderedIds },
@@ -246,7 +281,7 @@ function PipelineDashboard() {
                 />
               ))}
 
-              <div className="shrink-0 w-72 pt-0.5">
+              <div className="shrink-0 w-80 pt-0.5">
                 <button
                   onClick={() => setIsCreateStageOpen(true)}
                   className="w-full h-11 border-2 border-dashed border-border rounded-xl flex items-center justify-center gap-2 text-muted-foreground text-sm font-medium hover:border-primary hover:text-primary transition-colors"

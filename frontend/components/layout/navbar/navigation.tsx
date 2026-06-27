@@ -12,7 +12,7 @@ function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="container mx-auto px-4 py-2">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
@@ -25,14 +25,14 @@ function Navigation() {
             <Link href="/products" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
               Products
             </Link>
+            <Link href="/pricing" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+              Pricing
+            </Link>
             <Link href="/company" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
               Company
             </Link>
-            <Link href="/blog" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-              Blog
-            </Link>
-            <Link href="/pricing" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-              Pricing
+            <Link href="/contact" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+              Contact
             </Link>
           </div>
 
@@ -70,17 +70,17 @@ function Navigation() {
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-border">
             <div className="flex flex-col gap-4">
-              <Link href="/products" className="text-sm font-medium text-muted-foreground hover:text-primary py-2 transition-colors"   >
+              <Link href="/products" className="text-sm font-medium text-muted-foreground hover:text-primary py-2 transition-colors">
                 Products
+              </Link>
+              <Link href="/pricing" className="text-sm font-medium text-muted-foreground hover:text-primary py-2 transition-colors">
+                Pricing
               </Link>
               <Link href="/company" className="text-sm font-medium text-muted-foreground hover:text-primary py-2 transition-colors">
                 Company
               </Link>
-              <Link href="/blog" className="text-sm font-medium text-muted-foreground hover:text-primary py-2 transition-colors">
-                Blog
-              </Link>
-              <Link href="/pricing" className="text-sm font-medium text-muted-foreground hover:text-primary py-2 transition-colors">
-                Pricing
+              <Link href="/contact" className="text-sm font-medium text-muted-foreground hover:text-primary py-2 transition-colors">
+                Contact
               </Link>
               <div className="flex flex-col gap-2 pt-4 border-t border-border">
                 <Button variant="outline" className="w-full">
