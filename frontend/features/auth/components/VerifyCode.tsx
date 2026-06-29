@@ -8,12 +8,10 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 
 interface VerifyCodeProps {
-  email: string
-  onCodeVerify: () => void
   onBack: () => void
 }
 
-function VerifyCodePage({ email, onCodeVerify, onBack }: VerifyCodeProps) {
+function VerifyCodePage({ onBack }: VerifyCodeProps) {
   const navigate = useRouter()
   const [code, setCode] = useState("")
   const [timeLeft, setTimeLeft] = useState(300)
