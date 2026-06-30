@@ -1,50 +1,67 @@
 # LeadXpert – Lead Management System
 
-A modern lead management system designed to help teams capture, organize, track, and convert leads efficiently through structured pipelines, tasks, and activity tracking.
+A full-stack lead management system to help teams capture, organize, and convert leads through customizable pipelines.
 
-Built with a clean architecture and separation of concerns to support long-term scalability.
+## Project Structure
+
+This is a multi-repo project:
+
+- **Frontend (Web)** – You're here! Next.js dashboard for lead management
+- **Backend (API)** – [leadXpert_server](https://github.com/Sushant696/leadXpert_server) – Express + MongoDB REST API
+- **Mobile App** – [leadXpert](https://github.com/Sushant696/leadXpert) – Flutter mobile client
 
 ---
 
 ## Features
 
-- **Authentication & Authorization**
-  - User registration and login
-  - Role-based access control (future-ready)
-
-- **Lead Management**
-  - Create, update, delete leads
-  - Assign leads to users
-  - Track lead lifecycle and status
-
-- **Pipelines**
-  - Custom pipelines with stages
-  - Move leads across stages
-
-- **Tasks & Activities**
-  - Attach tasks to leads
-  - Follow-ups and reminders
-  - Activity history per lead
-
-- **Scalable Architecture**
-  - Controller → Service → Repository pattern
-  - DTO-based data flow
-  - Validation at boundaries
+- **Lead Management** – Create, assign, and track leads through their lifecycle
+- **Custom Pipelines** – Build your own sales stages and move leads through them
+- **Tasks & Activities** – Set follow-ups, reminders, and track every interaction
+- **Team Collaboration** – Invite workspace members, assign leads to teammates
+- **Auth & Permissions** – Secure login with role-based access control
+- **Dashboard Analytics** – Quick stats on leads, deals, and pipeline health
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
-### Frontend
-- Next.js
+**Frontend (Web)**
+- Next.js 16 + React 19
 - TypeScript
-- React Hook Form + Zod
-- Tailwind CSS, Shadcn
+- TanStack Query for data fetching
+- Tailwind CSS + Shadcn UI
+- Zustand for state management
 
-### Backend
-- Node.js
-- Express
-- TypeScript
-- MongoDB (Mongoose)
-- Zod (validation)
+**Backend**
+- Node.js + Express + TypeScript
+- MongoDB with Mongoose
+- Zod validation
+- JWT auth
+- Layered architecture (Controller → Service → Repository)
 
+**Mobile**
+- Flutter + Dart
+- Check the [mobile repo](https://github.com/Sushant696/leadXpert) for details
+
+---
+
+## Getting Started
+
+```bash
+# Install dependencies
+pnpm install
+
+# Set up environment variables
+cp .env.example .env.local
+# Add your backend API URL
+
+# Run dev server
+pnpm dev
+
+# Run tests
+pnpm test
+```
+
+Make sure the backend server is running (see [backend repo](https://github.com/Sushant696/leadXpert_server) for setup)
+
+---
