@@ -93,11 +93,6 @@ function DashboardCard() {
     },
   };
 
-  const taskPriorityDot = {
-    HIGH: "bg-red-500",
-    MEDIUM: "bg-yellow-500",
-    LOW: "bg-blue-400",
-  };
 
   return (
     <div className="relative bg-white/40 backdrop-blur-xl rounded-3xl p-5 shadow-[0_25px_80px_-15px_rgba(0,0,0,0.3)] border border-white/70">
@@ -225,7 +220,7 @@ function DashboardCard() {
                             {task.title}
                           </p>
                           <span
-                            className={`shrink-0 inline-block w-1.5 h-1.5 rounded-full ${taskPriorityDot[task.priority]}`}
+                            className={`shrink-0 inline-block w-1.5 h-1.5 rounded-full  `}
                           />
                         </div>
                         {task.description && (
