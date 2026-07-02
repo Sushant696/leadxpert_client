@@ -13,10 +13,7 @@ import {
   Calendar,
   DollarSign,
   Flag,
-  Mail,
-  Phone,
   User,
-  Clock,
   Tag,
   FileText,
   Activity,
@@ -24,33 +21,63 @@ import {
   AlertCircle,
   TrendingUp,
   UserCheck,
-  MessageSquare,
 } from "lucide-react";
 import { Lead } from "../types/lead-types";
 import { cn } from "@/lib/utils";
 import { ConvertToDealModal } from "@/features/deal/components/ConvertToDealModal";
 import { useState } from "react";
+import { EditLeadModal } from "./EditLeadModal";
+import useUpdateLead from "../hooks/useUpdateLead";
+import { useRouter } from "next/navigation";
 
 interface LeadDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  lead: Lead | null;
+  lead: Lead;
   workspaceId: string;
   pipelineId: string;
 }
 
 const priorityConfig = {
-  LOW: { color: "bg-blue-500/10 text-blue-700 border-blue-200", label: "Low", icon: Flag },
-  MEDIUM: { color: "bg-yellow-500/10 text-yellow-700 border-yellow-200", label: "Medium", icon: Flag },
-  HIGH: { color: "bg-orange-500/10 text-orange-700 border-orange-200", label: "High", icon: Flag },
-  URGENT: { color: "bg-red-500/10 text-red-700 border-red-200", label: "Urgent", icon: AlertCircle },
+  LOW: {
+    color: "bg-blue-500/10 text-blue-700 border-blue-200",
+    label: "Low",
+    icon: Flag,
+  },
+  MEDIUM: {
+    color: "bg-yellow-500/10 text-yellow-700 border-yellow-200",
+    label: "Medium",
+    icon: Flag,
+  },
+  HIGH: {
+    color: "bg-orange-500/10 text-orange-700 border-orange-200",
+    label: "High",
+    icon: Flag,
+  },
+  URGENT: {
+    color: "bg-red-500/10 text-red-700 border-red-200",
+    label: "Urgent",
+    icon: AlertCircle,
+  },
 };
 
 const statusConfig = {
-  OPEN: { color: "bg-green-500/10 text-green-700 border-green-200", label: "Open" },
-  CONTACTED: { color: "bg-blue-500/10 text-blue-700 border-blue-200", label: "Contacted" },
-  QUALIFIED: { color: "bg-purple-500/10 text-purple-700 border-purple-200", label: "Qualified" },
-  LOST: { color: "bg-gray-500/10 text-gray-700 border-gray-200", label: "Lost" },
+  OPEN: {
+    color: "bg-green-500/10 text-green-700 border-green-200",
+    label: "Open",
+  },
+  CONTACTED: {
+    color: "bg-blue-500/10 text-blue-700 border-blue-200",
+    label: "Contacted",
+  },
+  QUALIFIED: {
+    color: "bg-purple-500/10 text-purple-700 border-purple-200",
+    label: "Qualified",
+  },
+  LOST: {
+    color: "bg-gray-500/10 text-gray-700 border-gray-200",
+    label: "Lost",
+  },
 };
 
 const sourceLabels = {
@@ -70,7 +97,10 @@ export function LeadDetailsModal({
   workspaceId,
   pipelineId,
 }: LeadDetailsModalProps) {
+  const router = useRouter();
+  const updateLeadMutation = useUpdateLead(workspaceId, pipelineId, lead?._id);
   const [isConvertModalOpen, setIsConvertModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   if (!lead) return null;
 
@@ -123,76 +153,80 @@ export function LeadDetailsModal({
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Left Column - Main Info */}
-          <div className="md:col-span-2 space-y-6">
+          <div className="md:col-span-2 space-y-4">
             {/* Contact Information */}
-            <div className="space-y-3">
+            <div className="space-y-2">
               <h3 className="text-sm font-semibold text-primary uppercase tracking-wider flex items-center gap-2">
                 <User size={14} />
-                Contact Information
+                Contact
               </h3>
               {lead.contactId ? (
-                <div className="bg-muted/30 rounded-lg p-4 space-y-3">
+                <div className="bg-muted/30 rounded-lg p-3 space-y-2">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
+                    <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
                       {lead.contactId.name.charAt(0).toUpperCase()}
                     </div>
                     <div>
-                      <p className="font-semibold text-primary">
+                      <p className="font-semibold text-sm text-primary">
                         {lead.contactId.name}
                       </p>
                       {lead.contactId.email && (
-                        <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                          <Mail size={12} />
-                          <span>{lead.contactId.email}</span>
-                        </div>
-                      )}
-                      {lead.contactId.phone && (
-                        <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                          <Phone size={12} />
-                          <span>{lead.contactId.phone}</span>
-                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          {lead.contactId.email}
+                        </p>
                       )}
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="bg-muted/30 rounded-lg p-4">
-                  <p className="text-sm text-muted-foreground italic">
-                    No contact assigned to this lead
+                <div className="bg-muted/30 rounded-lg p-3">
+                  <p className="text-xs text-muted-foreground italic">
+                    No contact assigned
                   </p>
                 </div>
               )}
             </div>
 
-            {/* Lead Value */}
-            <div className="space-y-3">
-              <h3 className="text-sm font-semibold text-primary uppercase tracking-wider flex items-center gap-2">
-                <DollarSign size={14} />
-                Lead Value
-              </h3>
-              <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
-                <p className="text-3xl font-bold text-accent">
-                  {new Intl.NumberFormat("en-US", {
-                    style: "currency",
-                    currency: lead.currency,
-                    maximumFractionDigits: 0,
-                  }).format(lead.value)}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Currency: {lead.currency}
-                </p>
+            {/* Lead Value & Source */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <h3 className="text-xs font-semibold text-primary uppercase tracking-wider flex items-center gap-2">
+                  <DollarSign size={12} />
+                  Value
+                </h3>
+                <div className="bg-accent/10 border border-accent/20 rounded-lg p-3">
+                  <p className="text-2xl font-bold text-accent">
+                    {new Intl.NumberFormat("en-US", {
+                      style: "currency",
+                      currency: lead.currency,
+                      maximumFractionDigits: 0,
+                    }).format(lead.value)}
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="text-xs font-semibold text-primary uppercase tracking-wider flex items-center gap-2">
+                  <TrendingUp size={12} />
+                  Source
+                </h3>
+                <div className="bg-muted/30 rounded-lg p-3">
+                  <p className="text-sm font-medium">
+                    {lead.source ? sourceLabels[lead.source] : "—"}
+                  </p>
+                </div>
               </div>
             </div>
 
             {/* Quick Note */}
             {lead.quickNote && (
-              <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-primary uppercase tracking-wider flex items-center gap-2">
-                  <FileText size={14} />
-                  Quick Note
+              <div className="space-y-2">
+                <h3 className="text-xs font-semibold text-primary uppercase tracking-wider flex items-center gap-2">
+                  <FileText size={12} />
+                  Note
                 </h3>
-                <div className="bg-muted/30 rounded-lg p-4">
-                  <p className="text-sm text-muted-foreground leading-relaxed">
+                <div className="bg-muted/30 rounded-lg p-3">
+                  <p className="text-sm text-muted-foreground line-clamp-2">
                     {lead.quickNote}
                   </p>
                 </div>
@@ -201,181 +235,92 @@ export function LeadDetailsModal({
 
             {/* Tags */}
             {lead.tags.length > 0 && (
-              <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-primary uppercase tracking-wider flex items-center gap-2">
-                  <Tag size={14} />
+              <div className="space-y-2">
+                <h3 className="text-xs font-semibold text-primary uppercase tracking-wider flex items-center gap-2">
+                  <Tag size={12} />
                   Tags
                 </h3>
-                <div className="flex flex-wrap gap-2">
-                  {lead.tags.map((tag, index) => (
+                <div className="flex flex-wrap gap-1.5">
+                  {lead.tags.slice(0, 3).map((tag, index) => (
                     <Badge
                       key={index}
                       variant="secondary"
-                      className="text-xs px-3 py-1"
+                      className="text-xs px-2 py-0.5"
                     >
                       {tag}
                     </Badge>
                   ))}
+                  {lead.tags.length > 3 && (
+                    <Badge variant="outline" className="text-xs px-2 py-0.5">
+                      +{lead.tags.length - 3}
+                    </Badge>
+                  )}
                 </div>
               </div>
             )}
           </div>
 
-          {/* Right Column - Additional Info */}
-          <div className="space-y-6">
-            {/* Lead Details */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-primary uppercase tracking-wider">
-                Details
+          {/* Right Column - Quick Stats */}
+          <div className="space-y-4">
+            <div className="space-y-3">
+              <h3 className="text-xs font-semibold text-primary uppercase tracking-wider">
+                Info
               </h3>
 
-              {lead.source && (
-                <div className="space-y-1">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    Source
-                  </p>
-                  <p className="text-sm font-medium flex items-center gap-2">
-                    <TrendingUp size={12} className="text-muted-foreground" />
-                    {sourceLabels[lead.source]}
-                  </p>
-                </div>
-              )}
-
               {lead.assignedTo && (
-                <div className="space-y-1">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                <div className="text-xs">
+                  <p className="font-medium text-muted-foreground mb-1">
                     Assigned To
                   </p>
                   <div className="flex items-center gap-2">
                     <UserCheck size={12} className="text-muted-foreground" />
-                    <div>
-                      <p className="text-sm font-medium">
-                        {lead.assignedTo.name}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {lead.assignedTo.email}
-                      </p>
-                    </div>
+                    <span className="font-medium">{lead.assignedTo.name}</span>
                   </div>
                 </div>
               )}
 
-              <Separator />
-
-              {/* Dates */}
               {lead.nextFollowUpAt && (
-                <div className="space-y-1">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    Next Follow-up
+                <div className="text-xs">
+                  <p className="font-medium text-muted-foreground mb-1">
+                    Follow-up
                   </p>
                   <div className="flex items-center gap-2">
                     <Calendar size={12} className="text-muted-foreground" />
-                    <span className="text-sm font-medium">
+                    <span className="font-medium">
                       {new Date(lead.nextFollowUpAt).toLocaleDateString(
-                        "en-US",
-                        {
-                          month: "long",
-                          day: "numeric",
-                          year: "numeric",
-                        }
-                      )}
-                    </span>
-                  </div>
-                </div>
-              )}
-
-              {lead.lastContactedAt && (
-                <div className="space-y-1">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    Last Contacted
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <Clock size={12} className="text-muted-foreground" />
-                    <span className="text-sm font-medium">
-                      {new Date(lead.lastContactedAt).toLocaleDateString(
                         "en-US",
                         {
                           month: "short",
                           day: "numeric",
-                          year: "numeric",
-                        }
+                        },
                       )}
                     </span>
                   </div>
                 </div>
               )}
 
-              <div className="space-y-1">
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  Created At
-                </p>
-                <div className="flex items-center gap-2">
-                  <Calendar size={12} className="text-muted-foreground" />
-                  <span className="text-sm font-medium">
-                    {new Date(lead.createdAt).toLocaleDateString("en-US", {
-                      month: "long",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
-                  </span>
-                </div>
-              </div>
+              <Separator className="my-2" />
 
-              <Separator />
-
-              {/* Activity Counts */}
-              <div className="space-y-3">
+              <div className="space-y-2 text-xs">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <span className="text-muted-foreground flex items-center gap-1">
                     <Activity size={12} />
-                    <span>Activities</span>
-                  </div>
+                    Activities
+                  </span>
                   <Badge variant="secondary" className="text-xs">
                     {lead.activityCount}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <span className="text-muted-foreground flex items-center gap-1">
                     <CheckSquare size={12} />
-                    <span>Tasks</span>
-                  </div>
+                    Tasks
+                  </span>
                   <Badge variant="secondary" className="text-xs">
                     {lead.taskCount}
                   </Badge>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <MessageSquare size={12} />
-                    <span>Notes</span>
-                  </div>
-                  <Badge variant="secondary" className="text-xs">
-                    {lead.noteCount}
-                  </Badge>
-                </div>
               </div>
-
-              {/* ML Score */}
-              {lead.mlScore > 0 && (
-                <>
-                  <Separator />
-                  <div className="space-y-1">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      ML Score
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 bg-muted rounded-full h-2 overflow-hidden">
-                        <div
-                          className="h-full bg-accent transition-all"
-                          style={{ width: `${lead.mlScore}%` }}
-                        />
-                      </div>
-                      <span className="text-sm font-bold text-accent">
-                        {lead.mlScore}%
-                      </span>
-                    </div>
-                  </div>
-                </>
-              )}
             </div>
           </div>
         </div>
@@ -386,11 +331,18 @@ export function LeadDetailsModal({
           <Button variant="outline" onClick={onClose}>
             Close
           </Button>
-          <Button variant="default">Edit Lead</Button>
           <Button
-            variant="default"
-            onClick={() => setIsConvertModalOpen(true)}
+            variant="outline"
+            onClick={() => {
+              router.push(`/dashboard/pipeline/leads/${lead._id}`);
+            }}
           >
+            View Details
+          </Button>
+          <Button variant="default" onClick={() => setIsEditModalOpen(true)}>
+            Edit
+          </Button>
+          <Button variant="default" onClick={() => setIsConvertModalOpen(true)}>
             Convert to Deal
           </Button>
         </DialogFooter>
@@ -402,6 +354,19 @@ export function LeadDetailsModal({
           workspaceId={workspaceId}
           pipelineId={pipelineId}
           onSuccess={onClose}
+        />
+
+        <EditLeadModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          lead={lead}
+          workspaceId={workspaceId}
+          pipelineId={pipelineId}
+          onSubmit={async (data) => {
+            updateLeadMutation.mutate(data);
+            setIsEditModalOpen(false);
+            onClose();
+          }}
         />
       </DialogContent>
     </Dialog>
