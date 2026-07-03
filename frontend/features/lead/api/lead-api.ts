@@ -16,6 +16,7 @@ import {
   ConvertLeadResponse,
   MarkLeadAsLostResponse,
   ArchiveLeadResponse,
+  ScoreLeadResponse,
 } from "../types/lead-types";
 
 const leadApi = {
@@ -128,6 +129,12 @@ const leadApi = {
     return await apiWrapper.delete(
       apiURLs.LEAD.archive(workspaceId, pipelineId, leadId),
     );
+  },
+
+  // Manually (re)score a lead. The ML route returns a bare object, not the
+  // standard { success, data } envelope, so callers read fields directly.
+  scoreLead: async (leadId: string): Promise<ScoreLeadResponse> => {
+    return await apiWrapper.post(apiURLs.ML.scoreLead(leadId), {});
   },
 };
 

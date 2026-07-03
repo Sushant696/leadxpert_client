@@ -105,6 +105,10 @@ export const apiURLs = {
       `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads/${leadId}`,
   },
 
+  ML: {
+    scoreLead: (leadId: string) => `/api/ml/leads/${leadId}/score`,
+  },
+
   CONTACT: {
     getAll: (workspaceId: string) => `/api/contact/${workspaceId}/contacts`,
     getById: (workspaceId: string, contactId: string) =>

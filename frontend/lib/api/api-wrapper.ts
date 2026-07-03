@@ -18,6 +18,21 @@ interface RequestConfig {
   headers?: Record<string, string>;
 }
 
+// Single send with a given bearer token. Kept separate so the original request
+// and the post-refresh retry share identical config.
+function sendRequest(config: RequestConfig, accessToken: string) {
+  return axiosInstance.request({
+    url: config.url,
+    method: config.method,
+    data: config.data,
+    params: config.params,
+    headers: {
+      ...config.headers,
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+}
+
 async function makeAuthenticatedRequest<T>(config: RequestConfig): Promise<T> {
   let accessToken = await getAccessToken();
 
@@ -30,32 +45,13 @@ async function makeAuthenticatedRequest<T>(config: RequestConfig): Promise<T> {
   }
 
   try {
-    const response = await axiosInstance.request({
-      url: config.url,
-      method: config.method,
-      data: config.data,
-      params: config.params,
-      headers: {
-        ...config.headers,
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const response = await sendRequest(config, accessToken);
 
-    // axios validateStatus accepts all 2xx-5xx codes, so 401 won't throw
-    // so check the status explicitly here.
+    // axios validateStatus accepts all 2xx-5xx codes, so a 401 won't throw —
+    // check the status explicitly and refresh + retry once.
     if (response.status === 401) {
       const newAccessToken = await refreshAccessToken();
-      // than retry original request with new token
-      const retryResponse = await axiosInstance.request({
-        url: config.url,
-        method: config.method,
-        data: config.data,
-        params: config.params,
-        headers: {
-          ...config.headers,
-          Authorization: `Bearer ${newAccessToken}`,
-        },
-      });
+      const retryResponse = await sendRequest(config, newAccessToken);
 
       if (retryResponse.status === 401) {
         throw new SessionExpiredError(
@@ -70,21 +66,12 @@ async function makeAuthenticatedRequest<T>(config: RequestConfig): Promise<T> {
   } catch (error: any) {
     if (error instanceof SessionExpiredError) throw error;
 
+    // Defensive: if axios ever throws on a 401 (e.g. validateStatus changes),
+    // attempt a single refresh + retry here too.
     if (error.response?.status === 401) {
       try {
         const newAccessToken = await refreshAccessToken();
-        // retry original request with new token
-        const retryResponse = await axiosInstance.request({
-          url: config.url,
-          method: config.method,
-          data: config.data,
-          params: config.params,
-          headers: {
-            ...config.headers,
-            Authorization: `Bearer ${newAccessToken}`,
-          },
-        });
-
+        const retryResponse = await sendRequest(config, newAccessToken);
         return retryResponse.data;
       } catch (refreshError: any) {
         // Refresh failed - session is completely expired
@@ -99,11 +86,26 @@ async function makeAuthenticatedRequest<T>(config: RequestConfig): Promise<T> {
 }
 
 /*
- * Refreshes access token using the refresh token
- * gets called automatically when 401 error is detected if api-Wrapper methods are used
+ * Refreshes access token using the refresh token.
+ * Gets called automatically when a 401 is detected if apiWrapper methods are used.
+ *
+ * Single-flight: when the kanban board fires many requests at once and they all
+ * 401 together, we want EXACTLY ONE refresh request — not one per failed call.
+ * Concurrent callers share the same in-flight promise; the slot clears once it
+ * settles so the next expiry can refresh again.
  */
+let refreshPromise: Promise<string> | null = null;
 
-async function refreshAccessToken(): Promise<string> {
+function refreshAccessToken(): Promise<string> {
+  if (!refreshPromise) {
+    refreshPromise = doRefreshAccessToken().finally(() => {
+      refreshPromise = null;
+    });
+  }
+  return refreshPromise;
+}
+
+async function doRefreshAccessToken(): Promise<string> {
   const refreshToken = await getRefreshToken();
   if (!refreshToken) {
     throw new Error("No refresh token available");

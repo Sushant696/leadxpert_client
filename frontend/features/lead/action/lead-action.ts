@@ -145,3 +145,9 @@ export async function archiveLeadAction(
   }
   return response.data.message;
 }
+
+export async function scoreLeadAction(leadId: string) {
+  // ML route responds with a bare object (no success envelope); the freshly
+  // written ml fields are picked up by invalidating the lead query afterward.
+  return await leadApi.scoreLead(leadId);
+}

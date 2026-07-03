@@ -1,4 +1,24 @@
 export type LeadPriority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
+export type MlPriority = "HIGH" | "MEDIUM" | "LOW";
+
+// Raw 14-feature vector the ML service scored the lead on, echoed back on the
+// Lead for explainability. Categorical features are strings; the rest numeric.
+export interface ScoreFeatures {
+  lead_source?: string;
+  business_vertical?: string;
+  human_priority?: string;
+  lead_value?: number;
+  days_in_pipeline?: number;
+  time_in_current_stage?: number;
+  days_since_last_contact?: number;
+  activity_count?: number;
+  task_count?: number;
+  note_count?: number;
+  stage_index?: number;
+  stage_probability?: number;
+  is_rotten?: number;
+  has_upcoming_task?: number;
+}
 export type LeadStatus = "OPEN" | "CONTACTED" | "QUALIFIED" | "LOST";
 export type LeadSource =
   | "WEBSITE"
@@ -50,7 +70,12 @@ export interface Lead {
   taskCount: number;
   noteCount: number;
   activityCount: number;
+  // ML scoring fields — populated by the backend scoring service. `mlPriority`
+  // is null and `mlScore` 0 until a lead has been scored for the first time.
   mlScore: number;
+  mlPriority?: MlPriority | null;
+  lastScoredAt?: string | null;
+  scoreFeatures?: ScoreFeatures | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -130,3 +155,15 @@ export type AssignLeadResponse = ApiResponse<{ lead: Lead }>;
 export type ConvertLeadResponse = ApiResponse<{ lead: Lead }>;
 export type MarkLeadAsLostResponse = ApiResponse<{ lead: Lead }>;
 export type ArchiveLeadResponse = ApiResponse<Record<string, never>>;
+
+// The ML re-score endpoint returns a bare object (no { success, data } envelope).
+// On a skipped lead only { leadId, message } come back.
+export interface ScoreLeadResponse {
+  leadId: string;
+  mlScore?: number;
+  mlPriority?: MlPriority;
+  conversionProbability?: number;
+  topFeatures?: { feature: string; importance: number }[];
+  scoredAt?: string;
+  message?: string;
+}
