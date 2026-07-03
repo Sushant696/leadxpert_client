@@ -4,7 +4,6 @@ import { useState, useRef } from "react";
 import { MessageSquare, Send, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import useCreateNote from "../hooks/useCreateNote";
-import useGetNotes from "../hooks/useGetNotes";
 import { Textarea } from "@/components/ui/textarea";
 
 interface QuickNoteInputProps {
@@ -19,7 +18,6 @@ export function QuickNoteInput({
   leadId,
   workspaceId,
   pipelineId,
-  noteCount,
   lastNote,
 }: QuickNoteInputProps) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -28,15 +26,11 @@ export function QuickNoteInput({
 
   const createNoteMutation = useCreateNote(workspaceId, pipelineId);
 
-  const { data: notes } = useGetNotes(
-    workspaceId,
-    "LEAD",
-    leadId,
-    noteCount > 0 && !isExpanded,
-  );
-
-  const latestNote = notes?.[0];
-  const previewText = latestNote?.content || lastNote;
+  // Preview comes from the lead's denormalized `quickNote` (passed as `lastNote`),
+  // which is already on the lead payload. We deliberately do NOT fetch the full
+  // notes list per card here — that caused one network request per lead card on
+  // board load (N+1). Full notes are loaded lazily in the lead details modal.
+  const previewText = lastNote;
 
   const handleExpand = (e: React.MouseEvent) => {
     e.stopPropagation();

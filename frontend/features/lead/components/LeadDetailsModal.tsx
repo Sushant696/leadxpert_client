@@ -10,24 +10,17 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
+  ArrowRight,
   Calendar,
   DollarSign,
   Flag,
   User,
-  Tag,
-  FileText,
-  Activity,
-  CheckSquare,
-  AlertCircle,
   TrendingUp,
-  UserCheck,
+  AlertCircle,
 } from "lucide-react";
 import { Lead } from "../types/lead-types";
 import { cn } from "@/lib/utils";
-import { ConvertToDealModal } from "@/features/deal/components/ConvertToDealModal";
-import { useState } from "react";
-import { EditLeadModal } from "./EditLeadModal";
-import useUpdateLead from "../hooks/useUpdateLead";
+import { ScoreBadge } from "./ScoreBadge";
 import { useRouter } from "next/navigation";
 
 interface LeadDetailsModalProps {
@@ -80,7 +73,7 @@ const statusConfig = {
   },
 };
 
-const sourceLabels = {
+const sourceLabels: Record<string, string> = {
   WEBSITE: "Website",
   REFERRAL: "Referral",
   COLD_CALL: "Cold Call",
@@ -90,17 +83,15 @@ const sourceLabels = {
   OTHER: "Other",
 };
 
+// Lightweight preview of a lead. Shows only the essentials — the full record
+// (ML score panel, notes, tags, stats, actions) lives on the dedicated detail
+// page reached via "View Full Details".
 export function LeadDetailsModal({
   isOpen,
   onClose,
   lead,
-  workspaceId,
-  pipelineId,
 }: LeadDetailsModalProps) {
   const router = useRouter();
-  const updateLeadMutation = useUpdateLead(workspaceId, pipelineId, lead?._id);
-  const [isConvertModalOpen, setIsConvertModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   if (!lead) return null;
 
@@ -110,38 +101,38 @@ export function LeadDetailsModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl w-[90vw] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-[95vw] max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
-              <DialogTitle className="text-2xl font-bold">
-                {lead.title}
-              </DialogTitle>
-              <DialogDescription className="mt-1">
-                Lead #{lead._id.slice(-6)}
-              </DialogDescription>
-            </div>
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-2">
+            <DialogTitle className="text-lg sm:text-xl font-bold pr-6">
+              {lead.title}
+            </DialogTitle>
+            <DialogDescription>Lead #{lead._id.slice(-6)}</DialogDescription>
+            <div className="flex flex-wrap items-center gap-2 pt-1">
               <Badge
                 variant="outline"
-                className={cn("text-xs px-2 py-1", priority.color)}
+                className={cn("text-xs px-2 py-0.5", priority.color)}
               >
-                <PriorityIcon size={12} className="mr-1" />
+                <PriorityIcon size={11} className="mr-1" />
                 {priority.label}
               </Badge>
               <Badge
                 variant="outline"
-                className={cn("text-xs px-2 py-1", status.color)}
+                className={cn("text-xs px-2 py-0.5", status.color)}
               >
                 {status.label}
               </Badge>
+              <ScoreBadge
+                mlScore={lead.mlScore}
+                mlPriority={lead.mlPriority ?? null}
+              />
               {lead.isConverted && (
-                <Badge variant="default" className="text-xs px-2 py-1">
+                <Badge variant="default" className="text-xs px-2 py-0.5">
                   Converted
                 </Badge>
               )}
               {lead.isRotten && (
-                <Badge variant="destructive" className="text-xs px-2 py-1">
+                <Badge variant="destructive" className="text-xs px-2 py-0.5">
                   Rotten
                 </Badge>
               )}
@@ -151,223 +142,77 @@ export function LeadDetailsModal({
 
         <Separator />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Left Column - Main Info */}
-          <div className="md:col-span-2 space-y-4">
-            {/* Contact Information */}
-            <div className="space-y-2">
-              <h3 className="text-sm font-semibold text-primary uppercase tracking-wider flex items-center gap-2">
-                <User size={14} />
-                Contact
-              </h3>
-              {lead.contactId ? (
-                <div className="bg-muted/30 rounded-lg p-3 space-y-2">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
-                      {lead.contactId.name.charAt(0).toUpperCase()}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-sm text-primary">
-                        {lead.contactId.name}
-                      </p>
-                      {lead.contactId.email && (
-                        <p className="text-xs text-muted-foreground">
-                          {lead.contactId.email}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="bg-muted/30 rounded-lg p-3">
-                  <p className="text-xs text-muted-foreground italic">
-                    No contact assigned
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Lead Value & Source */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <h3 className="text-xs font-semibold text-primary uppercase tracking-wider flex items-center gap-2">
-                  <DollarSign size={12} />
-                  Value
-                </h3>
-                <div className="bg-accent/10 border border-accent/20 rounded-lg p-3">
-                  <p className="text-2xl font-bold text-accent">
-                    {new Intl.NumberFormat("en-US", {
-                      style: "currency",
-                      currency: lead.currency,
-                      maximumFractionDigits: 0,
-                    }).format(lead.value)}
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <h3 className="text-xs font-semibold text-primary uppercase tracking-wider flex items-center gap-2">
-                  <TrendingUp size={12} />
-                  Source
-                </h3>
-                <div className="bg-muted/30 rounded-lg p-3">
-                  <p className="text-sm font-medium">
-                    {lead.source ? sourceLabels[lead.source] : "—"}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Note */}
-            {lead.quickNote && (
-              <div className="space-y-2">
-                <h3 className="text-xs font-semibold text-primary uppercase tracking-wider flex items-center gap-2">
-                  <FileText size={12} />
-                  Note
-                </h3>
-                <div className="bg-muted/30 rounded-lg p-3">
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {lead.quickNote}
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* Tags */}
-            {lead.tags.length > 0 && (
-              <div className="space-y-2">
-                <h3 className="text-xs font-semibold text-primary uppercase tracking-wider flex items-center gap-2">
-                  <Tag size={12} />
-                  Tags
-                </h3>
-                <div className="flex flex-wrap gap-1.5">
-                  {lead.tags.slice(0, 3).map((tag, index) => (
-                    <Badge
-                      key={index}
-                      variant="secondary"
-                      className="text-xs px-2 py-0.5"
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
-                  {lead.tags.length > 3 && (
-                    <Badge variant="outline" className="text-xs px-2 py-0.5">
-                      +{lead.tags.length - 3}
-                    </Badge>
-                  )}
-                </div>
-              </div>
-            )}
+        {/* Basic details only */}
+        <div className="space-y-3">
+          {/* Contact */}
+          <div className="flex items-center gap-2 text-sm">
+            <User size={14} className="text-muted-foreground shrink-0" />
+            <span className="text-muted-foreground">Contact:</span>
+            <span className="font-medium truncate">
+              {lead.contactId?.name ?? "—"}
+            </span>
           </div>
 
-          {/* Right Column - Quick Stats */}
-          <div className="space-y-4">
-            <div className="space-y-3">
-              <h3 className="text-xs font-semibold text-primary uppercase tracking-wider">
-                Info
-              </h3>
-
-              {lead.assignedTo && (
-                <div className="text-xs">
-                  <p className="font-medium text-muted-foreground mb-1">
-                    Assigned To
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <UserCheck size={12} className="text-muted-foreground" />
-                    <span className="font-medium">{lead.assignedTo.name}</span>
-                  </div>
-                </div>
-              )}
-
-              {lead.nextFollowUpAt && (
-                <div className="text-xs">
-                  <p className="font-medium text-muted-foreground mb-1">
-                    Follow-up
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <Calendar size={12} className="text-muted-foreground" />
-                    <span className="font-medium">
-                      {new Date(lead.nextFollowUpAt).toLocaleDateString(
-                        "en-US",
-                        {
-                          month: "short",
-                          day: "numeric",
-                        },
-                      )}
-                    </span>
-                  </div>
-                </div>
-              )}
-
-              <Separator className="my-2" />
-
-              <div className="space-y-2 text-xs">
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground flex items-center gap-1">
-                    <Activity size={12} />
-                    Activities
-                  </span>
-                  <Badge variant="secondary" className="text-xs">
-                    {lead.activityCount}
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground flex items-center gap-1">
-                    <CheckSquare size={12} />
-                    Tasks
-                  </span>
-                  <Badge variant="secondary" className="text-xs">
-                    {lead.taskCount}
-                  </Badge>
-                </div>
+          {/* Value + Source side by side, stacks on mobile */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="bg-muted/30 rounded-lg p-3">
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
+                <DollarSign size={12} />
+                Value
               </div>
+              <p className="text-lg font-bold text-accent">
+                {new Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: lead.currency,
+                  maximumFractionDigits: 0,
+                }).format(lead.value)}
+              </p>
+            </div>
+            <div className="bg-muted/30 rounded-lg p-3">
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
+                <TrendingUp size={12} />
+                Source
+              </div>
+              <p className="text-sm font-medium">
+                {lead.source ? sourceLabels[lead.source] ?? lead.source : "—"}
+              </p>
             </div>
           </div>
+
+          {/* Follow-up */}
+          {lead.nextFollowUpAt && (
+            <div className="flex items-center gap-2 text-sm">
+              <Calendar size={14} className="text-muted-foreground shrink-0" />
+              <span className="text-muted-foreground">Follow-up:</span>
+              <span className="font-medium">
+                {new Date(lead.nextFollowUpAt).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </span>
+            </div>
+          )}
         </div>
 
         <Separator />
 
-        <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={onClose}>
+        <DialogFooter className="flex-col-reverse sm:flex-row gap-2">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            className="w-full sm:w-auto"
+          >
             Close
           </Button>
           <Button
-            variant="outline"
-            onClick={() => {
-              router.push(`/dashboard/pipeline/leads/${lead._id}`);
-            }}
+            onClick={() => router.push(`/dashboard/leads/${lead._id}`)}
+            className="w-full sm:w-auto"
           >
-            View Details
-          </Button>
-          <Button variant="default" onClick={() => setIsEditModalOpen(true)}>
-            Edit
-          </Button>
-          <Button variant="default" onClick={() => setIsConvertModalOpen(true)}>
-            Convert to Deal
+            View Full Details
+            <ArrowRight size={14} />
           </Button>
         </DialogFooter>
-
-        <ConvertToDealModal
-          isOpen={isConvertModalOpen}
-          onClose={() => setIsConvertModalOpen(false)}
-          lead={lead}
-          workspaceId={workspaceId}
-          pipelineId={pipelineId}
-          onSuccess={onClose}
-        />
-
-        <EditLeadModal
-          isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-          lead={lead}
-          workspaceId={workspaceId}
-          pipelineId={pipelineId}
-          onSubmit={async (data) => {
-            updateLeadMutation.mutate(data);
-            setIsEditModalOpen(false);
-            onClose();
-          }}
-        />
       </DialogContent>
     </Dialog>
   );

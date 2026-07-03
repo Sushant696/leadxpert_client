@@ -42,6 +42,16 @@ export async function registerAction(formData: RegisterData) {
 }
 
 export async function logoutAction() {
+  // Best-effort server-side revocation (bumps the user's tokenVersion so the
+  // refresh token can't be reused). Must run BEFORE clearing cookies, since the
+  // request reads the access token from them. Never let a failure here block the
+  // client-side logout.
+  try {
+    await authApi.logout();
+  } catch (error) {
+    // ignore — we still clear local session below
+  }
+
   await clearAuthCookies();
   return { success: true };
 }

@@ -1,11 +1,19 @@
 "use client";
 
-import { Archive, Plus, Settings2 } from "lucide-react";
-import { useState } from "react";
+import { ArrowDownWideNarrow, Archive, Plus, Settings2 } from "lucide-react";
+import { useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import useWorkspaceStore from "@/store/workspace-store";
 import useGetSinglePipeline from "@/features/pipeline/hooks/useGetSinglePipeline";
 import { PipelineSkeleton } from "@/features/pipeline/components/pipelineSkeleton";
@@ -25,7 +33,12 @@ import useGetLeads from "@/features/lead/hooks/useGetLeads";
 import { CreateLeadModal } from "@/features/lead/components/CreateLeadModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { moveLeadToStageAction } from "@/features/lead/action/lead-action";
+import { Lead } from "@/features/lead/types/lead-types";
 import { showToast } from "@/components/showToast";
+
+// Stable reference for stages with no leads, so columns don't re-render due to
+// a fresh `[]` identity on every parent render.
+const EMPTY_LEADS: Lead[] = [];
 
 function PipelineDashboard() {
   const { pipeline: pipelineId } = useParams<{ pipeline: string }>();
@@ -34,6 +47,7 @@ function PipelineDashboard() {
   const [isCreateStageOpen, setIsCreateStageOpen] = useState(false);
   const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(false);
   const [isApplyingTemplate, setIsApplyingTemplate] = useState(false);
+  const [sortMode, setSortMode] = useState<"default" | "score">("default");
   const bulkCreateStageMutation = useBulkCreatePipelineStage(
     workspace?.id ?? "",
     pipelineId,
@@ -104,8 +118,34 @@ function PipelineDashboard() {
     },
   });
 
-  // map of leads of for quick lookup during drag
-  const leadsById = new Map(allLeads.map((lead) => [lead._id, lead]));
+  // Build both lookups once per leads change instead of on every render:
+  //  - leadsById: quick lookup during drag
+  //  - leadsByStage: pre-bucketed leads per stage, so each column gets its slice
+  //    directly instead of filtering the full list on every render (O(stages × leads)).
+  const leadsById = useMemo(
+    () => new Map(allLeads.map((lead) => [lead._id, lead])),
+    [allLeads],
+  );
+
+  const leadsByStage = useMemo(() => {
+    const map = new Map<string, typeof allLeads>();
+    for (const lead of allLeads) {
+      const stageId = lead.stageId._id;
+      const bucket = map.get(stageId);
+      if (bucket) {
+        bucket.push(lead);
+      } else {
+        map.set(stageId, [lead]);
+      }
+    }
+    // "Score: High to Low" sorts each stage's leads by ML score descending.
+    if (sortMode === "score") {
+      for (const bucket of map.values()) {
+        bucket.sort((a, b) => (b.mlScore ?? 0) - (a.mlScore ?? 0));
+      }
+    }
+    return map;
+  }, [allLeads, sortMode]);
 
   if (isLoading) return <PipelineSkeleton />;
 
@@ -187,6 +227,31 @@ function PipelineDashboard() {
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="text-xs gap-1.5">
+                  <ArrowDownWideNarrow size={13} /> Sort
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuLabel className="text-xs">
+                  Sort leads by
+                </DropdownMenuLabel>
+                <DropdownMenuRadioGroup
+                  value={sortMode}
+                  onValueChange={(value) =>
+                    setSortMode(value as "default" | "score")
+                  }
+                >
+                  <DropdownMenuRadioItem value="default" className="text-xs">
+                    Default
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="score" className="text-xs">
+                    Score: High to Low
+                  </DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <Button
               onClick={() => setPipelineSettingsOpen(true)}
               variant="outline"
@@ -276,7 +341,7 @@ function PipelineDashboard() {
                   workspaceId={workspace?.id ?? ""}
                   pipelineId={pipelineId}
                   index={index}
-                  leads={allLeads}
+                  leads={leadsByStage.get(stage._id) ?? EMPTY_LEADS}
                   isLoadingLeads={isLoadingLeads}
                 />
               ))}
