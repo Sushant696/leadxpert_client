@@ -148,6 +148,22 @@ export const apiURLs = {
       `/api/deals/${workspaceId}/deals/${dealId}`,
   },
 
+  INSIGHTS: {
+    hotLeads: (workspaceId: string) => `/api/insights/${workspaceId}/hot-leads`,
+    stageFunnel: (workspaceId: string) => `/api/insights/${workspaceId}/stage-funnel`,
+    scoreCalibration: (workspaceId: string) =>
+      `/api/insights/${workspaceId}/score-calibration`,
+    confusionMatrix: (workspaceId: string) =>
+      `/api/insights/${workspaceId}/confusion-matrix`,
+    priorityMismatch: (workspaceId: string) =>
+      `/api/insights/${workspaceId}/priority-mismatch`,
+    atRiskValue: (workspaceId: string) => `/api/insights/${workspaceId}/at-risk-value`,
+    featureImportance: (workspaceId: string) =>
+      `/api/insights/${workspaceId}/feature-importance`,
+    sourcePerformance: (workspaceId: string) =>
+      `/api/insights/${workspaceId}/source-performance`,
+  },
+
   TASK: {
     create: (workspaceId: string) => `/api/tasks/${workspaceId}/tasks`,
     getAll: (workspaceId: string) => `/api/tasks/${workspaceId}/tasks`,

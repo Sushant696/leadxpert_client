@@ -39,6 +39,8 @@ import {
 import { cn } from "@/lib/utils";
 import useGetDashboardStats from "@/features/workspace/hooks/useGetDashboardStats";
 import useGetAllTasks from "@/features/lead/hooks/useGetAllTasks";
+import { FocusTodayWidget } from "@/features/insights/components/FocusTodayWidget";
+import { StageFunnelWidget } from "@/features/insights/components/StageFunnelWidget";
 
 function Dashboard() {
   type DashboardTask = {
@@ -141,7 +143,7 @@ function Dashboard() {
   });
 
   return (
-    <div className="min-h-screen bg-background max-w-7xl mx-auto p-6 space-y-8">
+    <div className="min-h-screen bg-background  mx-auto p-6 space-y-8">
       <header className="space-y-1">
         <p className="text-sm  font-medium">{currentDate}</p>
         <h1 className="text-3xl font-bold tracking-tight capitalize">
@@ -265,6 +267,13 @@ function Dashboard() {
               </div>
             </CardContent>
           </Card>
+        </div>
+      )}
+
+      {currentWorkspace && (
+        <div className="grid gap-4 lg:grid-cols-2">
+          <FocusTodayWidget workspaceId={currentWorkspace.id} />
+          <StageFunnelWidget workspaceId={currentWorkspace.id} />
         </div>
       )}
 

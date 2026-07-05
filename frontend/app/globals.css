@@ -147,6 +147,14 @@
   --status-lost: oklch(0.706 0.198 17.42);
   /* #F87171 - Light red */
 
+  /* Insights chart outcome colors — validated against light surface via
+     dataviz skill's validate_palette.js (CVD separation + contrast). Distinct
+     from --status-* above since those aren't dark-mode tuned and these need
+     to read correctly as small stacked-bar segments in both themes. */
+  --chart-outcome-converted: #10b981;
+  --chart-outcome-lost: #ef4444;
+  --chart-outcome-neutral: #94a3b8;
+
   /* Border & Input */
   --border: oklch(0.918 0.006 264.54);
   /* #E2E8F0 */
@@ -231,6 +239,11 @@
   /* Orange */
   --status-converted: oklch(0.691 0.166 165.88);
   --status-lost: oklch(0.706 0.198 17.42);
+
+  /* Insights chart outcome colors — dark-surface-tuned pair (validated). */
+  --chart-outcome-converted: #059669;
+  --chart-outcome-lost: #ef4444;
+  --chart-outcome-neutral: #94a3b8;
 
   /* Border & Input */
   --border: oklch(1 0 0 / 0.10);
