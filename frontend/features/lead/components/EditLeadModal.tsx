@@ -55,7 +55,7 @@ const editLeadSchema = z.object({
     ] as const)
     .optional()
     .nullable(),
-  status: z.enum(["OPEN", "CONTACTED", "QUALIFIED", "LOST"] as const),
+  status: z.enum(["OPEN", "WON", "LOST", "ARCHIVED"] as const),
   assignedTo: z.string().optional().nullable(),
   nextFollowUpAt: z.string().optional().nullable(),
   tags: z.array(z.string()).min(0),
@@ -92,7 +92,7 @@ const PRIORITIES: {
   },
 ];
 
-const STATUSES: LeadStatus[] = ["OPEN", "CONTACTED", "QUALIFIED", "LOST"];
+const STATUSES: LeadStatus[] = ["OPEN", "WON", "LOST", "ARCHIVED"];
 const CURRENCIES: Currency[] = ["NPR", "USD", "EUR", "GBP"];
 const SOURCES: LeadSource[] = [
   "WEBSITE",

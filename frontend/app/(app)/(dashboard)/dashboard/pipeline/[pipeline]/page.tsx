@@ -31,9 +31,15 @@ import { move } from "@dnd-kit/helpers";
 import { PipelineStageRef } from "@/features/pipeline/types/pipeline-types";
 import useGetLeads from "@/features/lead/hooks/useGetLeads";
 import { CreateLeadModal } from "@/features/lead/components/CreateLeadModal";
+import { WonDealDialog } from "@/features/lead/components/WonDealDialog";
+import { LostReasonDialog } from "@/features/lead/components/LostReasonDialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { moveLeadToStageAction } from "@/features/lead/action/lead-action";
-import { Lead } from "@/features/lead/types/lead-types";
+import {
+  Lead,
+  DealDetailsPayload,
+  LostReasonTag,
+} from "@/features/lead/types/lead-types";
 import { showToast } from "@/components/showToast";
 
 // Stable reference for stages with no leads, so columns don't re-render due to
@@ -70,11 +76,38 @@ function PipelineDashboard() {
     pipelineId,
   );
 
+  // A drop on a WON/LOST stage needs extra info (deal details / lost reason)
+  // captured in a dialog before the move is committed. These hold the pending
+  // drop until the user confirms or cancels.
+  const [pendingWonDrop, setPendingWonDrop] = useState<{
+    lead: Lead;
+    stageId: string;
+  } | null>(null);
+  const [pendingLostDrop, setPendingLostDrop] = useState<{
+    lead: Lead;
+    stageId: string;
+  } | null>(null);
+
   const queryClient = useQueryClient();
   const moveLeadMutation = useMutation({
-    mutationFn: ({ leadId, stageId }: { leadId: string; stageId: string }) =>
+    mutationFn: ({
+      leadId,
+      stageId,
+      dealDetails,
+      lostReason,
+      lostReasonTag,
+    }: {
+      leadId: string;
+      stageId: string;
+      dealDetails?: DealDetailsPayload;
+      lostReason?: string;
+      lostReasonTag?: LostReasonTag;
+    }) =>
       moveLeadToStageAction(workspace?.id ?? "", pipelineId, leadId, {
         stageId,
+        dealDetails,
+        lostReason,
+        lostReasonTag,
       }),
     onMutate: ({ leadId, stageId }) => {
       const previousLeads = queryClient.getQueryData([
@@ -130,7 +163,11 @@ function PipelineDashboard() {
   const leadsByStage = useMemo(() => {
     const map = new Map<string, typeof allLeads>();
     for (const lead of allLeads) {
-      const stageId = lead.stageId._id;
+      // A lead can have a null stageId if its stage was deleted — skip it so a
+      // stale reference can't crash the board (it simply won't render in any
+      // column until moved to a live stage).
+      const stageId = lead.stageId?._id;
+      if (!stageId) continue;
       const bucket = map.get(stageId);
       if (bucket) {
         bucket.push(lead);
@@ -299,7 +336,31 @@ function PipelineDashboard() {
                 const lead = leadsById.get(leadId);
                 const newStageId = over.id as string;
 
-                if (lead && lead.stageId._id !== newStageId) {
+                if (lead && lead.stageId?._id !== newStageId) {
+                  const targetStage = pipeline.stages.find(
+                    (s) => s._id === newStageId,
+                  );
+
+                  // WON-type stage: a lead can only be converted once. Block up
+                  // front if it already has a deal (also covers reopened leads,
+                  // where isConverted is false but the deal still exists), then
+                  // open the deal dialog. Otherwise the card reverts on its own.
+                  if (targetStage?.type === "WON") {
+                    if (lead.hasDeal || lead.isConverted) {
+                      showToast.error("This lead already has a deal");
+                      return;
+                    }
+                    setPendingWonDrop({ lead, stageId: newStageId });
+                    return;
+                  }
+
+                  // LOST-type stage: capture a lost reason before committing.
+                  if (targetStage?.type === "LOST") {
+                    setPendingLostDrop({ lead, stageId: newStageId });
+                    return;
+                  }
+
+                  // OPEN move (or reopen): commit immediately.
                   moveLeadMutation.mutate({ leadId, stageId: newStageId });
                 }
               }
@@ -386,6 +447,38 @@ function PipelineDashboard() {
         workspaceId={workspace?.id ?? ""}
         pipelineId={pipelineId}
       />
+
+      {pendingWonDrop && (
+        <WonDealDialog
+          open={!!pendingWonDrop}
+          lead={pendingWonDrop.lead}
+          workspaceId={workspace?.id ?? ""}
+          onClose={() => setPendingWonDrop(null)}
+          onConfirm={(dealDetails) =>
+            moveLeadMutation.mutateAsync({
+              leadId: pendingWonDrop.lead._id,
+              stageId: pendingWonDrop.stageId,
+              dealDetails,
+            })
+          }
+        />
+      )}
+
+      {pendingLostDrop && (
+        <LostReasonDialog
+          open={!!pendingLostDrop}
+          lead={pendingLostDrop.lead}
+          onClose={() => setPendingLostDrop(null)}
+          onConfirm={({ lostReason, lostReasonTag }) =>
+            moveLeadMutation.mutateAsync({
+              leadId: pendingLostDrop.lead._id,
+              stageId: pendingLostDrop.stageId,
+              lostReason,
+              lostReasonTag,
+            })
+          }
+        />
+      )}
     </div>
   );
 }

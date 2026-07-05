@@ -56,20 +56,20 @@ const priorityConfig = {
 
 const statusConfig = {
   OPEN: {
-    color: "bg-green-500/10 text-green-700 border-green-200",
+    color: "bg-blue-500/10 text-blue-700 border-blue-200",
     label: "Open",
   },
-  CONTACTED: {
-    color: "bg-blue-500/10 text-blue-700 border-blue-200",
-    label: "Contacted",
-  },
-  QUALIFIED: {
-    color: "bg-purple-500/10 text-purple-700 border-purple-200",
-    label: "Qualified",
+  WON: {
+    color: "bg-emerald-500/10 text-emerald-700 border-emerald-200",
+    label: "Won",
   },
   LOST: {
-    color: "bg-gray-500/10 text-gray-700 border-gray-200",
+    color: "bg-red-500/10 text-red-700 border-red-200",
     label: "Lost",
+  },
+  ARCHIVED: {
+    color: "bg-gray-500/10 text-gray-700 border-gray-200",
+    label: "Archived",
   },
 };
 
