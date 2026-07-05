@@ -96,7 +96,7 @@ async function makeAuthenticatedRequest<T>(config: RequestConfig): Promise<T> {
  */
 let refreshPromise: Promise<string> | null = null;
 
-function refreshAccessToken(): Promise<string> {
+export function refreshAccessToken(): Promise<string> {
   if (!refreshPromise) {
     refreshPromise = doRefreshAccessToken().finally(() => {
       refreshPromise = null;

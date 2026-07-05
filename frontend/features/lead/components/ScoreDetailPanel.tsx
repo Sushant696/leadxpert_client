@@ -64,10 +64,10 @@ export function ScoreDetailPanel({ lead }: ScoreDetailPanelProps) {
   const features = lead.scoreFeatures;
 
   return (
-    <div className="space-y-4 rounded-lg border border-border bg-muted/20 p-4">
+    <div className="space-y-4 rounded-xl border border-border bg-card p-4 shadow-sm">
       <div className="flex items-center justify-between">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-primary flex items-center gap-2">
-          <Sparkles size={14} />
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+          <Sparkles size={14} className="text-primary" />
           Lead Score
         </h3>
         <ScoreBadge mlScore={lead.mlScore} mlPriority={lead.mlPriority ?? null} />

@@ -103,10 +103,17 @@ export const apiURLs = {
       `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads/${leadId}/lost`,
     archive: (workspaceId: string, pipelineId: string, leadId: string) =>
       `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads/${leadId}`,
+    events: (workspaceId: string, pipelineId: string, leadId: string) =>
+      `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads/${leadId}/events`,
   },
 
   ML: {
     scoreLead: (leadId: string) => `/api/ml/leads/${leadId}/score`,
+  },
+
+  ACTIVITY: {
+    getByEntity: (workspaceId: string, entityType: string, entityId: string) =>
+      `/api/activities/${workspaceId}/activities/${entityType}/${entityId}`,
   },
 
   CONTACT: {
