@@ -27,10 +27,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import useWorkspaceStore from "@/store/workspace-store";
-import { useGetAllLeads } from "@/features/lead/hooks/useGetAllLeads";
+import useGetLeadDetail from "@/features/lead/hooks/useGetLeadDetail";
 import useUpdateLead from "@/features/lead/hooks/useUpdateLead";
 import useLeadEvents from "@/features/lead/hooks/useLeadEvents";
 import { ScoreDetailPanel } from "@/features/lead/components/ScoreDetailPanel";
+import { ScoreTrendChart } from "@/features/lead/components/ScoreTrendChart";
 import { ActivityFeed } from "@/features/lead/components/ActivityFeed";
 import { NotesPanel } from "@/features/lead/components/NotesPanel";
 import { TasksPanel } from "@/features/lead/components/TasksPanel";
@@ -119,11 +120,10 @@ function Page() {
   const workspaceId = workspace?.id || "";
   const leadId = params.lead as string;
 
-  // The route only carries the lead id (no pipeline id), so we reuse the
-  // workspace-level leads query and pick the lead out of it rather than the
-  // pipeline-scoped getLeadById endpoint.
-  const { data: leads = [], isLoading } = useGetAllLeads(workspaceId);
-  const lead = leads.find((l) => l._id === leadId);
+  // The route only carries the lead id (no pipeline id), so we fetch the single
+  // lead through the workspace-scoped detail endpoint. The response includes the
+  // lead's pipelineId, which the edit/convert/SSE hooks below derive from it.
+  const { data: lead, isLoading } = useGetLeadDetail(workspaceId, leadId);
 
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isConvertOpen, setIsConvertOpen] = useState(false);
@@ -142,6 +142,12 @@ function Page() {
     pipelineId: lead?.pipelineId ?? "",
     enabled: !!lead,
   });
+
+  // With a rich score history the trend reads best full-width on top; with only
+  // a few points a small chart beside the score card looks less stretched.
+  const FULL_WIDTH_MIN_POINTS = 6;
+  const scorePointCount = lead?.scoreHistory?.length ?? 0;
+  const isFullWidthTrend = scorePointCount >= FULL_WIDTH_MIN_POINTS;
 
   if (isLoading) {
     return (
@@ -243,9 +249,22 @@ function Page() {
           </div>
         </div>
 
+        {/* Score trend — full-width on top only when there's a rich history.
+            With few points it drops into the left column below (beside the
+            score card) so a small chart isn't stretched across the page. */}
+        {isFullWidthTrend && (
+          <div className="px-1">
+            <ScoreTrendChart lead={lead} chartHeightClassName="h-64" />
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-1">
           {/* Left column — main info */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Compact trend sits at the top of the left column, level with the
+                score card in the sidebar, and flows straight into the cards
+                below it (no dead space under a short chart). */}
+            {!isFullWidthTrend && <ScoreTrendChart lead={lead} />}
             <Card>
               <CardContent className="p-5 space-y-5">
                 {/* Contact */}

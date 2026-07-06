@@ -99,8 +99,19 @@ export interface Lead {
   mlPriority?: MlPriority | null;
   lastScoredAt?: string | null;
   scoreFeatures?: ScoreFeatures | null;
+  // Append-only history of past scores, powering the score trend chart. The
+  // detail endpoint returns a lightweight { score, scoredAt } series; the list
+  // endpoint may carry the fuller entry, so priority/features are optional.
+  scoreHistory?: ScoreHistoryEntry[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ScoreHistoryEntry {
+  score: number;
+  scoredAt: string;
+  priority?: MlPriority | null;
+  features?: ScoreFeatures | null;
 }
 
 export interface StageHistoryEntry {

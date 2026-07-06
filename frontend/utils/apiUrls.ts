@@ -89,6 +89,9 @@ export const apiURLs = {
     getAll: (workspaceId: string, pipelineId: string) =>
       `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads`,
     getAllByWorkspace: (workspaceId: string) => `/api/leads/${workspaceId}/all`,
+    // Workspace-scoped single-lead fetch for the detail page (no pipeline id).
+    getDetail: (workspaceId: string, leadId: string) =>
+      `/api/leads/${workspaceId}/leads/${leadId}`,
     getById: (workspaceId: string, pipelineId: string, leadId: string) =>
       `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads/${leadId}`,
     update: (workspaceId: string, pipelineId: string, leadId: string) =>

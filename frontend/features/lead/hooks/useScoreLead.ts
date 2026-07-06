@@ -21,6 +21,8 @@ const useScoreLead = (
         queryKey: ["leads", workspaceId, pipelineId],
       });
       queryClient.invalidateQueries({ queryKey: ["lead", leadId] });
+      // Detail page (useGetLeadDetail) keys on ["lead-detail", leadId].
+      queryClient.invalidateQueries({ queryKey: ["lead-detail", leadId] });
     },
     onError: (error: Error) => {
       showToast.error(error.message || "Failed to re-score lead");

@@ -46,6 +46,15 @@ export async function getLeadByIdAction(
   return response.data.lead;
 }
 
+// Workspace-scoped single-lead fetch for the detail page (no pipeline id).
+export async function getLeadDetailAction(workspaceId: string, leadId: string) {
+  const response = await leadApi.getLeadDetail(workspaceId, leadId);
+  if (!response.success) {
+    throw new Error(response.message || "Failed to fetch lead");
+  }
+  return response.data.lead;
+}
+
 export async function updateLeadAction(
   workspaceId: string,
   pipelineId: string,

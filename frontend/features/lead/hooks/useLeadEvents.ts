@@ -65,6 +65,8 @@ function useLeadEvents({
           break;
         case "score":
           queryClient.invalidateQueries({ queryKey: ["leads", workspaceId] });
+          // Refresh the single-lead detail view (score trend + ml fields).
+          queryClient.invalidateQueries({ queryKey: ["lead-detail", leadId] });
           break;
       }
     };

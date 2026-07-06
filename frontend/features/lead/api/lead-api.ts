@@ -62,6 +62,15 @@ const leadApi = {
     );
   },
 
+  // Workspace-scoped single-lead fetch for the detail page, which only knows
+  // the workspace + lead id (no pipeline id in its route).
+  getLeadDetail: async (
+    workspaceId: string,
+    leadId: string,
+  ): Promise<GetLeadByIdResponse> => {
+    return await apiWrapper.get(apiURLs.LEAD.getDetail(workspaceId, leadId));
+  },
+
   updateLead: async (
     workspaceId: string,
     pipelineId: string,
