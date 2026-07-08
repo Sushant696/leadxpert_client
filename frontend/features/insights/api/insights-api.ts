@@ -14,21 +14,45 @@ export const insightsApi = {
       pipelineId ? { pipelineId } : undefined,
     ),
 
-  getScoreCalibration: (workspaceId: string) =>
-    apiWrapper.get(apiURLs.INSIGHTS.scoreCalibration(workspaceId)),
+  getScoreCalibration: (workspaceId: string, pipelineId?: string) =>
+    apiWrapper.get(
+      apiURLs.INSIGHTS.scoreCalibration(workspaceId),
+      pipelineId ? { pipelineId } : undefined,
+    ),
 
-  getConfusionMatrix: (workspaceId: string) =>
-    apiWrapper.get(apiURLs.INSIGHTS.confusionMatrix(workspaceId)),
+  getConfusionMatrix: (workspaceId: string, pipelineId?: string) =>
+    apiWrapper.get(
+      apiURLs.INSIGHTS.confusionMatrix(workspaceId),
+      pipelineId ? { pipelineId } : undefined,
+    ),
 
-  getPriorityMismatch: (workspaceId: string) =>
-    apiWrapper.get(apiURLs.INSIGHTS.priorityMismatch(workspaceId)),
+  getPriorityMismatch: (workspaceId: string, pipelineId?: string) =>
+    apiWrapper.get(
+      apiURLs.INSIGHTS.priorityMismatch(workspaceId),
+      pipelineId ? { pipelineId } : undefined,
+    ),
 
-  getAtRiskValue: (workspaceId: string) =>
-    apiWrapper.get(apiURLs.INSIGHTS.atRiskValue(workspaceId)),
+  getAtRiskValue: (workspaceId: string, pipelineId?: string) =>
+    apiWrapper.get(
+      apiURLs.INSIGHTS.atRiskValue(workspaceId),
+      pipelineId ? { pipelineId } : undefined,
+    ),
 
   getFeatureImportance: (workspaceId: string) =>
     apiWrapper.get(apiURLs.INSIGHTS.featureImportance(workspaceId)),
 
-  getSourcePerformance: (workspaceId: string) =>
-    apiWrapper.get(apiURLs.INSIGHTS.sourcePerformance(workspaceId)),
+  getSourcePerformance: (workspaceId: string, pipelineId?: string) =>
+    apiWrapper.get(
+      apiURLs.INSIGHTS.sourcePerformance(workspaceId),
+      pipelineId ? { pipelineId } : undefined,
+    ),
+
+  getDriverRanking: (workspaceId: string) =>
+    apiWrapper.get(apiURLs.INSIGHTS.driverRanking(workspaceId)),
+
+  getLossStageBreakdown: (workspaceId: string, pipelineId?: string) =>
+    apiWrapper.get(
+      apiURLs.INSIGHTS.lossStageBreakdown(workspaceId),
+      pipelineId ? { pipelineId } : undefined,
+    ),
 };

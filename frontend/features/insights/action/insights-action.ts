@@ -4,8 +4,10 @@ import { insightsApi } from "../api/insights-api";
 import {
   AtRiskValue,
   ConfusionMatrix,
+  DriverRanking,
   FeatureImportanceResponse,
   HotLead,
+  LossStageBreakdown,
   PriorityMismatchLead,
   ScoreCalibrationTier,
   SourcePerformanceRow,
@@ -36,8 +38,9 @@ export async function getStageFunnelAction(
 
 export async function getScoreCalibrationAction(
   workspaceId: string,
+  pipelineId?: string,
 ): Promise<ScoreCalibrationTier[]> {
-  const response = await insightsApi.getScoreCalibration(workspaceId);
+  const response = await insightsApi.getScoreCalibration(workspaceId, pipelineId);
   if (!response.success) {
     throw new Error(response.message || "Failed to fetch score calibration");
   }
@@ -46,8 +49,9 @@ export async function getScoreCalibrationAction(
 
 export async function getConfusionMatrixAction(
   workspaceId: string,
+  pipelineId?: string,
 ): Promise<ConfusionMatrix> {
-  const response = await insightsApi.getConfusionMatrix(workspaceId);
+  const response = await insightsApi.getConfusionMatrix(workspaceId, pipelineId);
   if (!response.success) {
     throw new Error(response.message || "Failed to fetch confusion matrix");
   }
@@ -56,8 +60,9 @@ export async function getConfusionMatrixAction(
 
 export async function getPriorityMismatchAction(
   workspaceId: string,
+  pipelineId?: string,
 ): Promise<PriorityMismatchLead[]> {
-  const response = await insightsApi.getPriorityMismatch(workspaceId);
+  const response = await insightsApi.getPriorityMismatch(workspaceId, pipelineId);
   if (!response.success) {
     throw new Error(response.message || "Failed to fetch priority mismatch");
   }
@@ -66,8 +71,9 @@ export async function getPriorityMismatchAction(
 
 export async function getAtRiskValueAction(
   workspaceId: string,
+  pipelineId?: string,
 ): Promise<AtRiskValue> {
-  const response = await insightsApi.getAtRiskValue(workspaceId);
+  const response = await insightsApi.getAtRiskValue(workspaceId, pipelineId);
   if (!response.success) {
     throw new Error(response.message || "Failed to fetch at-risk value");
   }
@@ -86,10 +92,35 @@ export async function getFeatureImportanceAction(
 
 export async function getSourcePerformanceAction(
   workspaceId: string,
+  pipelineId?: string,
 ): Promise<SourcePerformanceRow[]> {
-  const response = await insightsApi.getSourcePerformance(workspaceId);
+  const response = await insightsApi.getSourcePerformance(workspaceId, pipelineId);
   if (!response.success) {
     throw new Error(response.message || "Failed to fetch source performance");
   }
   return response.data.sources;
+}
+
+export async function getDriverRankingAction(
+  workspaceId: string,
+): Promise<DriverRanking> {
+  const response = await insightsApi.getDriverRanking(workspaceId);
+  if (!response.success) {
+    throw new Error(response.message || "Failed to fetch driver ranking");
+  }
+  return response.data;
+}
+
+export async function getLossStageBreakdownAction(
+  workspaceId: string,
+  pipelineId?: string,
+): Promise<LossStageBreakdown> {
+  const response = await insightsApi.getLossStageBreakdown(
+    workspaceId,
+    pipelineId,
+  );
+  if (!response.success) {
+    throw new Error(response.message || "Failed to fetch loss stage breakdown");
+  }
+  return response.data;
 }

@@ -33,6 +33,10 @@ export interface ScoreCalibrationTier {
   lost: number;
   open: number;
   conversionRate: number;
+  // Resolved-only figures (WON/LOST leads) — what the Insights page renders.
+  resolvedTotal: number;
+  resolvedConverted: number;
+  resolvedConversionRate: number;
 }
 
 export interface ConfusionMatrixGridRow {
@@ -66,6 +70,7 @@ export interface PriorityMismatchLead {
   mlScore: number;
   mlPriority: string;
   humanPriority: string;
+  lastContactedAt: string | null;
   contactName: string | null;
   assignedToName: string | null;
 }
@@ -107,6 +112,27 @@ export interface SourcePerformanceRow {
   conversionRate: number;
   avgValue: number;
   avgMlScore: number;
+}
+
+export interface DriverRankingItem {
+  label: string;
+  weight: number;
+}
+
+export interface DriverRanking {
+  drivers: DriverRankingItem[];
+}
+
+export interface LossStageRow {
+  stageName: string;
+  count: number;
+  value: number;
+}
+
+export interface LossStageBreakdown {
+  stages: LossStageRow[];
+  count: number;
+  value: number;
 }
 
 export interface ApiResponse<T> {

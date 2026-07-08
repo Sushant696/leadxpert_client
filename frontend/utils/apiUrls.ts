@@ -165,6 +165,10 @@ export const apiURLs = {
       `/api/insights/${workspaceId}/feature-importance`,
     sourcePerformance: (workspaceId: string) =>
       `/api/insights/${workspaceId}/source-performance`,
+    driverRanking: (workspaceId: string) =>
+      `/api/insights/${workspaceId}/driver-ranking`,
+    lossStageBreakdown: (workspaceId: string) =>
+      `/api/insights/${workspaceId}/loss-stage-breakdown`,
   },
 
   TASK: {

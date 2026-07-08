@@ -1,30 +1,42 @@
 "use client";
 
+import { Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ShieldAlert } from "lucide-react";
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import useWorkspaceStore from "@/store/workspace-store";
 import { RESOURCE_BASED_ROLES } from "@/types/user";
-import { ScoreCalibrationChart } from "@/features/insights/components/ScoreCalibrationChart";
-import { ConfusionMatrixCard } from "@/features/insights/components/ConfusionMatrixCard";
-import { PriorityMismatchTable } from "@/features/insights/components/PriorityMismatchTable";
-import { AtRiskValueCard } from "@/features/insights/components/AtRiskValueCard";
-import { FeatureImportanceChart } from "@/features/insights/components/FeatureImportanceChart";
-import { SourcePerformanceChart } from "@/features/insights/components/SourcePerformanceChart";
+import {
+  PipelineFilter,
+  ALL_PIPELINES,
+} from "@/features/insights/components/insights-page/PipelineFilter";
+import { ScoringHealthCard } from "@/features/insights/components/insights-page/ScoringHealthCard";
+import { BestSourcesCard } from "@/features/insights/components/insights-page/BestSourcesCard";
+import { SaleDriversCard } from "@/features/insights/components/insights-page/SaleDriversCard";
+import { MoneyAtRiskCard } from "@/features/insights/components/insights-page/MoneyAtRiskCard";
+import { SecondLookCard } from "@/features/insights/components/insights-page/SecondLookCard";
+import { DealsFallApartCard } from "@/features/insights/components/insights-page/DealsFallApartCard";
 
-function Page() {
+// Route this page lives at — the selected pipeline is kept in this route's URL
+// query so the view is shareable and survives a refresh.
+const ROUTE = "/dashboard/analytics";
+
+function AnalyticsContent() {
   const workspace = useWorkspaceStore((state) => state.workspace);
-  const isSuperAdmin = workspace?.role === RESOURCE_BASED_ROLES.SUPER_ADMIN;
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   if (!workspace) {
     return (
       <div className="flex flex-col items-center justify-center gap-2 h-full text-center p-6">
-        <p className="text-sm text-muted-foreground">Select a workspace to view insights.</p>
+        <p className="text-sm text-muted-foreground">
+          Select a workspace to view insights.
+        </p>
       </div>
     );
   }
 
-  if (!isSuperAdmin) {
+  if (workspace.role !== RESOURCE_BASED_ROLES.SUPER_ADMIN) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 h-full text-center p-6">
         <div className="p-3 bg-destructive/10 rounded-full text-destructive">
@@ -33,8 +45,8 @@ function Page() {
         <div>
           <h2 className="font-semibold text-foreground">Super admin only</h2>
           <p className="text-sm text-muted-foreground max-w-sm mt-1">
-            ML insights are restricted to the workspace owner. Ask your workspace&apos;s
-            super admin for access.
+            Insights are restricted to the workspace owner. Ask your
+            workspace&apos;s super admin for access.
           </p>
         </div>
       </div>
@@ -42,90 +54,57 @@ function Page() {
   }
 
   const workspaceId = workspace.id;
+  // Absent param == the workspace-wide "All pipelines" view.
+  const pipelineId = searchParams.get("pipelineId") || ALL_PIPELINES;
+
+  const handlePipelineChange = (next: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (next === ALL_PIPELINES) {
+      params.delete("pipelineId");
+    } else {
+      params.set("pipelineId", next);
+    }
+    const query = params.toString();
+    router.replace(query ? `${ROUTE}?${query}` : ROUTE, { scroll: false });
+  };
 
   return (
     <div className="space-y-6 mx-auto pb-8">
-      <header className="space-y-1">
-        <h1 className="text-2xl font-bold text-foreground">Insights</h1>
-        <p className="text-sm text-muted-foreground">
-          How well the lead-scoring model predicts real outcomes for {workspace.name}, and where
-          it&apos;s pointing your sales effort.
-        </p>
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-bold text-foreground">Insights</h1>
+          <p className="text-sm text-muted-foreground">
+            Where your leads are winning, stalling, and slipping away across{" "}
+            {workspace.name}.
+          </p>
+        </div>
+        <PipelineFilter
+          workspaceId={workspaceId}
+          value={pipelineId}
+          onChange={handlePipelineChange}
+        />
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm">Score-tier conversion calibration</CardTitle>
-            <CardDescription>
-              Actual converted / lost / open outcomes for leads in each ML priority tier.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ScoreCalibrationChart workspaceId={workspaceId} />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm">Confusion matrix</CardTitle>
-            <CardDescription>
-              HIGH priority treated as &quot;predicted to convert,&quot; scored against resolved leads only.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ConfusionMatrixCard workspaceId={workspaceId} />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm">ML vs. rep priority mismatch</CardTitle>
-            <CardDescription>
-              Open leads where the model and the assigned rep disagree on priority.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <PriorityMismatchTable workspaceId={workspaceId} />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm">At-risk pipeline value</CardTitle>
-            <CardDescription>Open leads flagged stale (rotten), by stage.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <AtRiskValueCard workspaceId={workspaceId} />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm">Feature importance</CardTitle>
-            <CardDescription>
-              What the model weighs most heavily when scoring a lead (from training evaluation).
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <FeatureImportanceChart workspaceId={workspaceId} />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm">Lead source performance</CardTitle>
-            <CardDescription>
-              Conversion rate by source — lead_source is the model&apos;s single strongest signal.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <SourcePerformanceChart workspaceId={workspaceId} />
-          </CardContent>
-        </Card>
+        <ScoringHealthCard workspaceId={workspaceId} pipelineId={pipelineId} />
+        <BestSourcesCard workspaceId={workspaceId} pipelineId={pipelineId} />
+        <SaleDriversCard workspaceId={workspaceId} />
+        <MoneyAtRiskCard workspaceId={workspaceId} pipelineId={pipelineId} />
+        <SecondLookCard workspaceId={workspaceId} pipelineId={pipelineId} />
+        <DealsFallApartCard workspaceId={workspaceId} pipelineId={pipelineId} />
       </div>
     </div>
   );
 }
 
-export default Page;
+export default function AnalyticsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-6 text-sm text-muted-foreground">Loading insights…</div>
+      }
+    >
+      <AnalyticsContent />
+    </Suspense>
+  );
+}
