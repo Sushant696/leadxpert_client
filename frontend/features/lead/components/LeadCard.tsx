@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { QuickTaskModal } from "./QuickTaskModal";
 import { QuickNoteInput } from "./QuickNoteInput";
+import { ScoreBadge } from "./ScoreBadge";
 
 interface LeadCardProps {
   lead: Lead;
@@ -58,18 +59,25 @@ export function LeadCard({
           <h4 className="text-sm font-semibold text-foreground line-clamp-2 flex-1">
             {lead.title}
           </h4>
-          <Badge
-            variant="outline"
-            className={cn("text-xs shrink-0 px-2 py-0.5", priority.color)}
-          >
-            <Flag size={10} className="mr-1" />
-            {lead.priority}
-          </Badge>
+          <div className="flex flex-col items-end gap-1 shrink-0">
+            <Badge
+              variant="outline"
+              className={cn("text-xs px-2 py-0.5", priority.color)}
+            >
+              <Flag size={10} className="mr-1" />
+              {lead.priority}
+            </Badge>
+            <ScoreBadge
+              mlScore={lead.mlScore}
+              mlPriority={lead.mlPriority ?? null}
+              showScore={false}
+            />
+          </div>
         </div>
 
         {lead.contactId && (
           <p className="text-xs text-muted-foreground truncate">
-            👤 {lead.contactId.name}
+            👤 {lead?.contactId?.name}
           </p>
         )}
 
@@ -143,14 +151,18 @@ export function LeadCard({
         )}
       </div>
 
-      {/* Quick Task Modal */}
-      <QuickTaskModal
-        isOpen={isTaskModalOpen}
-        onClose={() => setIsTaskModalOpen(false)}
-        leadId={lead._id}
-        workspaceId={workspaceId}
-        pipelineId={pipelineId}
-      />
+      {/* Quick Task Modal — mounted only while open so a board of N cards
+          doesn't keep N idle modal components (each with its own form/mutation
+          hooks) alive. */}
+      {isTaskModalOpen && (
+        <QuickTaskModal
+          isOpen={isTaskModalOpen}
+          onClose={() => setIsTaskModalOpen(false)}
+          leadId={lead._id}
+          workspaceId={workspaceId}
+          pipelineId={pipelineId}
+        />
+      )}
     </>
   );
 }

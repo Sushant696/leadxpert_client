@@ -254,26 +254,30 @@ export function StageColumn({
         </div>
       </div>
 
-      {/* Lead Details Modal */}
-      <LeadDetailsModal
-        isOpen={isLeadModalOpen}
-        onClose={() => {
-          setIsLeadModalOpen(false);
-          setSelectedLead(null);
-        }}
-        lead={selectedLead}
-        workspaceId={workspaceId}
-        pipelineId={pipelineId}
-      />
+      {/* Lead Details / Create modals — mounted only while open. The
+          selectedLead guard also narrows the type so `lead` is non-null. */}
+      {isLeadModalOpen && selectedLead && (
+        <LeadDetailsModal
+          isOpen={isLeadModalOpen}
+          onClose={() => {
+            setIsLeadModalOpen(false);
+            setSelectedLead(null);
+          }}
+          lead={selectedLead}
+          workspaceId={workspaceId}
+          pipelineId={pipelineId}
+        />
+      )}
 
-      {/* Create Lead Modal */}
-      <CreateLeadModal
-        isOpen={isCreateLeadModalOpen}
-        onClose={() => setIsCreateLeadModalOpen(false)}
-        workspaceId={workspaceId}
-        pipelineId={pipelineId}
-        stageId={stage._id}
-      />
+      {isCreateLeadModalOpen && (
+        <CreateLeadModal
+          isOpen={isCreateLeadModalOpen}
+          onClose={() => setIsCreateLeadModalOpen(false)}
+          workspaceId={workspaceId}
+          pipelineId={pipelineId}
+          stageId={stage._id}
+        />
+      )}
     </>
   );
 }

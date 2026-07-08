@@ -10,7 +10,7 @@ import useGetPipelines from '@/features/pipeline/hooks/useGetPipelines';
 
 import NavItem from './navItem';
 import { cn } from '@/lib/utils';
-import { NAV_ITEMS } from './items';
+import { NAV_ITEMS, SUPER_ADMIN_NAV_ITEMS } from './items';
 import getInitials from '@/utils/getInitials';
 import { Dialog } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -38,6 +38,7 @@ const Sidebar = ({ mode = 'desktop', onNavigate }: SidebarProps) => {
   const currentWorkspace = workspace;
   const userRole = currentWorkspace?.role;
   const canManage = userRole === RESOURCE_BASED_ROLES.SUPER_ADMIN || userRole === RESOURCE_BASED_ROLES.ADMIN;
+  const isSuperAdmin = userRole === RESOURCE_BASED_ROLES.SUPER_ADMIN;
 
   const { data: pipelines, isLoading: isPipelinesLoading } = useGetPipelines(
     currentWorkspace?.id ?? ""
@@ -64,6 +65,16 @@ const Sidebar = ({ mode = 'desktop', onNavigate }: SidebarProps) => {
 
       <nav className="space-y-1 pr-1">
         {NAV_ITEMS.map((item) => (
+          <NavItem
+            key={item.href}
+            icon={<item.icon size={18} />}
+            label={item.label}
+            href={item.href}
+            active={pathname === item.href}
+            onClick={onNavigate}
+          />
+        ))}
+        {isSuperAdmin && SUPER_ADMIN_NAV_ITEMS.map((item) => (
           <NavItem
             key={item.href}
             icon={<item.icon size={18} />}

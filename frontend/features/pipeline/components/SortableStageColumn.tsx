@@ -28,7 +28,8 @@ export function SortableStageColumn({
       stage,
     },
   });
-  const stageLeads = leads.filter((lead) => lead.stageId._id === stage._id);
+  // `leads` is already the pre-bucketed slice for this stage (bucketed once in
+  // the board), so no per-render filtering is needed here.
   return (
     <div
       ref={ref}
@@ -40,7 +41,7 @@ export function SortableStageColumn({
         stage={stage}
         workspaceId={workspaceId}
         pipelineId={pipelineId}
-        leads={stageLeads}
+        leads={leads}
         isLoadingLeads={isLoadingLeads}
         isDropTarget={isDropTarget}
       />

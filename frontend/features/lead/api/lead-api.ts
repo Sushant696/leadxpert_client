@@ -16,6 +16,7 @@ import {
   ConvertLeadResponse,
   MarkLeadAsLostResponse,
   ArchiveLeadResponse,
+  ScoreLeadResponse,
 } from "../types/lead-types";
 
 const leadApi = {
@@ -59,6 +60,15 @@ const leadApi = {
     return await apiWrapper.get(
       apiURLs.LEAD.getById(workspaceId, pipelineId, leadId),
     );
+  },
+
+  // Workspace-scoped single-lead fetch for the detail page, which only knows
+  // the workspace + lead id (no pipeline id in its route).
+  getLeadDetail: async (
+    workspaceId: string,
+    leadId: string,
+  ): Promise<GetLeadByIdResponse> => {
+    return await apiWrapper.get(apiURLs.LEAD.getDetail(workspaceId, leadId));
   },
 
   updateLead: async (
@@ -128,6 +138,12 @@ const leadApi = {
     return await apiWrapper.delete(
       apiURLs.LEAD.archive(workspaceId, pipelineId, leadId),
     );
+  },
+
+  // Manually (re)score a lead. The ML route returns a bare object, not the
+  // standard { success, data } envelope, so callers read fields directly.
+  scoreLead: async (leadId: string): Promise<ScoreLeadResponse> => {
+    return await apiWrapper.post(apiURLs.ML.scoreLead(leadId), {});
   },
 };
 

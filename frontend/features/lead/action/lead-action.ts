@@ -46,6 +46,15 @@ export async function getLeadByIdAction(
   return response.data.lead;
 }
 
+// Workspace-scoped single-lead fetch for the detail page (no pipeline id).
+export async function getLeadDetailAction(workspaceId: string, leadId: string) {
+  const response = await leadApi.getLeadDetail(workspaceId, leadId);
+  if (!response.success) {
+    throw new Error(response.message || "Failed to fetch lead");
+  }
+  return response.data.lead;
+}
+
 export async function updateLeadAction(
   workspaceId: string,
   pipelineId: string,
@@ -144,4 +153,10 @@ export async function archiveLeadAction(
     throw new Error(response.message || "Failed to archive lead");
   }
   return response.data.message;
+}
+
+export async function scoreLeadAction(leadId: string) {
+  // ML route responds with a bare object (no success envelope); the freshly
+  // written ml fields are picked up by invalidating the lead query afterward.
+  return await leadApi.scoreLead(leadId);
 }

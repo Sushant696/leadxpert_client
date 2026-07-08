@@ -89,6 +89,9 @@ export const apiURLs = {
     getAll: (workspaceId: string, pipelineId: string) =>
       `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads`,
     getAllByWorkspace: (workspaceId: string) => `/api/leads/${workspaceId}/all`,
+    // Workspace-scoped single-lead fetch for the detail page (no pipeline id).
+    getDetail: (workspaceId: string, leadId: string) =>
+      `/api/leads/${workspaceId}/leads/${leadId}`,
     getById: (workspaceId: string, pipelineId: string, leadId: string) =>
       `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads/${leadId}`,
     update: (workspaceId: string, pipelineId: string, leadId: string) =>
@@ -103,6 +106,17 @@ export const apiURLs = {
       `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads/${leadId}/lost`,
     archive: (workspaceId: string, pipelineId: string, leadId: string) =>
       `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads/${leadId}`,
+    events: (workspaceId: string, pipelineId: string, leadId: string) =>
+      `/api/leads/${workspaceId}/pipelines/${pipelineId}/leads/${leadId}/events`,
+  },
+
+  ML: {
+    scoreLead: (leadId: string) => `/api/ml/leads/${leadId}/score`,
+  },
+
+  ACTIVITY: {
+    getByEntity: (workspaceId: string, entityType: string, entityId: string) =>
+      `/api/activities/${workspaceId}/activities/${entityType}/${entityId}`,
   },
 
   CONTACT: {
@@ -135,6 +149,22 @@ export const apiURLs = {
       `/api/deals/${workspaceId}/deals/${dealId}`,
     delete: (workspaceId: string, dealId: string) =>
       `/api/deals/${workspaceId}/deals/${dealId}`,
+  },
+
+  INSIGHTS: {
+    hotLeads: (workspaceId: string) => `/api/insights/${workspaceId}/hot-leads`,
+    stageFunnel: (workspaceId: string) => `/api/insights/${workspaceId}/stage-funnel`,
+    scoreCalibration: (workspaceId: string) =>
+      `/api/insights/${workspaceId}/score-calibration`,
+    confusionMatrix: (workspaceId: string) =>
+      `/api/insights/${workspaceId}/confusion-matrix`,
+    priorityMismatch: (workspaceId: string) =>
+      `/api/insights/${workspaceId}/priority-mismatch`,
+    atRiskValue: (workspaceId: string) => `/api/insights/${workspaceId}/at-risk-value`,
+    featureImportance: (workspaceId: string) =>
+      `/api/insights/${workspaceId}/feature-importance`,
+    sourcePerformance: (workspaceId: string) =>
+      `/api/insights/${workspaceId}/source-performance`,
   },
 
   TASK: {
