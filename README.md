@@ -8,7 +8,6 @@ This is a multi-repo project:
 
 - **Frontend (Web)** – You're here! Next.js dashboard for lead management
 - **Backend (API)** – [leadXpert_server](https://github.com/Sushant696/leadXpert_server) – Express + MongoDB REST API
-- **Mobile App** – [leadXpert](https://github.com/Sushant696/leadXpert) – Flutter mobile client
 
 ---
 
